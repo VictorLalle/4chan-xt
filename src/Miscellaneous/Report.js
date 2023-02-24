@@ -1,7 +1,7 @@
 import Redirect from "../Archive/Redirect";
 import $ from "../platform/$";
 // @ ts-ignore
-import ReportPage from './ArchiveReport.html';
+import ReportPage from './Report/ArchiveReport.html';
 
 /*
  * decaffeinate suggestions:

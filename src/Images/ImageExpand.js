@@ -1,6 +1,9 @@
 import Callbacks from "../classes/Callbacks";
+import Config from "../config/Config";
+import Nav from "../Miscellaneous/Nav";
 import $ from "../platform/$";
 import ImageCommon from "./ImageCommon";
+import Volume from "./Volume";
 
 /*
  * decaffeinate suggestions:

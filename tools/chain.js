@@ -1,5 +1,5 @@
 var fs = require('fs');
-var template = require('./template');
+var template = require('./template.js');
 var coffee = require('coffeescript');
 
 for (var name of process.argv.slice(2)) {
@@ -8,7 +8,7 @@ for (var name of process.argv.slice(2)) {
     var sourceName = `src/${parts[1]}/${parts[3]}.${parts[4]}`;
     var script = fs.readFileSync(sourceName, 'utf8');
     script = script.replace(/\r\n/g, '\n');
-    script = template(script, {type: parts[2]}, sourceName);
+    script = template(script, { type: parts[2] }, sourceName);
     if (parts[4] === 'coffee') {
       var definesVar = /^[$A-Z][$\w]*$/.test(parts[3]);
       if (definesVar) {
@@ -26,5 +26,3 @@ for (var name of process.argv.slice(2)) {
     throw err;
   }
 }
-
-

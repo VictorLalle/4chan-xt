@@ -27,4 +27,4 @@ const QuoteStrikeThrough = {
     }
   }
 };
-export const QuoteStrikeThrough;
+export default QuoteStrikeThrough;

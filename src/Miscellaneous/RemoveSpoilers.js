@@ -34,7 +34,7 @@ const RemoveSpoilers = {
     for (var spoiler of spoilers) {
       var span = $.el('span', { className: 'removed-spoiler' });
       $.replace(spoiler, span);
-      $.add(span, Array.from(spoiler.childNodes)];
+      $.add(span, spoiler.childNodes);
     }
   }
 };

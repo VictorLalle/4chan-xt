@@ -1,6 +1,14 @@
-import { createFilter } from "rollup-pluginutils";
+import { createFilter } from "@rollup/pluginutils";
 
-export default function inlineFile(opts = {}) {
+/**
+ * @param {{
+ *  include: import("@rollup/pluginutils").FilterPattern,
+ *  exclude?: import("@rollup/pluginutils").FilterPattern,
+ *  transformer?: (input: string) => string
+ * }} opts
+ * @returns {import("rollup").Plugin}
+ */
+export default function inlineFile(opts) {
   if (!opts.include) {
     throw Error("include option should be specified");
   }
@@ -14,15 +22,12 @@ export default function inlineFile(opts = {}) {
   return {
     name: "inlineFile",
 
-    transform(code, id) {
+    async transform(code, id) {
       if (filter(id)) {
         if (opts.transformer) {
           code = opts.transformer(code);
         }
-        return {
-          code: `export default ${JSON.stringify(code)};`,
-          map: { mappings: "" }
-        };
+        return `export default ${JSON.stringify(code)};`;
       }
     }
   };

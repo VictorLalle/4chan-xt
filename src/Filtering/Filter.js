@@ -1,4 +1,13 @@
+import Callbacks from "../classes/Callbacks";
+import Notice from "../classes/Notice";
+import Config from "../config/Config";
+import Settings from "../General/Settings";
+import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
+import $$ from "../platform/$$";
+import QuoteYou from "../Quotelinks/QuoteYou";
+import PostHiding from "./PostHiding";
+import ThreadHiding from "./ThreadHiding";
 
 /*
  * decaffeinate suggestions:

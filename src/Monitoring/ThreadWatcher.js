@@ -8,6 +8,12 @@ import Thread from '../classes/Thread';
 import Filter from '../Filtering/Filter';
 import Main from '../main/Main';
 import $$ from '../platform/$$';
+import Config from '../config/Config';
+import CrossOrigin from '../platform/CrossOrigin';
+import PostRedirect from '../Posting/PostRedirect';
+import QuoteYou from '../Quotelinks/QuoteYou';
+import Unread from './Unread';
+import UnreadIndex from './UnreadIndex';
 
 /*
  * decaffeinate suggestions:

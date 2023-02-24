@@ -7,7 +7,7 @@ import $ from '../platform/$';
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 // @ts-ignore
-import EmbeddingPage from './Embedding/embedding.html';
+import EmbeddingPage from './Embedding/Embed.html';
 
 const Embedding = {
   init() {

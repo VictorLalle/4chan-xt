@@ -5,6 +5,10 @@ import Callbacks from '../classes/Callbacks';
 import Notice from '../classes/Notice';
 import Post from '../classes/Post';
 import Main from '../main/Main';
+import Config from '../config/Config';
+import Settings from '../General/Settings';
+import QuoteThreading from '../Quotelinks/QuoteThreading';
+import Unread from './Unread';
 
 /*
  * decaffeinate suggestions:
@@ -119,7 +123,7 @@ const ThreadUpdater = {
   http://freesound.org/people/pierrecartoons1979/sounds/90112/
   cc-by-nc-3.0
   */
-  beep: 'data:audio/wav;base64,<%= readBase64("beep.wav") %>',
+  beep: `data:audio/wav;base64,${Beep}`,
 
   playBeep() {
     const { audio } = ThreadUpdater;

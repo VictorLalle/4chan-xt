@@ -1112,7 +1112,7 @@ var QR = {
       QR.notifications.push(new Notice('info', 'QR upload aborted.', 5));
     }
     return QR.status();
-  }
+  },
 
   Cooldown: {
     seconds: 0,

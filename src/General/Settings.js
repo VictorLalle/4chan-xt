@@ -12,15 +12,29 @@ import SaucePage from './Settings/Sauce.html';
 import AdvancedPage from './Settings/Advanced.html';
 import KeybindsPage from './Settings/Keybinds.html';
 import FilterSelectPage from './Settings/Filter-select.html';
+import Redirect from '../Archive/Redirect';
+import DataBoard from '../classes/DataBoard';
+import Notice from '../classes/Notice';
+import Config from '../config/Config';
+import ImageHost from '../Images/ImageHost';
+import CustomCSS from '../Miscellaneous/CustomCSS';
+import FileInfo from '../Miscellaneous/FileInfo';
+import Keybinds from '../Miscellaneous/Keybinds';
+import Time from '../Miscellaneous/Time';
+import Favicon from '../Monitoring/Favicon';
+import ThreadUpdater from '../Monitoring/ThreadUpdater';
+import Unread from '../Monitoring/Unread';
+import $$ from '../platform/$$';
+import $ from '../platform/$';
 
-var Settings = {
+const Settings = {
   init() {
     // 4chan X settings link
     const link = $.el('a', {
-      className:   'settings-link fa fa-wrench',
+      className: 'settings-link fa fa-wrench',
       textContent: 'Settings',
-      title:       '<%= meta.name %> Settings',
-      href:        'javascript:;'
+      title: '<%= meta.name %> Settings',
+      href: 'javascript:;'
     }
     );
     $.on(link, 'click', Settings.open);
@@ -29,30 +43,31 @@ var Settings = {
 
     const add = this.addSection;
 
-    add('Main',     this.main);
-    add('Filter',   this.filter);
-    add('Sauce',    this.sauce);
+    add('Main', this.main);
+    add('Filter', this.filter);
+    add('Sauce', this.sauce);
     add('Advanced', this.advanced);
     add('Keybinds', this.keybinds);
 
-    $.on(d, 'AddSettingsSection',   Settings.addSection);
+    $.on(d, 'AddSettingsSection', Settings.addSection);
     $.on(d, 'OpenSettings', e => Settings.open(e.detail));
 
     if ((g.SITE.software === 'yotsuba') && Conf['Disable Native Extension']) {
       if ($.hasStorage) {
         // Run in page context to handle case where 4chan X has localStorage access but not the page.
         // (e.g. Pale Moon 26.2.2, GM 3.8, cookies disabled for 4chan only)
-        return $.global(function() {
+        return $.global(function () {
           try {
             const settings = JSON.parse(localStorage.getItem('4chan-settings')) || {};
             if (settings.disableAll) { return; }
             settings.disableAll = true;
             return localStorage.setItem('4chan-settings', JSON.stringify(settings));
           } catch (error) {
-            return Object.defineProperty(window, 'Config', {value: {disableAll: true}});
-          }});
+            return Object.defineProperty(window, 'Config', { value: { disableAll: true } });
+          }
+        });
       } else {
-        return $.global(() => Object.defineProperty(window, 'Config', {value: {disableAll: true}}));
+        return $.global(() => Object.defineProperty(window, 'Config', { value: { disableAll: true } }));
       }
     }
   },
@@ -63,13 +78,13 @@ var Settings = {
     $.event('CloseMenu');
 
     Settings.dialog = (dialog = $.el('div',
-      {id:        'overlay'}
-    , { innerHTML: SettingsPage }));
+      { id: 'overlay' }
+      , { innerHTML: SettingsPage }));
 
-    $.on($('.export', dialog), 'click',  Settings.export);
-    $.on($('.import', dialog), 'click',  Settings.import);
-    $.on($('.reset',  dialog), 'click',  Settings.reset);
-    $.on($('input',   dialog), 'change', Settings.onImport);
+    $.on($('.export', dialog), 'click', Settings.export);
+    $.on($('.import', dialog), 'click', Settings.import);
+    $.on($('.reset', dialog), 'click', Settings.reset);
+    $.on($('input', dialog), 'change', Settings.onImport);
 
     const links = [];
     for (var section of Settings.sections) {
@@ -109,10 +124,10 @@ var Settings = {
 
   addSection(title, open) {
     if (typeof title !== 'string') {
-      ({title, open} = title.detail);
+      ({ title, open } = title.detail);
     }
     const hyphenatedTitle = title.toLowerCase().replace(/\s+/g, '-');
-    return Settings.sections.push({title, hyphenatedTitle, open});
+    return Settings.sections.push({ title, hyphenatedTitle, open });
   },
 
   openSection() {
@@ -144,12 +159,13 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
       }
     },
     ads(cb) {
-      return $.onExists(doc, '.adg-rects > .desktop', ad => $.onExists(ad, 'iframe', function() {
-        const url = Redirect.to('thread', {boardID: 'qa', threadID: 362590});
+      return $.onExists(doc, '.adg-rects > .desktop', ad => $.onExists(ad, 'iframe', function () {
+        const url = Redirect.to('thread', { boardID: 'qa', threadID: 362590 });
         return cb($.el('li',
-          { innerHTML:
-            'To protect yourself from <a href="${url}" target="_blank">malicious ads</a>,' +
-            ' you should <a href="https://github.com/gorhill/uBlock#ublock-origin" target="_blank">block ads</a> on 4chan.'
+          {
+            innerHTML:
+              'To protect yourself from <a href="${url}" target="_blank">malicious ads</a>,' +
+              ' you should <a href="https://github.com/gorhill/uBlock#ublock-origin" target="_blank">block ads</a> on 4chan.'
           }
         )
         );
@@ -160,10 +176,10 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
   main(section) {
     let key;
     const warnings = $.el('fieldset',
-      {hidden: true}
-    ,
-      {innerHTML: '<legend>Warnings</legend><ul></ul>'});
-    const addWarning = function(item) {
+      { hidden: true }
+      ,
+      { innerHTML: '<legend>Warnings</legend><ul></ul>' });
+    const addWarning = function (item) {
       $.add($('ul', warnings), item);
       return warnings.hidden = false;
     };
@@ -173,9 +189,9 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     }
     $.add(section, warnings);
 
-    const items  = $.dict();
+    const items = $.dict();
     const inputs = $.dict();
-    const addCheckboxes = function(root, obj) {
+    const addCheckboxes = function (root, obj) {
       const containers = [root];
       return (() => {
         const result = [];
@@ -184,20 +200,20 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
           if (arr instanceof Array) {
             var description = arr[1];
             var div = $.el('div',
-              {innerHTML: '<label><input type="checkbox" name="${key}">${key}</label><span class="description">: ${description}</span>'});
+              { innerHTML: '<label><input type="checkbox" name="${key}">${key}</label><span class="description">: ${description}</span>' });
             div.dataset.name = key;
             var input = $('input', div);
             $.on(input, 'change', $.cb.checked);
-            $.on(input, 'change', function() { return this.parentNode.parentNode.dataset.checked = this.checked; });
-            items[key]  = Conf[key];
+            $.on(input, 'change', function () { return this.parentNode.parentNode.dataset.checked = this.checked; });
+            items[key] = Conf[key];
             inputs[key] = input;
             var level = arr[2] || 0;
             if (containers.length <= level) {
-              var container = $.el('div', {className: 'suboption-list'});
-              $.add(containers[containers.length-1].lastElementChild, container);
+              var container = $.el('div', { className: 'suboption-list' });
+              $.add(containers[containers.length - 1].lastElementChild, container);
               containers[level] = container;
-            } else if (containers.length > (level+1)) {
-              containers.splice(level+1, containers.length - (level+1));
+            } else if (containers.length > (level + 1)) {
+              containers.splice(level + 1, containers.length - (level + 1));
             }
             result.push($.add(containers[level], div));
           }
@@ -209,11 +225,11 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     for (var keyFS in Config.main) {
       var obj = Config.main[keyFS];
       var fs = $.el('fieldset',
-        {innerHTML: '<legend>${keyFS}</legend>'});
+        { innerHTML: '<legend>${keyFS}</legend>' });
       addCheckboxes(fs, obj);
       if (keyFS === 'Posting and Captchas') {
         $.add(fs, $.el('p',
-          {innerHTML: 'For more info on captcha options and issues, see the <a href="' + meta.captchaFAQ + '" target="_blank">captcha FAQ</a>.'})
+          { innerHTML: 'For more info on captcha options and issues, see the <a href="' + meta.captchaFAQ + '" target="_blank">captcha FAQ</a>.' })
         );
       }
       $.add(section, fs);
@@ -231,7 +247,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
       $('div[data-name="Work around CORB Bug"]', section).hidden = true;
     }
 
-    $.get(items, function(items) {
+    $.get(items, function (items) {
       for (key in items) {
         var val = items[key];
         inputs[key].checked = val;
@@ -240,9 +256,9 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     });
 
     const div = $.el('div',
-      {innerHTML: '<button></button><span class="description">: Clear manually-hidden threads and posts on all boards. Reload the page to apply.'});
+      { innerHTML: '<button></button><span class="description">: Clear manually-hidden threads and posts on all boards. Reload the page to apply.' });
     const button = $('button', div);
-    $.get({hiddenThreads: $.dict(), hiddenPosts: $.dict()}, function({hiddenThreads, hiddenPosts}) {
+    $.get({ hiddenThreads: $.dict(), hiddenPosts: $.dict() }, function ({ hiddenThreads, hiddenPosts }) {
       let board, ID, site, thread;
       let hiddenNum = 0;
       for (ID in hiddenThreads) {
@@ -279,9 +295,9 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
       }
       return button.textContent = `Hidden: ${hiddenNum}`;
     });
-    $.on(button, 'click', function() {
+    $.on(button, 'click', function () {
       this.textContent = 'Hidden: 0';
-      return $.get('hiddenThreads', $.dict(), function({hiddenThreads}) {
+      return $.get('hiddenThreads', $.dict(), function ({ hiddenThreads }) {
         if ($.hasStorage && (g.SITE.software === 'yotsuba')) {
           let boardID;
           for (boardID in hiddenThreads['4chan.org']?.boards) {
@@ -301,15 +317,15 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     // Make sure to export the most recent data, but don't overwrite existing `Conf` object.
     const Conf2 = $.dict();
     $.extend(Conf2, Conf);
-    return $.get(Conf2, function(Conf2) {
+    return $.get(Conf2, function (Conf2) {
       // Don't export cached JSON data.
       delete Conf2['boardConfig'];
-      return (Settings.downloadExport({version: g.VERSION, date: Date.now(), Conf: Conf2}));
+      return (Settings.downloadExport({ version: g.VERSION, date: Date.now(), Conf: Conf2 }));
     });
   },
 
   downloadExport(data) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = $.el('a', {
       download: `<%= meta.name %> v${g.VERSION}-${data.date}.json`,
@@ -337,9 +353,9 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     }
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       try {
-        return Settings.loadSettings($.dict.json(e.target.result), function(err) {
+        return Settings.loadSettings($.dict.json(e.target.result), function (err) {
           if (err) {
             return output.textContent = 'Import failed due to an error.';
           } else if (confirm('Import successful. Reload now?')) {
@@ -357,7 +373,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
 
   convertFrom: {
     loadletter(data) {
-      const convertSettings = function(data, map) {
+      const convertSettings = function (data, map) {
         for (var prevKey in map) {
           var newKey = map[prevKey];
           if (newKey) { data.Conf[newKey] = data.Conf[prevKey]; }
@@ -434,7 +450,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
         data.Conf['fourchanImageHost'] = data.Conf['Always CDN'] ? 'i.4cdn.org' : '';
         delete data.Conf['Always CDN'];
       }
-      data.Conf.sauces = data.Conf.sauces.replace(/\$\d/g, function(c) {
+      data.Conf.sauces = data.Conf.sauces.replace(/\$\d/g, function (c) {
         switch (c) {
           case '$1':
             return '%TURL';
@@ -455,12 +471,12 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
         }
       }
       if (data.WatchedThreads) {
-        data.Conf['watchedThreads'] = $.dict.clone({'4chan.org': {boards: {}}});
+        data.Conf['watchedThreads'] = $.dict.clone({ '4chan.org': { boards: {} } });
         for (var boardID in data.WatchedThreads) {
           var threads = data.WatchedThreads[boardID];
           for (var threadID in threads) {
             var threadData = threads[threadID];
-            (data.Conf['watchedThreads']['4chan.org'].boards[boardID] || (data.Conf['watchedThreads']['4chan.org'].boards[boardID] = $.dict()))[threadID] = {excerpt: threadData.textContent};
+            (data.Conf['watchedThreads']['4chan.org'].boards[boardID] || (data.Conf['watchedThreads']['4chan.org'].boards[boardID] = $.dict()))[threadID] = { excerpt: threadData.textContent };
           }
         }
       }
@@ -472,10 +488,10 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     let corrupted, key, val;
     const changes = $.dict();
     const set = (key, value) => data[key] = (changes[key] = value);
-    const setD = function(key, value) {
+    const setD = function (key, value) {
       if (data[key] == null) { return set(key, value); }
     };
-    const addSauces = function(sauces) {
+    const addSauces = function (sauces) {
       if (data['sauces'] != null) {
         sauces = sauces.filter(s => data['sauces'].indexOf(s.match(/[^#;\s]+|$/)[0]) < 0);
         if (sauces.length) {
@@ -483,7 +499,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
         }
       }
     };
-    const addCSS = function(css) {
+    const addCSS = function (css) {
       if (data['usercss'] == null) { set('usercss', Config['usercss']); }
       if (data['usercss'].indexOf(css) < 0) {
         return set('usercss', css + '\n\n' + data['usercss']);
@@ -493,9 +509,9 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     if (corrupted = (version[0] === '"')) {
       try {
         version = JSON.parse(version);
-      } catch (error) {}
+      } catch (error) { }
     }
-    const compareString = version.replace(/\d+/g, x => ('0000'+x).slice(-5));
+    const compareString = version.replace(/\d+/g, x => ('0000' + x).slice(-5));
     if (compareString < '00001.00013.00014.00008') {
       for (key in data) {
         val = data[key];
@@ -512,7 +528,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
           try {
             var val2 = JSON.parse(val);
             set(key, val2);
-          } catch (error1) {}
+          } catch (error1) { }
         }
       }
     }
@@ -526,7 +542,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     }
     if (compareString < '00001.00011.00010.00001') {
       if (data['selectedArchives'] != null) {
-        const uids = {"Moe":0,"4plebs Archive":3,"Nyafuu Archive":4,"Love is Over":5,"Rebecca Black Tech":8,"warosu":10,"fgts":15,"not4plebs":22,"DesuStorage":23,"fireden.net":24,"disabled":null};
+        const uids = { "Moe": 0, "4plebs Archive": 3, "Nyafuu Archive": 4, "Love is Over": 5, "Rebecca Black Tech": 8, "warosu": 10, "fgts": 15, "not4plebs": 22, "DesuStorage": 23, "fireden.net": 24, "disabled": null };
         for (var boardID in data['selectedArchives']) {
           var record = data['selectedArchives'][boardID];
           for (var type in record) {
@@ -561,7 +577,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
       $.queueTask(() => Settings.warnings.ads(item => new Notice('warning', [...Array.from(item.childNodes)])));
     }
     if (compareString < '00001.00011.00020.00003') {
-      const object = {'Inline Cross-thread Quotes Only': false, 'Pass Link': true};
+      const object = { 'Inline Cross-thread Quotes Only': false, 'Pass Link': true };
       for (key in object) {
         var value = object[key];
         if (data[key] == null) { set(key, value); }
@@ -676,8 +692,8 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     if (compareString < '00001.00014.00005.00000') {
       for (var db of DataBoard.keys) {
         if (data[db]?.boards) {
-          var {boards, lastChecked} = data[db];
-          data[db]['4chan.org'] = {boards, lastChecked};
+          var { boards, lastChecked } = data[db];
+          data[db]['4chan.org'] = { boards, lastChecked };
           delete data[db].boards;
           delete data[db].lastChecked;
           set(db, data[db]);
@@ -687,7 +703,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
         const siteProperties = $.dict();
         for (var line of data['siteSoftware'].split('\n')) {
           var [hostname, software] = Array.from(line.split(' '));
-          siteProperties[hostname] = {software};
+          siteProperties[hostname] = { software };
         }
         set('siteProperties', siteProperties);
       }
@@ -786,7 +802,7 @@ vp-replace
     } else if (data.version !== g.VERSION) {
       Settings.upgrade(data.Conf, data.version);
     }
-    return $.clear(function(err) {
+    return $.clear(function (err) {
       if (err) { return cb(err); }
       return $.set(data.Conf, cb);
     });
@@ -794,7 +810,7 @@ vp-replace
 
   reset() {
     if (confirm('Your current settings will be entirely wiped, are you sure?')) {
-      return $.clear(function(err) {
+      return $.clear(function (err) {
         if (err) {
           return $('.imp-exp-result').textContent = 'Import failed due to an error.';
         } else if (confirm('Reset successful. Reload now?')) {
@@ -824,7 +840,7 @@ vp-replace
       }
       );
       $.on(ta, 'change', $.cb.value);
-      $.get(name, Conf[name], function(item) {
+      $.get(name, Conf[name], function (item) {
         ta.value = item[name];
         return $.add(div, ta);
       });
@@ -841,7 +857,7 @@ vp-replace
     $.extend(section, { innerHTML: SaucePage });
     $('.warning', section).hidden = Conf['Sauce'];
     const ta = $('textarea', section);
-    $.get('sauces', Conf['sauces'], function(item) {
+    $.get('sauces', Conf['sauces'], function (item) {
       ta.value = item['sauces'];
       return (ta.hidden = false);
     }); // XXX prevent Firefox from adding initialization to undo queue
@@ -858,7 +874,7 @@ vp-replace
       inputs[input.name] = input;
     }
 
-    $.on(inputs['archiveLists'], 'change', function() {
+    $.on(inputs['archiveLists'], 'change', function () {
       $.set('lastarchivecheck', 0);
       Conf['lastarchivecheck'] = 0;
       return $.id('lastarchivecheck').textContent = 'never';
@@ -879,7 +895,7 @@ vp-replace
       }
     }
 
-    $.get(items, function(items) {
+    $.get(items, function (items) {
       for (var key in items) {
         var val = items[key];
         input = inputs[key];
@@ -893,35 +909,35 @@ vp-replace
 
     const listImageHost = $.id('list-fourchanImageHost');
     for (var textContent of ImageHost.suggestions) {
-      $.add(listImageHost, $.el('option', {textContent}));
+      $.add(listImageHost, $.el('option', { textContent }));
     }
 
-    const interval  = inputs['Interval'];
+    const interval = inputs['Interval'];
     const customCSS = inputs['Custom CSS'];
-    const applyCSS  = $('#apply-css', section);
+    const applyCSS = $('#apply-css', section);
 
-    interval.value             =  Conf['Interval'];
-    customCSS.checked          =  Conf['Custom CSS'];
+    interval.value = Conf['Interval'];
+    customCSS.checked = Conf['Custom CSS'];
     inputs['usercss'].disabled = !Conf['Custom CSS'];
-    applyCSS.disabled          = !Conf['Custom CSS'];
+    applyCSS.disabled = !Conf['Custom CSS'];
 
-    $.on(interval,  'change', ThreadUpdater.cb.interval);
+    $.on(interval, 'change', ThreadUpdater.cb.interval);
     $.on(customCSS, 'change', Settings.togglecss);
-    $.on(applyCSS,  'click',  () => CustomCSS.update());
+    $.on(applyCSS, 'click', () => CustomCSS.update());
 
     const itemsArchive = $.dict();
     for (name of ['archives', 'selectedArchives', 'lastarchivecheck']) { itemsArchive[name] = Conf[name]; }
-    $.get(itemsArchive, function(itemsArchive) {
+    $.get(itemsArchive, function (itemsArchive) {
       $.extend(Conf, itemsArchive);
       Redirect.selectArchives();
       return Settings.addArchiveTable(section);
     });
 
-    const boardSelect    = $('#archive-board-select', section);
-    const table          = $('#archive-table', section);
+    const boardSelect = $('#archive-board-select', section);
+    const table = $('#archive-table', section);
     const updateArchives = $('#update-archives', section);
 
-    $.on(boardSelect, 'change', function() {
+    $.on(boardSelect, 'change', function () {
       $('tbody > :not([hidden])', table).hidden = true;
       return $(`tbody > .${this.value}`, table).hidden = false;
     });
@@ -933,24 +949,24 @@ vp-replace
     let boardID, o;
     $('#lastarchivecheck', section).textContent = Conf['lastarchivecheck'] === 0 ?
       'never'
-    :
+      :
       new Date(Conf['lastarchivecheck']).toLocaleString();
 
     const boardSelect = $('#archive-board-select', section);
-    const table       = $('#archive-table', section);
-    const tbody       = $('tbody', section);
+    const table = $('#archive-table', section);
+    const tbody = $('tbody', section);
 
     $.rmAll(boardSelect);
     $.rmAll(tbody);
 
     const archBoards = $.dict();
-    for (var {uid, name, boards, files, software} of Conf['archives']) {
+    for (var { uid, name, boards, files, software } of Conf['archives']) {
       if (!['fuuka', 'foolfuuka'].includes(software)) { continue; }
       for (boardID of boards) {
         o = archBoards[boardID] || (archBoards[boardID] = {
           thread: [],
-          post:   [],
-          file:   []
+          post: [],
+          file: []
         });
         var archive = [uid ?? name, name];
         o.thread.push(archive);
@@ -963,13 +979,13 @@ vp-replace
     const boardOptions = [];
     for (boardID of Object.keys(archBoards).sort()) { // Alphabetical order
       var row = $.el('tr',
-        {className: `board-${boardID}`});
+        { className: `board-${boardID}` });
       row.hidden = boardID !== g.BOARD.ID;
 
       boardOptions.push($.el('option', {
         textContent: `/${boardID}/`,
-        value:       `board-${boardID}`,
-        selected:    boardID === g.BOARD.ID
+        value: `board-${boardID}`,
+        selected: boardID === g.BOARD.ID
       }));
 
       o = archBoards[boardID];
@@ -1005,9 +1021,9 @@ vp-replace
   },
 
   addArchiveCell(boardID, data, type) {
-    const {length} = data[type];
+    const { length } = data[type];
     const td = $.el('td',
-      {className: 'archive-cell'});
+      { className: 'archive-cell' });
 
     if (!length) {
       td.textContent = '--';
@@ -1024,7 +1040,7 @@ vp-replace
       }));
     }
 
-    $.extend(td, {innerHTML: '<select></select>'});
+    $.extend(td, { innerHTML: '<select></select>' });
     const select = td.firstElementChild;
     if (!(select.disabled = length === 1)) {
       // XXX GM can't into datasets
@@ -1038,7 +1054,7 @@ vp-replace
   },
 
   saveSelectedArchive() {
-    return $.get('selectedArchives', Conf['selectedArchives'], ({selectedArchives}) => {
+    return $.get('selectedArchives', Conf['selectedArchives'], ({ selectedArchives }) => {
       (selectedArchives[this.dataset.boardid] || (selectedArchives[this.dataset.boardid] = $.dict()))[this.dataset.type] = JSON.parse(this.value);
       $.set('selectedArchives', selectedArchives);
       Conf['selectedArchives'] = selectedArchives;
@@ -1059,7 +1075,7 @@ vp-replace
   },
 
   backlink() {
-    return this.nextElementSibling.textContent = this.value.replace(/%(?:id|%)/g, x => ({'%id': '123456789', '%%': '%'})[x]);
+    return this.nextElementSibling.textContent = this.value.replace(/%(?:id|%)/g, x => ({ '%id': '123456789', '%%': '%' })[x]);
   },
 
   fileInfo() {
@@ -1107,23 +1123,23 @@ vp-replace
     $.extend(section, { innerHTML: KeybindsPage });
     $('.warning', section).hidden = Conf['Keybinds'];
 
-    const tbody  = $('tbody', section);
-    const items  = $.dict();
+    const tbody = $('tbody', section);
+    const items = $.dict();
     const inputs = $.dict();
     for (key in Config.hotkeys) {
       var arr = Config.hotkeys[key];
       var tr = $.el('tr',
-        {innerHTML: '<td>${arr[1]}</td><td><input class="field"></td>'});
+        { innerHTML: '<td>${arr[1]}</td><td><input class="field"></td>' });
       var input = $('input', tr);
       input.name = key;
       input.spellcheck = false;
-      items[key]  = Conf[key];
+      items[key] = Conf[key];
       inputs[key] = input;
       $.on(input, 'keydown', Settings.keybind);
       $.add(tbody, tr);
     }
 
-    return $.get(items, function(items) {
+    return $.get(items, function (items) {
       for (key in items) {
         var val = items[key];
         inputs[key].value = val;
@@ -1141,3 +1157,4 @@ vp-replace
     return $.cb.value.call(this);
   }
 };
+export default Settings;

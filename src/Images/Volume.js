@@ -1,4 +1,5 @@
 import Callbacks from "../classes/Callbacks";
+import Config from "../config/Config";
 import $ from "../platform/$";
 
 /*
