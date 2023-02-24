@@ -1,4 +1,4 @@
-class CatalogThreadNative {
+export default class CatalogThreadNative {
   toString() { return this.ID; }
 
   constructor(root) {
@@ -6,7 +6,7 @@ class CatalogThreadNative {
       root,
       thumb: $(g.SITE.selectors.catalog.thumb, root)
     };
-    this.siteID  = g.SITE.ID;
+    this.siteID = g.SITE.ID;
     this.boardID = this.nodes.thumb.parentNode.pathname.split(/\/+/)[1];
     this.board = g.boards[this.boardID] || new Board(this.boardID);
     this.ID = (this.threadID = +(root.dataset.id || root.id).match(/\d*$/)[0]);

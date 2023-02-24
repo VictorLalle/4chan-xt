@@ -1,16 +1,11 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-class Notice {
+export default class Notice {
   constructor(type, content, timeout, onclose) {
     this.add = this.add.bind(this);
     this.close = this.close.bind(this);
     this.timeout = timeout;
     this.onclose = onclose;
     this.el = $.el('div',
-      {innerHTML: "<a href=\"javascript:;\" class=\"close fa fa-times\" title=\"Close\"></a><div class=\"message\"></div>"});
+      { innerHTML: "<a href=\"javascript:;\" class=\"close fa fa-times\" title=\"Close\"></a><div class=\"message\"></div>" });
     this.el.style.opacity = 0;
     this.setType(type);
     $.on(this.el.firstElementChild, 'click', this.close);

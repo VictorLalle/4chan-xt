@@ -3,16 +3,16 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-class Board {
+export default class Board {
   toString() { return this.ID; }
 
   constructor(ID) {
     this.ID = ID;
     this.boardID = this.ID;
-    this.siteID  = g.SITE.ID;
+    this.siteID = g.SITE.ID;
     this.threads = new SimpleDict();
-    this.posts   = new SimpleDict();
-    this.config  = BoardConfig.boards?.[this.ID] || {};
+    this.posts = new SimpleDict();
+    this.config = BoardConfig.boards?.[this.ID] || {};
 
     g.boards[this] = this;
   }
@@ -21,8 +21,8 @@ class Board {
     const c2 = (this.config || {}).cooldowns || {};
     const c = {
       thread: c2.threads || 0,
-      reply:  c2.replies || 0,
-      image:  c2.images  || 0,
+      reply: c2.replies || 0,
+      image: c2.images || 0,
       thread_global: 300 // inter-board thread cooldown
     };
     // Pass users have reduced cooldowns.

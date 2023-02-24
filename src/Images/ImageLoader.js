@@ -1,6 +1,8 @@
+import Callbacks from "../classes/Callbacks";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
@@ -12,10 +14,10 @@ var ImageLoader = {
 
     Callbacks.Post.push({
       name: 'Image Replace',
-      cb:   this.node
+      cb: this.node
     });
 
-    $.on(d, 'PostsInserted', function() {
+    $.on(d, 'PostsInserted', function () {
       if (ImageLoader.prefetchEnabled || replace) {
         return g.posts.forEach(ImageLoader.prefetchAll);
       }
@@ -49,28 +51,28 @@ var ImageLoader = {
   },
 
   replaceVideo(post, file) {
-    const {thumb} = file;
+    const { thumb } = file;
     const video = $.el('video', {
-      preload:     'none',
-      loop:        true,
-      muted:       true,
-      poster:      thumb.src || thumb.dataset.src,
+      preload: 'none',
+      loop: true,
+      muted: true,
+      poster: thumb.src || thumb.dataset.src,
       textContent: thumb.alt,
-      className:   thumb.className
+      className: thumb.className
     }
     );
     video.setAttribute('muted', 'muted');
     video.dataset.md5 = thumb.dataset.md5;
     for (var attr of ['height', 'width', 'maxHeight', 'maxWidth']) { video.style[attr] = thumb.style[attr]; }
-    video.src         = file.url;
+    video.src = file.url;
     $.replace(thumb, video);
-    file.thumb      = video;
+    file.thumb = video;
     return file.videoThumb = true;
   },
 
   prefetch(post, file) {
     let clone, type;
-    const {isImage, isVideo, thumb, url} = file;
+    const { isImage, isVideo, thumb, url } = file;
     if (file.isPrefetched || !(isImage || isVideo) || post.isHidden || post.thread.isHidden) { return; }
     if (isVideo) {
       type = 'WEBM';
@@ -81,14 +83,14 @@ var ImageLoader = {
     const replace = Conf[`Replace ${type}`] && !/spoiler/.test(thumb.src || thumb.dataset.src);
     if (!replace && !ImageLoader.prefetchEnabled) { return; }
     if ($.hasClass(doc, 'catalog-mode')) { return; }
-    if (![post, ...Array.from(post.clones)].some(clone => doc.contains(clone.nodes.root))) { return; }
+    if (![post, ...post.clones].some(clone => doc.contains(clone.nodes.root))) { return; }
     file.isPrefetched = true;
     if (file.videoThumb) {
       for (clone of post.clones) { clone.file.thumb.preload = 'auto'; }
       thumb.preload = 'auto';
       // XXX Cloned video elements with poster in Firefox cause momentary display of image loading icon.
       if ($.engine === 'gecko') {
-        $.on(thumb, 'loadeddata', function() { return this.removeAttribute('poster'); });
+        $.on(thumb, 'loadeddata', function () { return this.removeAttribute('poster'); });
       }
       return;
     }
@@ -96,7 +98,7 @@ var ImageLoader = {
     const el = $.el(isImage ? 'img' : 'video');
     if (isVideo) { el.preload = 'auto'; }
     if (replace && isImage) {
-      $.on(el, 'load', function() {
+      $.on(el, 'load', function () {
         for (clone of post.clones) { clone.file.thumb.src = url; }
         return thumb.src = url;
       });
@@ -121,11 +123,11 @@ var ImageLoader = {
   playVideos() {
     // Special case: Quote previews are off screen when inserted into document, but quickly moved on screen.
     const qpClone = $.id('qp')?.firstElementChild;
-    return g.posts.forEach(function(post) {
-      for (post of [post, ...Array.from(post.clones)]) {
+    return g.posts.forEach(function (post) {
+      for (post of [post, ...post.clones]) {
         for (var file of post.files) {
           if (file.videoThumb) {
-            var {thumb} = file;
+            var { thumb } = file;
             if (Header.isNodeVisible(thumb) || (post.nodes.root === qpClone)) { thumb.play(); } else { thumb.pause(); }
           }
         }

@@ -1,9 +1,13 @@
+import Callbacks from "../classes/Callbacks";
+import DataBoard from "../classes/DataBoard";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var ThreadHiding = {
+const ThreadHiding = {
   init() {
     if (!['index', 'catalog'].includes(g.VIEW) || (!Conf['Thread Hiding Buttons'] && !(Conf['Menu'] && Conf['Thread Hiding Link']) && !Conf['JSON Index'])) { return; }
     this.db = new DataBoard('hiddenThreads');
@@ -15,7 +19,7 @@ var ThreadHiding = {
     }
     return Callbacks.Post.push({
       name: 'Thread Hiding',
-      cb:   this.node
+      cb: this.node
     });
   },
 
@@ -33,11 +37,11 @@ var ThreadHiding = {
     if (!$.hasStorage || (g.SITE.software !== 'yotsuba')) { return; }
     this.hiddenThreads = JSON.parse(localStorage.getItem(`4chan-hide-t-${g.BOARD}`)) || {};
     return Main.ready(() => // 4chan's catalog sets the style to "display: none;" when hiding or unhiding a thread.
-    new MutationObserver(ThreadHiding.catalogSave).observe($.id('threads'), {
-      attributes: true,
-      subtree: true,
-      attributeFilter: ['style']
-    }));
+      new MutationObserver(ThreadHiding.catalogSave).observe($.id('threads'), {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ['style']
+      }));
   },
 
   catalogSave() {
@@ -46,15 +50,16 @@ var ThreadHiding = {
     for (threadID in hiddenThreads2) {
       if (!$.hasOwn(ThreadHiding.hiddenThreads, threadID)) {
         ThreadHiding.db.set({
-          boardID:  g.BOARD.ID,
+          boardID: g.BOARD.ID,
           threadID,
-          val:      {makeStub: Conf['Stubs']}});
+          val: { makeStub: Conf['Stubs'] }
+        });
       }
     }
     for (threadID in ThreadHiding.hiddenThreads) {
       if (!$.hasOwn(hiddenThreads2, threadID)) {
         ThreadHiding.db.delete({
-          boardID:  g.BOARD.ID,
+          boardID: g.BOARD.ID,
           threadID
         });
       }
@@ -63,7 +68,7 @@ var ThreadHiding = {
   },
 
   isHidden(boardID, threadID) {
-    return !!(ThreadHiding.db && ThreadHiding.db.get({boardID, threadID}));
+    return !!(ThreadHiding.db && ThreadHiding.db.get({ boardID, threadID }));
   },
 
   node() {
@@ -74,14 +79,14 @@ var ThreadHiding = {
       $.prepend(this.nodes.root, ThreadHiding.makeButton(this.thread, 'hide'));
     }
 
-    if (data = ThreadHiding.db.get({boardID: this.board.ID, threadID: this.ID})) {
+    if (data = ThreadHiding.db.get({ boardID: this.board.ID, threadID: this.ID })) {
       return ThreadHiding.hide(this.thread, data.makeStub);
     }
   },
 
   onIndexRefresh() {
-    return g.BOARD.threads.forEach(function(thread) {
-      const {root} = thread.nodes;
+    return g.BOARD.threads.forEach(function (thread) {
+      const { root } = thread.nodes;
       if (thread.isHidden && thread.stub && !root.contains(thread.stub)) {
         return ThreadHiding.makeStub(thread, root);
       }
@@ -110,14 +115,15 @@ var ThreadHiding = {
       Menu.menu.addEntry({
         el: div,
         order: 20,
-        open({thread, isReply}) {
+        open({ thread, isReply }) {
           if (isReply || thread.isHidden || (Conf['JSON Index'] && (Conf['Index Mode'] === 'catalog'))) {
             return false;
           }
           ThreadHiding.menu.thread = thread;
           return true;
         },
-        subEntries: [{el: apply}, {el: makeStub}]});
+        subEntries: [{ el: apply }, { el: makeStub }]
+      });
 
       div = $.el('a', {
         className: 'show-thread-link',
@@ -125,12 +131,12 @@ var ThreadHiding = {
         href: 'javascript:;'
       }
       );
-      $.on(div, 'click', ThreadHiding.menu.show); 
+      $.on(div, 'click', ThreadHiding.menu.show);
 
       Menu.menu.addEntry({
         el: div,
         order: 20,
-        open({thread, isReply}) {
+        open({ thread, isReply }) {
           if (isReply || !thread.isHidden || (Conf['JSON Index'] && (Conf['Index Mode'] === 'catalog'))) {
             return false;
           }
@@ -149,7 +155,7 @@ var ThreadHiding = {
       return Menu.menu.addEntry({
         el: hideStubLink,
         order: 15,
-        open({thread, isReply}) {
+        open({ thread, isReply }) {
           if (isReply || !thread.isHidden || (Conf['JSON Index'] && (Conf['Index Mode'] === 'catalog'))) {
             return false;
           }
@@ -160,21 +166,21 @@ var ThreadHiding = {
 
     hide() {
       const makeStub = $('input', this.parentNode).checked;
-      const {thread} = ThreadHiding.menu;
+      const { thread } = ThreadHiding.menu;
       ThreadHiding.hide(thread, makeStub);
       ThreadHiding.saveHiddenState(thread, makeStub);
       return $.event('CloseMenu');
     },
 
     show() {
-      const {thread} = ThreadHiding.menu;
+      const { thread } = ThreadHiding.menu;
       ThreadHiding.show(thread);
       ThreadHiding.saveHiddenState(thread);
       return $.event('CloseMenu');
     },
 
     hideStub() {
-      const {thread} = ThreadHiding.menu;
+      const { thread } = ThreadHiding.menu;
       ThreadHiding.show(thread);
       ThreadHiding.hide(thread, false);
       ThreadHiding.saveHiddenState(thread, false);
@@ -185,10 +191,10 @@ var ThreadHiding = {
   makeButton(thread, type) {
     const a = $.el('a', {
       className: `${type}-thread-button`,
-      href:      'javascript:;'
+      href: 'javascript:;'
     }
     );
-    $.extend(a, {innerHTML: "<span class=\"fa fa-" + ((type === "hide") ? "minus" : "plus") + "-square\"></span>"});
+    $.extend(a, { innerHTML: "<span class=\"fa fa-" + ((type === "hide") ? "minus" : "plus") + "-square\"></span>" });
     a.dataset.fullID = thread.fullID;
     $.on(a, 'click', ThreadHiding.toggle);
     return a;
@@ -196,13 +202,13 @@ var ThreadHiding = {
 
   makeStub(thread, root) {
     let summary, threadDivider;
-    let numReplies  = $$(g.SITE.selectors.replyOriginal, root).length;
+    let numReplies = $$(g.SITE.selectors.replyOriginal, root).length;
     if (summary = $(g.SITE.selectors.summary, root)) { numReplies += +summary.textContent.match(/\d+/); }
 
     const a = ThreadHiding.makeButton(thread, 'show');
     $.add(a, $.tn(` ${thread.OP.info.nameBlock} (${numReplies === 1 ? '1 reply' : `${numReplies} replies`})`));
     thread.stub = $.el('div',
-      {className: 'stub'});
+      { className: 'stub' });
     if (Conf['Menu']) {
       $.add(thread.stub, [a, Menu.makeButton(thread.OP)]);
     } else {
@@ -219,12 +225,13 @@ var ThreadHiding = {
   saveHiddenState(thread, makeStub) {
     if (thread.isHidden) {
       ThreadHiding.db.set({
-        boardID:  thread.board.ID,
+        boardID: thread.board.ID,
         threadID: thread.ID,
-        val: {makeStub}});
+        val: { makeStub }
+      });
     } else {
       ThreadHiding.db.delete({
-        boardID:  thread.board.ID,
+        boardID: thread.board.ID,
         threadID: thread.ID
       });
     }
@@ -243,7 +250,7 @@ var ThreadHiding = {
     return ThreadHiding.saveHiddenState(thread);
   },
 
-  hide(thread, makeStub=Conf['Stubs']) {
+  hide(thread, makeStub = Conf['Stubs']) {
     if (thread.isHidden) { return; }
     const threadRoot = thread.nodes.root;
     thread.isHidden = true;
@@ -272,3 +279,4 @@ var ThreadHiding = {
     }
   }
 };
+export default ThreadHiding;

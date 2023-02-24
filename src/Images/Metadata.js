@@ -1,32 +1,36 @@
+import $ from "../platform/$";
+import Callbacks from "../classes/Callbacks";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var Metadata = {
+const Metadata = {
   init() {
     if (!Conf['WEBM Metadata'] || !['index', 'thread'].includes(g.VIEW)) { return; }
 
     return Callbacks.Post.push({
       name: 'WEBM Metadata',
-      cb:   this.node
+      cb: this.node
     });
   },
 
   node() {
     for (let i = 0; i < this.files.length; i++) {
       var file = this.files[i];
-      if (/webm$/i.test(file.url)) {var el;
-      
+      if (/webm$/i.test(file.url)) {
+        var el;
+
         if (this.isClone) {
           el = $('.webm-title', file.text);
         } else {
           el = $.el('span',
-            {className: 'webm-title'});
+            { className: 'webm-title' });
           el.dataset.index = i;
           $.extend(el,
-            {innerHTML: "<a href=\"javascript:;\"></a>"});
+            { innerHTML: "<a href=\"javascript:;\"></a>" });
           $.add(file.text, [$.tn(' '), el]);
         }
         if (el.children.length === 1) { $.one(el.lastElementChild, 'mouseover focus', Metadata.load); }
@@ -37,13 +41,13 @@ var Metadata = {
   load() {
     $.rmClass(this.parentNode, 'error');
     $.addClass(this.parentNode, 'loading');
-    const {index} = this.parentNode.dataset;
+    const { index } = this.parentNode.dataset;
     return CrossOrigin.binary(Get.postFromNode(this).files[+index].url, data => {
       $.rmClass(this.parentNode, 'loading');
       if (data != null) {
         const title = Metadata.parse(data);
         const output = $.el('span',
-          {textContent: title || ''});
+          { textContent: title || '' });
         if (title == null) { $.addClass(this.parentNode, 'not-found'); }
         $.before(this, output);
         this.parentNode.tabIndex = 0;
@@ -54,12 +58,12 @@ var Metadata = {
         return $.one(this, 'click', Metadata.load);
       }
     }
-    ,
-      {Range: 'bytes=0-9999'});
+      ,
+      { Range: 'bytes=0-9999' });
   },
 
   parse(data) {
-    const readInt = function() {
+    const readInt = function () {
       let n = data[i++];
       let len = 0;
       while (n < (0x80 >> len)) { len++; }
@@ -73,7 +77,7 @@ var Metadata = {
     var i = 0;
     while (i < data.length) {
       var element = readInt();
-      var size    = readInt();
+      var size = readInt();
       if (element === 0x3BA9) { // Title
         var title = '';
         while (size-- && (i < data.length)) {
@@ -87,3 +91,4 @@ var Metadata = {
     return null;
   }
 };
+export default Metadata;

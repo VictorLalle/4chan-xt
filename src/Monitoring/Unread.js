@@ -1,10 +1,17 @@
+import Callbacks from "../classes/Callbacks";
+import DataBoard from "../classes/DataBoard";
+import RandomAccessList from "../classes/RandomAccessList";
+import $ from "../platform/$";
+import Favicon from "./Favicon";
+import ThreadWatcher from "./ThreadWatcher";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var Unread = {
+const Unread = {
   init() {
     if ((g.VIEW !== 'thread') || (
       !Conf['Unread Count'] &&
@@ -32,18 +39,18 @@ var Unread = {
 
     Callbacks.Thread.push({
       name: 'Unread',
-      cb:   this.node
+      cb: this.node
     });
 
     return Callbacks.Post.push({
       name: 'Unread',
-      cb:   this.addPost
+      cb: this.addPost
     });
   },
 
   node() {
     Unread.thread = this;
-    Unread.title  = d.title;
+    Unread.title = d.title;
     Unread.lastReadPost = Unread.db?.get({
       boardID: this.board.ID,
       threadID: this.ID
@@ -51,8 +58,8 @@ var Unread = {
     Unread.readCount = 0;
     for (var ID of this.posts.keys) { if (+ID <= Unread.lastReadPost) { Unread.readCount++; } }
     $.one(d, '4chanXInitFinished', Unread.ready);
-    $.on(d, 'PostsInserted',      Unread.onUpdate);
-    $.on(d, 'ThreadUpdate',       function(e) { if (e.detail[404]) { return Unread.update(); } });
+    $.on(d, 'PostsInserted', Unread.onUpdate);
+    $.on(d, 'ThreadUpdate', function (e) { if (e.detail[404]) { return Unread.update(); } });
     const resetLink = $.el('a', {
       href: 'javascript:;',
       className: 'unread-reset',
@@ -72,7 +79,7 @@ var Unread = {
     Unread.read();
     Unread.update();
     $.on(d, 'scroll visibilitychange', Unread.read);
-    if (Conf['Unread Line']) { return $.on(d, 'visibilitychange',        Unread.setLine); }
+    if (Conf['Unread Line']) { return $.on(d, 'visibilitychange', Unread.setLine); }
   },
 
   positionPrev() {
@@ -86,7 +93,7 @@ var Unread = {
 
     let position = Unread.positionPrev();
     while (position) {
-      var {bottom} = position.data.nodes;
+      var { bottom } = position.data.nodes;
       if (!bottom.getBoundingClientRect().height) {
         // Don't try to scroll to posts with display: none
         position = position.prev;
@@ -111,9 +118,9 @@ var Unread = {
     $.forceSync('Remember Last Read Post');
     if (Conf['Remember Last Read Post'] && (!Unread.thread.isDead || Unread.thread.isArchived)) {
       Unread.db.set({
-        boardID:  Unread.thread.board.ID,
+        boardID: Unread.thread.board.ID,
         threadID: Unread.thread.ID,
-        val:      0
+        val: 0
       });
     }
 
@@ -167,23 +174,23 @@ var Unread = {
     }
   },
 
-  openNotification(post, predicate=' replied to you') {
+  openNotification(post, predicate = ' replied to you') {
     if (!Header.areNotificationsEnabled) { return; }
     const notif = new Notification(`${post.info.nameBlock}${predicate}`, {
       body: post.commentDisplay(),
       icon: Favicon.logo
     }
     );
-    notif.onclick = function() {
+    notif.onclick = function () {
       Header.scrollToIfNeeded(post.nodes.bottom, true);
       return window.focus();
     };
     return notif.onshow = () => setTimeout(() => notif.close()
-    , 7 * $.SECOND);
+      , 7 * $.SECOND);
   },
 
   onUpdate() {
-    return $.queueTask(function() { // ThreadUpdater may scroll immediately after inserting posts
+    return $.queueTask(function () { // ThreadUpdater may scroll immediately after inserting posts
       Unread.setLine();
       Unread.read();
       return Unread.update();
@@ -191,7 +198,7 @@ var Unread = {
   },
 
   readSinglePost(post) {
-    const {ID} = post;
+    const { ID } = post;
     if (!Unread.posts.has(ID)) { return; }
     Unread.posts.delete(ID);
     Unread.postsQuotingYou.delete(ID);
@@ -200,7 +207,7 @@ var Unread = {
     return Unread.update();
   },
 
-  read: $.debounce(100, function(e) {
+  read: $.debounce(100, function (e) {
     // Update the lastReadPost when hidden posts are added to the thread.
     if (!Unread.posts.size && (Unread.readCount !== Unread.thread.posts.keys.length)) {
       Unread.saveLastReadPost();
@@ -210,8 +217,8 @@ var Unread = {
 
     let count = 0;
     while (Unread.position) {
-      var {ID, data} = Unread.position;
-      var {bottom} = data.nodes;
+      var { ID, data } = Unread.position;
+      var { bottom } = data.nodes;
       if (!!bottom.getBoundingClientRect().height && // post has been hidden
         (Header.getBottomOf(bottom) <= -1)) { break; }                      // post is completely read
       count++;
@@ -232,7 +239,7 @@ var Unread = {
     }
   },
 
-  saveLastReadPost: $.debounce(2 * $.SECOND, function() {
+  saveLastReadPost: $.debounce(2 * $.SECOND, function () {
     let ID;
     $.forceSync('Remember Last Read Post');
     if (!Conf['Remember Last Read Post'] || !Unread.db) { return; }
@@ -247,9 +254,9 @@ var Unread = {
     }
     if (Unread.thread.isDead && !Unread.thread.isArchived) { return; }
     return Unread.db.set({
-      boardID:  Unread.thread.board.ID,
+      boardID: Unread.thread.board.ID,
       threadID: Unread.thread.ID,
-      val:      Unread.lastReadPost
+      val: Unread.lastReadPost
     });
   }),
 
@@ -279,7 +286,7 @@ var Unread = {
       const titleCount = count || !Conf['Hide Unread Count at (0)'] ? `(${count}) ` : '';
       const titleDead = Unread.thread.isDead ?
         Unread.title.replace('-', (Unread.thread.isArchived ? '- Archived -' : '- 404 -'))
-      :
+        :
         Unread.title;
       d.title = `${titleQuotingYou}${titleCount}${titleDead}`;
     }
@@ -287,20 +294,20 @@ var Unread = {
     Unread.saveThreadWatcherCount();
 
     if (Conf['Unread Favicon'] && (g.SITE.software === 'yotsuba')) {
-      const {isDead} = Unread.thread;
+      const { isDead } = Unread.thread;
       return Favicon.set((
         countQuotingYou ?
           (isDead ? 'unreadDeadY' : 'unreadY')
-        : count ?
-          (isDead ? 'unreadDead' : 'unread')
-        :
-          (isDead ? 'dead' : 'default')
+          : count ?
+            (isDead ? 'unreadDead' : 'unread')
+            :
+            (isDead ? 'dead' : 'default')
       )
       );
     }
   },
 
-  saveThreadWatcherCount: $.debounce(2 * $.SECOND, function() {
+  saveThreadWatcherCount: $.debounce(2 * $.SECOND, function () {
     $.forceSync('Remember Last Read Post');
     if (Conf['Remember Last Read Post'] && (!Unread.thread.isDead || Unread.thread.isArchived)) {
       let posts;
@@ -328,3 +335,4 @@ var Unread = {
     }
   })
 };
+export default Unread;

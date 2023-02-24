@@ -1,3 +1,5 @@
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -27,3 +29,4 @@ const CustomCSS = {
     return this.style.textContent = CSS.sub(Conf['usercss']);
   }
 };
+export default CustomCSS;

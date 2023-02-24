@@ -1,3 +1,6 @@
+import Callbacks from "../classes/Callbacks";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -10,17 +13,18 @@ const QuoteStrikeThrough = {
 
     return Callbacks.Post.push({
       name: 'Strike-through Quotes',
-      cb:   this.node
+      cb: this.node
     });
   },
 
   node() {
     if (this.isClone) { return; }
     for (var quotelink of this.nodes.quotelinks) {
-      var {boardID, postID} = Get.postDataFromLink(quotelink);
+      var { boardID, postID } = Get.postDataFromLink(quotelink);
       if (g.posts.get(`${boardID}.${postID}`)?.isHidden) {
         $.addClass(quotelink, 'filtered');
       }
     }
   }
 };
+export const QuoteStrikeThrough;

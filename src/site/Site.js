@@ -1,16 +1,19 @@
+import Main from "../main/Main";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var Site = {
+const Site = {
   defaultProperties: {
-    '4chan.org':    {software: 'yotsuba'},
-    '4channel.org': {canonical: '4chan.org'},
-    '4cdn.org':     {canonical: '4chan.org'},
-    'notso.smuglo.li': {canonical: 'smuglo.li'},
-    'smugloli.net':    {canonical: 'smuglo.li'},
-    'smug.nepu.moe':   {canonical: 'smuglo.li'}
+    '4chan.org': { software: 'yotsuba' },
+    '4channel.org': { canonical: '4chan.org' },
+    '4cdn.org': { canonical: '4chan.org' },
+    'notso.smuglo.li': { canonical: 'smuglo.li' },
+    'smugloli.net': { canonical: 'smuglo.li' },
+    'smug.nepu.moe': { canonical: 'smuglo.li' }
   },
 
   init(cb) {
@@ -47,8 +50,8 @@ var Site = {
     });
   },
 
-  resolve(url=location) {
-    let {hostname} = url;
+  resolve(url = location) {
+    let { hostname } = url;
     while (hostname && !$.hasOwn(Conf['siteProperties'], hostname)) {
       hostname = hostname.replace(/^[^.]*\.?/, '');
     }
@@ -74,8 +77,9 @@ var Site = {
       } = properties;
       if (!software || !$.hasOwn(SW, software)) { continue; }
       g.sites[ID] = (site = Object.create(SW[software]));
-      $.extend(site, {ID, siteID: ID, properties, software});
+      $.extend(site, { ID, siteID: ID, properties, software });
     }
     return g.SITE = g.sites[hostname];
   }
 };
+export default Site;

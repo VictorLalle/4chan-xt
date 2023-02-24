@@ -3,7 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-class RandomAccessList {
+export default class RandomAccessList {
   constructor(items) {
     this.length = 0;
     if (items) { for (var item of items) { this.push(item); } }
@@ -11,10 +11,10 @@ class RandomAccessList {
 
   push(data) {
     let item;
-    let {ID} = data;
+    let { ID } = data;
     if (!ID) { ID = data.id; }
     if (this[ID]) { return; }
-    const {last} = this;
+    const { last } = this;
     this[ID] = (item = {
       prev: last,
       next: null,
@@ -24,7 +24,7 @@ class RandomAccessList {
     item.prev = last;
     this.last = last ?
       (last.next = item)
-    :
+      :
       (this.first = item);
     return this.length++;
   }
@@ -34,7 +34,7 @@ class RandomAccessList {
 
     this.rmi(item);
 
-    const {prev} = root;
+    const { prev } = root;
     root.prev = item;
     item.next = root;
     item.prev = prev;
@@ -50,7 +50,7 @@ class RandomAccessList {
 
     this.rmi(item);
 
-    const {next} = root;
+    const { next } = root;
     root.next = item;
     item.prev = root;
     item.next = next;
@@ -62,10 +62,10 @@ class RandomAccessList {
   }
 
   prepend(item) {
-    const {first} = this;
+    const { first } = this;
     if ((item === first) || !this[item.ID]) { return; }
     this.rmi(item);
-    item.next  = first;
+    item.next = first;
     if (first) {
       first.prev = item;
     } else {
@@ -97,7 +97,7 @@ class RandomAccessList {
   }
 
   rmi(item) {
-    const {prev, next} = item;
+    const { prev, next } = item;
     if (prev) {
       prev.next = next;
     } else {

@@ -1,20 +1,26 @@
+import Callbacks from "../classes/Callbacks";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var QuoteBacklink = {
-  // Backlinks appending need to work for:
-  //  - previous, same, and following posts.
-  //  - existing and yet-to-exist posts.
-  //  - newly fetched posts.
-  //  - in copies.
-  // XXX what about order for fetched posts?
-  //
-  // First callback creates backlinks and add them to relevant containers.
-  // Second callback adds relevant containers into posts.
-  // This is is so that fetched posts can get their backlinks,
-  // and that as much backlinks are appended in the background as possible.
+
+/**
+ * Backlinks appending need to work for:
+ *  - previous, same, and following posts.
+ *  - existing and yet-to-exist posts.
+ *  - newly fetched posts.
+ *  - in copies.
+ * XXX what about order for fetched posts?
+ *
+ * First callback creates backlinks and add them to relevant containers.
+ * Second callback adds relevant containers into posts.
+ * This is is so that fetched posts can get their backlinks,
+ * and that as much backlinks are appended in the background as possible.
+ */
+const QuoteBacklink = {
   containers: $.dict(),
   init() {
     if (!['index', 'thread'].includes(g.VIEW) || !Conf['Quote Backlinks']) { return; }
@@ -27,11 +33,11 @@ var QuoteBacklink = {
 
     Callbacks.Post.push({
       name: 'Quote Backlinking Part 1',
-      cb:   this.firstNode
+      cb: this.firstNode
     });
     return Callbacks.Post.push({
       name: 'Quote Backlinking Part 2',
-      cb:   this.secondNode
+      cb: this.secondNode
     });
   },
   firstNode() {
@@ -40,7 +46,7 @@ var QuoteBacklink = {
     const a = $.el('a', {
       href: g.SITE.Build.postURL(this.board.ID, this.thread.ID, this.ID),
       className: this.isHidden ? 'filtered backlink' : 'backlink',
-      textContent: Conf['backlink'].replace(/%(?:id|%)/g, x => ({'%id': this.ID, '%%': '%'})[x])
+      textContent: Conf['backlink'].replace(/%(?:id|%)/g, x => ({ '%id': this.ID, '%%': '%' })[x])
     }
     );
     if (markYours) { $.add(a, QuoteYou.mark.cloneNode(true)); }
@@ -88,6 +94,7 @@ var QuoteBacklink = {
   },
   getContainer(id) {
     return this.containers[id] ||
-      (this.containers[id] = $.el('span', {className: 'container'}));
+      (this.containers[id] = $.el('span', { className: 'container' }));
   }
 };
+export default QuoteBacklink;

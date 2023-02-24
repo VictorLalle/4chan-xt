@@ -102,6 +102,7 @@
   },
   "devDependencies": {
     "@rollup/pluginutils": "^5.0.2",
+    "@types/greasemonkey": "^4.0.4",
     "chrome-webstore-upload": "^0.4.4",
     "coffeescript": "=1.12.7",
     "decaffeinate": "^8.1.3",

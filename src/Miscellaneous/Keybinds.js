@@ -1,3 +1,6 @@
+import $ from "../platform/$";
+import $$ from "../platform/$$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -5,7 +8,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var Keybinds = {
+const Keybinds = {
   init() {
     if (!Conf['Keybinds']) { return; }
 
@@ -13,7 +16,7 @@ var Keybinds = {
       $.sync(hotkey, Keybinds.sync);
     }
 
-    var init = function() {
+    var init = function () {
       $.off(d, '4chanXInitFinished', init);
       $.on(d, 'keydown', Keybinds.keydown);
       for (var node of $$('[accesskey]')) {
@@ -31,7 +34,7 @@ var Keybinds = {
     let key, thread, threadRoot;
     let catalog, notifications;
     if (!(key = Keybinds.keyCode(e))) { return; }
-    const {target} = e;
+    const { target } = e;
     if (['INPUT', 'TEXTAREA'].includes(target.nodeName)) {
       if (!/(Esc|Alt|Ctrl|Meta|Shift\+\w{2,})/.test(key) || !!/^Alt\+(\d|Up|Down|Left|Right)$/.test(key)) { return; }
     }
@@ -208,10 +211,10 @@ var Keybinds = {
         if (g.VIEW !== 'index') { return; }
         var searchInput = Index.enabled ?
           Index.searchInput
-        : g.SITE.selectors.searchBox ?
-          $(g.SITE.selectors.searchBox)
-        :
-          undefined;
+          : g.SITE.selectors.searchBox ?
+            $(g.SITE.selectors.searchBox)
+            :
+            undefined;
         if (!searchInput) { return; }
         Header.scrollToIfNeeded(searchInput);
         searchInput.focus();
@@ -299,45 +302,47 @@ var Keybinds = {
   },
 
   keyCode(e) {
-    let key = (() => { let kc;
-    switch ((kc = e.keyCode)) {
-      case 8: // return
-        return '';
-      case 13:
-        return 'Enter';
-      case 27:
-        return 'Esc';
-      case 32:
-        return 'Space';
-      case 37:
-        return 'Left';
-      case 38:
-        return 'Up';
-      case 39:
-        return 'Right';
-      case 40:
-        return 'Down';
-      case 188:
-        return 'Comma';
-      case 190:
-        return 'Period';
-      case 191:
-        return 'Slash';
-      case 59: case 186:
-        return 'Semicolon';
-      default:
-        if ((48 <= kc && kc <= 57) || (65 <= kc && kc <= 90)) { // 0-9, A-Z
-          return String.fromCharCode(kc).toLowerCase();
-        } else if (96 <= kc && kc <= 105) { // numpad 0-9
-          return String.fromCharCode(kc - 48).toLowerCase();
-        } else {
-          return null;
-        }
-    } })();
+    let key = (() => {
+      let kc;
+      switch ((kc = e.keyCode)) {
+        case 8: // return
+          return '';
+        case 13:
+          return 'Enter';
+        case 27:
+          return 'Esc';
+        case 32:
+          return 'Space';
+        case 37:
+          return 'Left';
+        case 38:
+          return 'Up';
+        case 39:
+          return 'Right';
+        case 40:
+          return 'Down';
+        case 188:
+          return 'Comma';
+        case 190:
+          return 'Period';
+        case 191:
+          return 'Slash';
+        case 59: case 186:
+          return 'Semicolon';
+        default:
+          if ((48 <= kc && kc <= 57) || (65 <= kc && kc <= 90)) { // 0-9, A-Z
+            return String.fromCharCode(kc).toLowerCase();
+          } else if (96 <= kc && kc <= 105) { // numpad 0-9
+            return String.fromCharCode(kc - 48).toLowerCase();
+          } else {
+            return null;
+          }
+      }
+    })();
     if (key) {
-      if (e.altKey) {   key = 'Alt+'   + key; }
-      if (e.ctrlKey) {  key = 'Ctrl+'  + key; }
-      if (e.metaKey) {  key = 'Meta+'  + key; }
+      if (e.altKey) { key = 'Alt+' + key; }
+      if (e.ctrlKey) { key = 'Ctrl+' + key; }
+      if (e.metaKey) { key = 'Meta+' + key; }
       if (e.shiftKey) { key = 'Shift+' + key; }
     }
     return key;
@@ -360,14 +365,16 @@ var Keybinds = {
   },
 
   tags(tag, ta) {
-    BoardConfig.ready(function() {
-      const {config} = g.BOARD;
-      const supported = (() => { switch (tag) {
-        case 'spoiler':     return !!config.spoilers;
-        case 'code':        return !!config.code_tags;
-        case 'math': case 'eqn': return !!config.math_tags;
-        case 'sjis':        return !!config.sjis_tags;
-      } })();
+    BoardConfig.ready(function () {
+      const { config } = g.BOARD;
+      const supported = (() => {
+        switch (tag) {
+          case 'spoiler': return !!config.spoilers;
+          case 'code': return !!config.code_tags;
+          case 'math': case 'eqn': return !!config.math_tags;
+          case 'sjis': return !!config.sjis_tags;
+        }
+      })();
       if (!supported) { return new Notice('warning', `[${tag}] tags are not supported on /${g.BOARD}/.`, 20); }
     });
 
@@ -375,7 +382,7 @@ var Keybinds = {
       value
     } = ta;
     const selStart = ta.selectionStart;
-    const selEnd   = ta.selectionEnd;
+    const selEnd = ta.selectionEnd;
 
     ta.value =
       value.slice(0, selStart) +
@@ -391,10 +398,10 @@ var Keybinds = {
   },
 
   sage() {
-    const isSage  = /sage/i.test(QR.nodes.email.value);
+    const isSage = /sage/i.test(QR.nodes.email.value);
     return QR.nodes.email.value = isSage ?
       ""
-    : "sage";
+      : "sage";
   },
 
   open(thread, tab) {
@@ -409,7 +416,7 @@ var Keybinds = {
 
   hl(delta, thread) {
     const replySelector = `${g.SITE.selectors.postContainer}${g.SITE.selectors.highlightable.reply}`;
-    const {highlight} = g.SITE.classes;
+    const { highlight } = g.SITE.classes;
 
     const postEl = $(`${replySelector}.${highlight}`, thread);
 
@@ -419,13 +426,13 @@ var Keybinds = {
     }
 
     if (postEl) {
-      const {height} = postEl.getBoundingClientRect();
+      const { height } = postEl.getBoundingClientRect();
       if ((Header.getTopOf(postEl) >= -height) && (Header.getBottomOf(postEl) >= -height)) { // We're at least partially visible
         let next;
-        const {root} = Get.postFromNode(postEl).nodes;
+        const { root } = Get.postFromNode(postEl).nodes;
         const axis = delta === +1 ?
           'following'
-        :
+          :
           'preceding';
         if (!(next = $.x(`${axis}-sibling::${g.SITE.xpath.replyContainer}[not(@hidden) and not(child::div[@class='stub'])][1]`, root))) { return; }
         if (!next.matches(replySelector)) { next = $(replySelector, next); }
@@ -447,3 +454,4 @@ var Keybinds = {
     }
   }
 };
+export default Keybinds;

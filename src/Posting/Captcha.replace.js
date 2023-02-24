@@ -1,9 +1,10 @@
+import $ from "../platform/$";
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-Captcha.replace = {
+const CaptchaReplace = {
   init() {
     if ((g.SITE.software !== 'yotsuba') || (d.cookie.indexOf('pass_enabled=1') >= 0)) { return; }
 
@@ -25,10 +26,10 @@ Captcha.replace = {
     let noscript, original, toggle;
     if (!((original = $('#g-recaptcha')) && (noscript = $('noscript', original.parentNode)))) { return; }
     const span = $.el('span',
-      {id: 'captcha-forced-noscript'});
+      { id: 'captcha-forced-noscript' });
     $.replace(noscript, span);
     $.rm(original);
-    const insert = function() {
+    const insert = function () {
       span.innerHTML = noscript.textContent;
       return Captcha.replace.iframe($('iframe[src^="https://www.google.com/recaptcha/"]', span));
     };
@@ -44,9 +45,10 @@ Captcha.replace = {
     if (lang = Conf['captchaLanguage'].trim()) {
       const src = /[?&]hl=/.test(iframe.src) ?
         iframe.src.replace(/([?&]hl=)[^&]*/, '$1' + encodeURIComponent(lang))
-      :
+        :
         iframe.src + `&hl=${encodeURIComponent(lang)}`;
       if (iframe.src !== src) { iframe.src = src; }
     }
   }
 };
+export default CaptchaReplace;

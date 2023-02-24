@@ -1,35 +1,37 @@
+import SimpleDict from "./SimpleDict";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-class Thread {
+export default class Thread {
   toString() { return this.ID; }
 
   constructor(ID, board) {
     this.board = board;
-    this.ID         = +ID;
-    this.threadID   = this.ID;
-    this.boardID    = this.board.ID;
-    this.siteID     = g.SITE.ID;
-    this.fullID     = `${this.board}.${this.ID}`;
-    this.posts      = new SimpleDict();
-    this.isDead     = false;
-    this.isHidden   = false;
-    this.isSticky   = false;
-    this.isClosed   = false;
+    this.ID = +ID;
+    this.threadID = this.ID;
+    this.boardID = this.board.ID;
+    this.siteID = g.SITE.ID;
+    this.fullID = `${this.board}.${this.ID}`;
+    this.posts = new SimpleDict();
+    this.isDead = false;
+    this.isHidden = false;
+    this.isSticky = false;
+    this.isClosed = false;
     this.isArchived = false;
-    this.postLimit  = false;
-    this.fileLimit  = false;
-    this.lastPost   = 0;
-    this.ipCount    = undefined;
-    this.json       = null;
+    this.postLimit = false;
+    this.fileLimit = false;
+    this.lastPost = 0;
+    this.ipCount = undefined;
+    this.json = null;
 
     this.OP = null;
     this.catalogView = null;
 
     this.nodes =
-      {root: null};
+      { root: null };
 
     this.board.threads.push(this.ID, this);
     g.threads.push(this.fullID, this);
@@ -37,12 +39,12 @@ class Thread {
 
   setPage(pageNum) {
     let icon;
-    const {info, reply} = this.OP.nodes;
+    const { info, reply } = this.OP.nodes;
     if (!(icon = $('.page-num', info))) {
-      icon = $.el('span', {className: 'page-num'});
+      icon = $.el('span', { className: 'page-num' });
       $.replace(reply.parentNode.previousSibling, [$.tn(' '), icon, $.tn(' ')]);
     }
-    icon.title       = `This thread is on page ${pageNum} in the original index.`;
+    icon.title = `This thread is on page ${pageNum} in the original index.`;
     icon.textContent = `[${pageNum}]`;
     if (this.catalogView) { return this.catalogView.nodes.pageCount.textContent = pageNum; }
   }
@@ -59,8 +61,8 @@ class Thread {
     if (this[name] === status) { return; }
     this[name] = status;
     if (!this.OP) { return; }
-    this.setIcon('Sticky',   this.isSticky);
-    this.setIcon('Closed',   this.isClosed && !this.isArchived);
+    this.setIcon('Sticky', this.isSticky);
+    this.setIcon('Closed', this.isClosed && !this.isArchived);
     return this.setIcon('Archived', this.isArchived);
   }
 
@@ -77,7 +79,7 @@ class Thread {
     }
     icon = $.el('img', {
       src: `${g.SITE.Build.staticPath}${typeLC}${g.SITE.Build.gifIcon}`,
-      alt:   type,
+      alt: type,
       title: type,
       className: `${typeLC}Icon retina`
     }
@@ -88,7 +90,7 @@ class Thread {
 
     const root = (type !== 'Sticky') && this.isSticky ?
       $('.stickyIcon', this.OP.nodes.info)
-    :
+      :
       $('.page-num', this.OP.nodes.info) || this.OP.nodes.quote;
     $.after(root, [$.tn(' '), icon]);
 
@@ -102,7 +104,7 @@ class Thread {
 
   collect() {
     let n = 0;
-    this.posts.forEach(function(post) {
+    this.posts.forEach(function (post) {
       if (post.clones.length) {
         return n++;
       } else {

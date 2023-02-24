@@ -1,15 +1,18 @@
+import Callbacks from "../classes/Callbacks";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var MarkNewIPs = {
+const MarkNewIPs = {
   init() {
     if ((g.SITE.software !== 'yotsuba') || (g.VIEW !== 'thread') || !Conf['Mark New IPs']) { return; }
     return Callbacks.Thread.push({
       name: 'Mark New IPs',
-      cb:   this.node
+      cb: this.node
     });
   },
 
@@ -21,7 +24,7 @@ var MarkNewIPs = {
 
   onUpdate(e) {
     let fullID;
-    const {ipCount, postCount, newPosts, deletedPosts} = e.detail;
+    const { ipCount, postCount, newPosts, deletedPosts } = e.detail;
     if (ipCount == null) { return; }
 
     switch (ipCount - MarkNewIPs.ipCount) {
@@ -44,7 +47,7 @@ var MarkNewIPs = {
   markNew(post, ipCount) {
     const suffix = ((Math.floor(ipCount / 10)) % 10) === 1 ?
       'th'
-    :
+      :
       ['st', 'nd', 'rd'][(ipCount % 10) - 1] || 'th'; // fuck switches
     const counter = $.el('span', {
       className: 'ip-counter',
@@ -61,3 +64,4 @@ var MarkNewIPs = {
     return $.addClass(post.nodes.root, 'old-ip');
   }
 };
+export default MarkNewIPs;

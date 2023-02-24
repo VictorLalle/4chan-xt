@@ -2,16 +2,12 @@
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-class DataBoard {
-  static initClass() {
-    this.keys = ['hiddenThreads', 'hiddenPosts', 'lastReadPosts', 'yourPosts', 'watchedThreads', 'watcherLastModified', 'customTitles'];
-  
-    this.prototype.changes = [];
-  }
+export default class DataBoard {
+  static keys = ['hiddenThreads', 'hiddenPosts', 'lastReadPosts', 'yourPosts', 'watchedThreads', 'watcherLastModified', 'customTitles'];
+  static changes = [];
 
   constructor(key, sync, dontClean) {
     this.onSync = this.onSync.bind(this);
@@ -34,18 +30,18 @@ class DataBoard {
     this.data = data;
     if (this.data.boards) {
       let lastChecked;
-      ({boards, lastChecked} = this.data);
-      this.data['4chan.org'] = {boards, lastChecked};
+      ({ boards, lastChecked } = this.data);
+      this.data['4chan.org'] = { boards, lastChecked };
       delete this.data.boards;
       delete this.data.lastChecked;
     }
-    return this.data[g.SITE.ID] || (this.data[g.SITE.ID] = {boards: $.dict()});
+    return this.data[g.SITE.ID] || (this.data[g.SITE.ID] = { boards: $.dict() });
   }
 
   save(change, cb) {
     change();
     this.changes.push(change);
-    return $.get(this.key, {boards: $.dict()}, items => {
+    return $.get(this.key, { boards: $.dict() }, items => {
       if (!this.changes.length) { return; }
       const needSync = ((items[this.key].version || 0) > (this.data.version || 0));
       if (needSync) {
@@ -62,7 +58,7 @@ class DataBoard {
   }
 
   forceSync(cb) {
-    return $.get(this.key, {boards: $.dict()}, items => {
+    return $.get(this.key, { boards: $.dict() }, items => {
       if ((items[this.key].version || 0) > (this.data.version || 0)) {
         this.initData(items[this.key]);
         for (var change of this.changes) { change(); }
@@ -72,31 +68,30 @@ class DataBoard {
     });
   }
 
-  delete({siteID, boardID, threadID, postID}, cb) {
+  delete({ siteID, boardID, threadID, postID }, cb) {
     if (!siteID) { siteID = g.SITE.ID; }
     if (!this.data[siteID]) { return; }
     return this.save(() => {
       if (postID) {
         if (!this.data[siteID].boards[boardID]?.[threadID]) { return; }
         delete this.data[siteID].boards[boardID][threadID][postID];
-        return this.deleteIfEmpty({siteID, boardID, threadID});
+        return this.deleteIfEmpty({ siteID, boardID, threadID });
       } else if (threadID) {
         if (!this.data[siteID].boards[boardID]) { return; }
         delete this.data[siteID].boards[boardID][threadID];
-        return this.deleteIfEmpty({siteID, boardID});
+        return this.deleteIfEmpty({ siteID, boardID });
       } else {
         return delete this.data[siteID].boards[boardID];
       }
-    }
-    , cb);
+    }, cb);
   }
 
-  deleteIfEmpty({siteID, boardID, threadID}) {
+  deleteIfEmpty({ siteID, boardID, threadID }) {
     if (!this.data[siteID]) { return; }
     if (threadID) {
       if (!Object.keys(this.data[siteID].boards[boardID][threadID]).length) {
         delete this.data[siteID].boards[boardID][threadID];
-        return this.deleteIfEmpty({siteID, boardID});
+        return this.deleteIfEmpty({ siteID, boardID });
       }
     } else if (!Object.keys(this.data[siteID].boards[boardID]).length) {
       return delete this.data[siteID].boards[boardID];
@@ -106,13 +101,12 @@ class DataBoard {
   set(data, cb) {
     return this.save(() => {
       return this.setUnsafe(data);
-    }
-    , cb);
+    }, cb);
   }
 
-  setUnsafe({siteID, boardID, threadID, postID, val}) {
+  setUnsafe({ siteID, boardID, threadID, postID, val }) {
     if (!siteID) { siteID = g.SITE.ID; }
-    if (!this.data[siteID]) { this.data[siteID] = {boards: $.dict()}; }
+    if (!this.data[siteID]) { this.data[siteID] = { boards: $.dict() }; }
     if (postID !== undefined) {
       let base;
       return (((base = this.data[siteID].boards[boardID] || (this.data[siteID].boards[boardID] = $.dict())))[threadID] || (base[threadID] = $.dict()))[postID] = val;
@@ -123,9 +117,9 @@ class DataBoard {
     }
   }
 
-  extend({siteID, boardID, threadID, postID, val}, cb) {
+  extend({ siteID, boardID, threadID, postID, val }, cb) {
     return this.save(() => {
-      const oldVal = this.get({siteID, boardID, threadID, postID, defaultValue: $.dict()});
+      const oldVal = this.get({ siteID, boardID, threadID, postID, defaultValue: $.dict() });
       for (var key in val) {
         var subVal = val[key];
         if (typeof subVal === 'undefined') {
@@ -134,18 +128,18 @@ class DataBoard {
           oldVal[key] = subVal;
         }
       }
-      return this.setUnsafe({siteID, boardID, threadID, postID, val: oldVal});
+      return this.setUnsafe({ siteID, boardID, threadID, postID, val: oldVal });
     }
-    , cb);
+      , cb);
   }
 
-  setLastChecked(key='lastChecked') {
+  setLastChecked(key = 'lastChecked') {
     return this.save(() => {
       return this.data[key] = Date.now();
     });
   }
 
-  get({siteID, boardID, threadID, postID, defaultValue}) {
+  get({ siteID, boardID, threadID, postID, defaultValue }) {
     let board, val;
     if (!siteID) { siteID = g.SITE.ID; }
     if (board = this.data[siteID]?.boards[boardID]) {
@@ -163,10 +157,7 @@ class DataBoard {
           val = board;
         }
       } else if (thread = board[threadID]) {
-        val = (postID != null) ?
-          thread[postID]
-        :
-          thread;
+        val = (postID != null) ? thread[postID] : thread;
       }
     }
     return val || defaultValue;
@@ -177,7 +168,7 @@ class DataBoard {
     const siteID = g.SITE.ID;
     for (boardID in this.data[siteID].boards) {
       var val = this.data[siteID].boards[boardID];
-      this.deleteIfEmpty({siteID, boardID});
+      this.deleteIfEmpty({ siteID, boardID });
     }
     const now = Date.now();
     if (now - (2 * $.HOUR) >= ((middle = this.data[siteID].lastChecked || 0)) || middle > now) {
@@ -191,14 +182,14 @@ class DataBoard {
   ajaxClean(boardID) {
     const that = this;
     const siteID = g.SITE.ID;
-    const threadsList = g.SITE.urls.threadsListJSON?.({siteID, boardID});
+    const threadsList = g.SITE.urls.threadsListJSON?.({ siteID, boardID });
     if (!threadsList) { return; }
-    return $.cache(threadsList, function() {
+    return $.cache(threadsList, function () {
       if (this.status !== 200) { return; }
-      const archiveList = g.SITE.urls.archiveListJSON?.({siteID, boardID});
+      const archiveList = g.SITE.urls.archiveListJSON?.({ siteID, boardID });
       if (!archiveList) { return that.ajaxCleanParse(boardID, this.response); }
       const response1 = this.response;
-      return $.cache(archiveList, function() {
+      return $.cache(archiveList, function () {
         if ((this.status !== 200) && (!!g.SITE.archivedBoardsKnown || (this.status !== 404))) { return; }
         return that.ajaxCleanParse(boardID, response1, this.response);
       });
@@ -224,7 +215,7 @@ class DataBoard {
       }
     }
     this.data[siteID].boards[boardID] = threads;
-    this.deleteIfEmpty({siteID, boardID});
+    this.deleteIfEmpty({ siteID, boardID });
     return $.set(this.key, this.data);
   }
 
@@ -234,4 +225,3 @@ class DataBoard {
     return this.sync?.();
   }
 }
-DataBoard.initClass();

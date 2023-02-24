@@ -1,3 +1,5 @@
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -9,3 +11,4 @@ const Anonymize = {
     return $.addClass(doc, 'anonymize');
   }
 };
+export default Anonymize;

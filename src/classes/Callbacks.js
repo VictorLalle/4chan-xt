@@ -1,28 +1,20 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-class Callbacks {
-  static initClass() {
-    this.Post          = new Callbacks('Post');
-    this.Thread        = new Callbacks('Thread');
-    this.CatalogThread = new Callbacks('Catalog Thread');
-    this.CatalogThreadNative = new Callbacks('Catalog Thread');
-  }
+export default class Callbacks {
+  static Post = new Callbacks('Post');
+  static Thread = new Callbacks('Thread');
+  static CatalogThread = new Callbacks('Catalog Thread');
+  static CatalogThreadNative = new Callbacks('Catalog Thread');
 
   constructor(type) {
     this.type = type;
     this.keys = [];
   }
 
-  push({name, cb}) {
+  push({ name, cb }) {
     if (!this[name]) { this.keys.push(name); }
     return this[name] = cb;
   }
 
-  execute(node, keys=this.keys, force=false) {
+  execute(node, keys = this.keys, force = false) {
     let errors;
     if (node.callbacksExecuted && !force) { return; }
     node.callbacksExecuted = true;
@@ -42,4 +34,3 @@ class Callbacks {
     if (errors) { return Main.handleErrors(errors); }
   }
 }
-Callbacks.initClass();

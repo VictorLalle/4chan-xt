@@ -19,9 +19,10 @@ const NormalizeURL = {
           break;
       }
     }
-    pathname = pathname.join('/');
-    if (location.pathname !== pathname) {
+
+    if (location.pathname !== pathname.join('/')) {
       return history.replaceState(history.state, '', `${location.protocol}//${location.host}${pathname}${location.hash}`);
     }
   }
 };
+export default NormalizeURL;

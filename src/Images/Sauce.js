@@ -1,3 +1,8 @@
+import Callbacks from "../classes/Callbacks";
+import Notice from "../classes/Notice";
+import Filter from "../Filtering/Filter";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,7 +11,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var Sauce = {
+const Sauce = {
   init() {
     let link;
     if (!['index', 'thread'].includes(g.VIEW) || !Conf['Sauce']) { return; }
@@ -22,14 +27,14 @@ var Sauce = {
     if (!links.length) { return; }
 
     this.links = links;
-    this.link  = $.el('a', {
-      target:    '_blank',
+    this.link = $.el('a', {
+      target: '_blank',
       className: 'sauce'
     }
     );
     return Callbacks.Post.push({
       name: 'Sauce',
-      cb:   this.node
+      cb: this.node
     });
   },
 
@@ -79,12 +84,12 @@ var Sauce = {
     $.extend(parts, link);
 
     if (!!parts['boards'] && !parts['boards'][`${post.siteID}/${post.boardID}`] && !parts['boards'][`${post.siteID}/*`]) { return null; }
-    if (!!parts['types']  && (needle = ext, !parts['types'].split(',').includes(needle))) { return null; }
+    if (!!parts['types'] && (needle = ext, !parts['types'].split(',').includes(needle))) { return null; }
     if (!!parts['regexp'] && (!(matches = file.name.match(parts['regexp'])))) { return null; }
 
     const missing = [];
     for (var key of ['url', 'text']) {
-      parts[key] = parts[key].replace(/%(T?URL|IMG|[sh]?MD5|board|name|%|semi|\$\d+)/g, function(orig, parameter) {
+      parts[key] = parts[key].replace(/%(T?URL|IMG|[sh]?MD5|board|name|%|semi|\$\d+)/g, function (orig, parameter) {
         let type;
         if (parameter[0] === '$') {
           if (!matches) { return orig; }
@@ -140,7 +145,7 @@ var Sauce = {
     $.add(file.text, nodes);
 
     if (skipped.length) {
-      var observer = new MutationObserver(function() {
+      var observer = new MutationObserver(function () {
         if (file.text.dataset.md5) {
           for ([link, node] of skipped) {
             var node2;
@@ -151,7 +156,7 @@ var Sauce = {
           return observer.disconnect();
         }
       });
-      return observer.observe(file.text, {attributes: true});
+      return observer.observe(file.text, { attributes: true });
     }
   },
 
@@ -160,11 +165,16 @@ var Sauce = {
     URL(post, file) { return file.url; },
     IMG(post, file, ext) { if (['gif', 'jpg', 'jpeg', 'png'].includes(ext)) { return file.url; } else { return file.thumbURL; } },
     MD5(post, file) { return file.MD5; },
-    sMD5(post, file) { return file.MD5?.replace(/[+/=]/g, c => ({'+': '-', '/': '_', '=': ''})[c]); },
-    hMD5(post, file) { if (file.MD5) { return (atob(file.MD5).map((c) => `0${c.charCodeAt(0).toString(16)}`.slice(-2))).join(''); } },
+    sMD5(post, file) { return file.MD5?.replace(/[+/=]/g, c => ({ '+': '-', '/': '_', '=': '' })[c]); },
+    hMD5(post, file) {
+      if (file.MD5) {
+        return (Array.from(atob(file.MD5)).map((c) => `0${c.charCodeAt(0).toString(16)}`.slice(-2))).join('');
+      }
+    },
     board(post) { return post.board.ID; },
     name(post, file) { return file.name; },
     '%'() { return '%'; },
     semi() { return ';'; }
   }
 };
+export default Sauce;

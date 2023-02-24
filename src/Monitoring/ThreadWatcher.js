@@ -1,20 +1,29 @@
+// @ts-ignore
+import ThreadWatcherPage from './ThreadWatcher/ThreadWatcher.html';
+import $ from "../platform/$";
+import Board from '../classes/Board';
+import Callbacks from '../classes/Callbacks';
+import DataBoard from '../classes/DataBoard';
+import Thread from '../classes/Thread';
+import Filter from '../Filtering/Filter';
+import Main from '../main/Main';
+import $$ from '../platform/$$';
+
 /*
  * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-import ThreadWatcherPage from './ThreadWatcher/ThreadWatcher.html';
 
-var ThreadWatcher = {
+const ThreadWatcher = {
   init() {
     let sc;
     if (!(this.enabled = Conf['Thread Watcher'])) { return; }
 
     this.shortcut = (sc = $.el('a', {
-      id:   'watcher-link',
+      id: 'watcher-link',
       textContent: 'Watcher',
       title: 'Thread Watcher',
       href: 'javascript:;',
@@ -22,17 +31,17 @@ var ThreadWatcher = {
     }
     ));
 
-    this.db     = new DataBoard('watchedThreads', this.refresh, true);
-    this.dbLM   = new DataBoard('watcherLastModified', null, true);
+    this.db = new DataBoard('watchedThreads', this.refresh, true);
+    this.dbLM = new DataBoard('watcherLastModified', null, true);
     this.dialog = UI.dialog('thread-watcher', { innerHTML: ThreadWatcherPage });
     this.status = $('#watcher-status', this.dialog);
-    this.list   = this.dialog.lastElementChild;
+    this.list = this.dialog.lastElementChild;
     this.refreshButton = $('.refresh', this.dialog);
     this.closeButton = $('.move > .close', this.dialog);
     this.unreaddb = Unread.db || UnreadIndex.db || new DataBoard('lastReadPosts');
     this.unreadEnabled = Conf['Remember Last Read Post'];
 
-    $.on(d, 'QRPostSuccessful',   this.cb.post);
+    $.on(d, 'QRPostSuccessful', this.cb.post);
     $.on(sc, 'click', this.toggleWatcher);
     $.on(this.refreshButton, 'click', this.buttonFetchAll);
     $.on(this.closeButton, 'click', this.toggleWatcher);
@@ -66,19 +75,19 @@ var ThreadWatcher = {
     if (Conf['Menu'] && Index.enabled) {
       Menu.menu.addEntry({
         el: $.el('a', {
-          href:      'javascript:;',
+          href: 'javascript:;',
           className: 'has-shortcut-text'
         }
-        , {innerHTML: '<span></span><span class="shortcut-text">Alt+click</span>'}),
+          , { innerHTML: '<span></span><span class="shortcut-text">Alt+click</span>' }),
         order: 6,
-        open({thread}) {
+        open({ thread }) {
           if (Conf['Index Mode'] !== 'catalog') { return false; }
           this.el.firstElementChild.textContent = ThreadWatcher.isWatched(thread) ?
             'Unwatch'
-          :
+            :
             'Watch';
           if (this.cb) { $.off(this.el, 'click', this.cb); }
-          this.cb = function() {
+          this.cb = function () {
             $.event('CloseMenu');
             return ThreadWatcher.toggle(thread);
           };
@@ -92,20 +101,20 @@ var ThreadWatcher = {
 
     Callbacks.Post.push({
       name: 'Thread Watcher',
-      cb:   this.node
+      cb: this.node
     });
     return Callbacks.CatalogThread.push({
       name: 'Thread Watcher',
-      cb:   this.catalogNode
+      cb: this.catalogNode
     });
   },
 
   isWatched(thread) {
-    return !!ThreadWatcher.db?.get({boardID: thread.board.ID, threadID: thread.ID});
+    return !!ThreadWatcher.db?.get({ boardID: thread.board.ID, threadID: thread.ID });
   },
 
   isWatchedRaw(boardID, threadID) {
-    return !!ThreadWatcher.db?.get({boardID, threadID});
+    return !!ThreadWatcher.db?.get({ boardID, threadID });
   },
 
   setToggler(toggler, isWatched) {
@@ -129,14 +138,14 @@ var ThreadWatcher = {
     const siteID = g.SITE.ID;
     const boardID = this.board.ID;
     const threadID = this.thread.ID;
-    const data = ThreadWatcher.db.get({siteID, boardID, threadID});
+    const data = ThreadWatcher.db.get({ siteID, boardID, threadID });
     ThreadWatcher.setToggler(toggler, !!data);
     $.on(toggler, 'click', ThreadWatcher.cb.toggle);
     // Add missing excerpt for threads added by Auto Watch
     if (data && (data.excerpt == null)) {
       return $.queueTask(() => {
-        return ThreadWatcher.update(siteID, boardID, threadID, {excerpt: Get.threadExcerpt(this.thread)});
-    });
+        return ThreadWatcher.update(siteID, boardID, threadID, { excerpt: Get.threadExcerpt(this.thread) });
+      });
     }
   },
 
@@ -184,33 +193,33 @@ var ThreadWatcher = {
     },
     pruneDeads() {
       if ($.hasClass(this, 'disabled')) { return; }
-      for (var {siteID, boardID, threadID, data} of ThreadWatcher.getAll()) {
+      for (var { siteID, boardID, threadID, data } of ThreadWatcher.getAll()) {
         if (data.isDead) {
-          ThreadWatcher.db.delete({siteID, boardID, threadID});
+          ThreadWatcher.db.delete({ siteID, boardID, threadID });
         }
       }
       ThreadWatcher.refresh();
       return $.event('CloseMenu');
     },
     dismiss() {
-      for (var {siteID, boardID, threadID, data} of ThreadWatcher.getAll()) {
+      for (var { siteID, boardID, threadID, data } of ThreadWatcher.getAll()) {
         if (data.quotingYou) {
-          ThreadWatcher.update(siteID, boardID, threadID, {dismiss: data.quotingYou || 0});
+          ThreadWatcher.update(siteID, boardID, threadID, { dismiss: data.quotingYou || 0 });
         }
       }
       return $.event('CloseMenu');
     },
     toggle() {
-      const {thread} = Get.postFromNode(this);
+      const { thread } = Get.postFromNode(this);
       return ThreadWatcher.toggle(thread);
     },
     rm() {
-      const {siteID} = this.parentNode.dataset;
-      const [boardID, threadID] = Array.from(this.parentNode.dataset.fullID.split('.'));
+      const { siteID } = this.parentNode.dataset;
+      const [boardID, threadID] = this.parentNode.dataset.fullID.split('.');
       return ThreadWatcher.rm(siteID, boardID, +threadID);
     },
     post(e) {
-      const {boardID, threadID, postID} = e.detail;
+      const { boardID, threadID, postID } = e.detail;
       const cb = PostRedirect.delay();
       if (postID === threadID) {
         if (Conf['Auto Watch']) {
@@ -221,8 +230,8 @@ var ThreadWatcher = {
       }
     },
     onIndexUpdate(e) {
-      const {db}    = ThreadWatcher;
-      const siteID  = g.SITE.ID;
+      const { db } = ThreadWatcher;
+      const siteID = g.SITE.ID;
       const boardID = g.BOARD.ID;
       let nKilled = 0;
       for (var threadID in db.data[siteID].boards[boardID]) {
@@ -231,10 +240,10 @@ var ThreadWatcher = {
         if (!data?.isDead && !e.detail.threads.includes(`${boardID}.${threadID}`)) {
           if (!e.detail.threads.some(fullID => +fullID.split('.')[1] > threadID)) { continue; }
           if (Conf['Auto Prune'] || !(data && (typeof data === 'object'))) { // corrupt data
-            db.delete({boardID, threadID});
+            db.delete({ boardID, threadID });
             nKilled++;
           } else {
-            ThreadWatcher.fetchStatus({siteID, boardID, threadID, data});
+            ThreadWatcher.fetchStatus({ siteID, boardID, threadID, data });
           }
         }
       }
@@ -249,14 +258,14 @@ var ThreadWatcher = {
   },
 
   requests: [],
-  fetched:  0,
+  fetched: 0,
 
-  fetch(url, {siteID, force}, args, cb) {
+  fetch(url, { siteID, force }, args, cb) {
     if (ThreadWatcher.requests.length === 0) {
       ThreadWatcher.status.textContent = '...';
       $.addClass(ThreadWatcher.refreshButton, 'fa-spin');
     }
-    const onloadend = function() {
+    const onloadend = function () {
       if (this.finished) { return; }
       this.finished = true;
       ThreadWatcher.fetched++;
@@ -275,7 +284,7 @@ var ThreadWatcher = {
       url,
       'ThreadWatcher',
       onloadend,
-      {timeout: $.MINUTE, ajax}
+      { timeout: $.MINUTE, ajax }
     );
     return ThreadWatcher.requests.push(req);
   },
@@ -304,13 +313,13 @@ var ThreadWatcher = {
       var boards = ThreadWatcher.dbLM.data[siteID];
       for (var boardID in boards.boards) {
         var data = boards.boards[boardID];
-        if (ThreadWatcher.db.get({siteID, boardID})) {
+        if (ThreadWatcher.db.get({ siteID, boardID })) {
           for (var url in data) {
             var date = data[url];
             lm[url] = date;
           }
         } else {
-          ThreadWatcher.dbLM.delete({siteID, boardID});
+          ThreadWatcher.dbLM.delete({ siteID, boardID });
         }
       }
     }
@@ -320,7 +329,7 @@ var ThreadWatcher = {
     let middle;
     clearTimeout(ThreadWatcher.timeout);
     if (!Conf['Auto Update Thread Watcher']) { return; }
-    const {db} = ThreadWatcher;
+    const { db } = ThreadWatcher;
     const interval = Conf['Show Page'] || (ThreadWatcher.unreadEnabled && Conf['Show Unread Count']) ? 5 * $.MINUTE : 2 * $.HOUR;
     const now = Date.now();
     if ((now - interval >= ((middle = db.data.lastChecked || 0)) || middle > now) && !d.hidden && !!d.hasFocus()) {
@@ -337,14 +346,14 @@ var ThreadWatcher = {
     }
   },
 
-  fetchAllStatus(interval=0) {
+  fetchAllStatus(interval = 0) {
     ThreadWatcher.status.textContent = '...';
     $.addClass(ThreadWatcher.refreshButton, 'fa-spin');
     ThreadWatcher.syncing = true;
     const dbs = [ThreadWatcher.db, ThreadWatcher.unreaddb, QuoteYou.db].filter(x => x);
     let n = 0;
     return dbs.map((dbi) =>
-      dbi.forceSync(function() {
+      dbi.forceSync(function () {
         if ((++n) === dbs.length) {
           let middle;
           if (!ThreadWatcher.syncing) { return; } // aborted
@@ -353,7 +362,7 @@ var ThreadWatcher = {
             // XXX On vichan boards, last_modified field of threads.json does not account for sage posts.
             // Occasionally check replies field of catalog.json to find these posts.
             let middle1;
-            const {db} = ThreadWatcher;
+            const { db } = ThreadWatcher;
             const now = Date.now();
             const deep = !(now - (2 * $.HOUR) < ((middle1 = db.data.lastChecked2 || 0)) && middle1 <= now);
             const boards = ThreadWatcher.getAll(true);
@@ -374,27 +383,27 @@ var ThreadWatcher = {
     if (!board.some(thread => !thread.data.isDead)) { return; }
     let force = false;
     for (var thread of board) {
-      var {data} = thread;
+      var { data } = thread;
       if (!data.isDead && (data.last !== -1)) {
         if (Conf['Show Page'] && (data.page == null)) { force = true; }
         if ((data.modified == null)) { force = (thread.force = true); }
       }
     }
-    const {siteID, boardID} = board[0];
+    const { siteID, boardID } = board[0];
     const site = g.sites[siteID];
     if (!site) { return; }
     const urlF = deep && site.threadModTimeIgnoresSage ? 'catalogJSON' : 'threadsListJSON';
-    const url = site.urls[urlF]?.({siteID, boardID});
+    const url = site.urls[urlF]?.({ siteID, boardID });
     if (!url) { return; }
-    return ThreadWatcher.fetch(url, {siteID, force}, [board, url], ThreadWatcher.parseBoard);
+    return ThreadWatcher.fetch(url, { siteID, force }, [board, url], ThreadWatcher.parseBoard);
   },
 
   parseBoard(board, url) {
     let page, thread;
     if (this.status !== 200) { return; }
-    const {siteID, boardID} = board[0];
+    const { siteID, boardID } = board[0];
     const lmDate = this.getResponseHeader('Last-Modified');
-    ThreadWatcher.dbLM.extend({siteID, boardID, val: $.item(url, lmDate)});
+    ThreadWatcher.dbLM.extend({ siteID, boardID, val: $.item(url, lmDate) });
     const threads = $.dict();
     let pageLength = 0;
     let nThreads = 0;
@@ -422,16 +431,16 @@ var ThreadWatcher = {
       }
     }
     for (thread of board) {
-      var {threadID, data} = thread;
+      var { threadID, data } = thread;
       if (threads[threadID]) {
         var index, modified, replies;
-        ({page, index, modified, replies} = threads[threadID]);
+        ({ page, index, modified, replies } = threads[threadID]);
         if (Conf['Show Page']) {
-          var lastPage = g.sites[siteID].isPrunedByAge?.({siteID, boardID}) ?
+          var lastPage = g.sites[siteID].isPrunedByAge?.({ siteID, boardID }) ?
             threadID === oldest
-          :
+            :
             index >= (nThreads - pageLength);
-          ThreadWatcher.update(siteID, boardID, threadID, {page, lastPage});
+          ThreadWatcher.update(siteID, boardID, threadID, { page, lastPage });
         }
         if (ThreadWatcher.unreadEnabled && Conf['Show Unread Count']) {
           if ((modified !== data.modified) || ((replies != null) && (replies !== data.replies))) {
@@ -446,22 +455,22 @@ var ThreadWatcher = {
   },
 
   fetchStatus(thread) {
-    const {siteID, boardID, threadID, data, force} = thread;
-    const url = g.sites[siteID]?.urls.threadJSON?.({siteID, boardID, threadID});
+    const { siteID, boardID, threadID, data, force } = thread;
+    const url = g.sites[siteID]?.urls.threadJSON?.({ siteID, boardID, threadID });
     if (!url) { return; }
     if (data.isDead && !force) { return; }
     if (data.last === -1) { return; } // 404 or no JSON API
-    return ThreadWatcher.fetch(url, {siteID, force}, [thread], ThreadWatcher.parseStatus);
+    return ThreadWatcher.fetch(url, { siteID, force }, [thread], ThreadWatcher.parseStatus);
   },
 
   parseStatus(thread, isArchiveURL) {
     let isDead, last;
-    let {siteID, boardID, threadID, data, newData, force} = thread;
+    let { siteID, boardID, threadID, data, newData, force } = thread;
     const site = g.sites[siteID];
     if ((this.status === 200) && this.response) {
       let isArchived;
-      last = this.response.posts[this.response.posts.length-1].no;
-      const replies = this.response.posts.length-1;
+      last = this.response.posts[this.response.posts.length - 1].no;
+      const replies = this.response.posts.length - 1;
       isDead = (isArchived = !!(this.response.posts[0].archived || isArchiveURL));
       if (isDead && Conf['Auto Prune']) {
         ThreadWatcher.rm(siteID, boardID, threadID);
@@ -470,14 +479,14 @@ var ThreadWatcher = {
 
       if ((last === data.last) && (isDead === data.isDead) && (isArchived === data.isArchived)) { return; }
 
-      const lastReadPost = ThreadWatcher.unreaddb.get({siteID, boardID, threadID, defaultValue: 0});
+      const lastReadPost = ThreadWatcher.unreaddb.get({ siteID, boardID, threadID, defaultValue: 0 });
       let unread = data.unread || 0;
       let quotingYou = data.quotingYou || 0;
-      const youOP = !!QuoteYou.db?.get({siteID, boardID, threadID, postID: threadID});
+      const youOP = !!QuoteYou.db?.get({ siteID, boardID, threadID, postID: threadID });
 
       for (var postObj of this.response.posts) {
         if ((postObj.no <= (data.last || 0)) || (postObj.no <= lastReadPost)) { continue; }
-        if (QuoteYou.db?.get({siteID, boardID, threadID, postID: postObj.no})) { continue; }
+        if (QuoteYou.db?.get({ siteID, boardID, threadID, postID: postObj.no })) { continue; }
 
         var quotesYou = false;
         if (!Conf['Require OP Quote Link'] && youOP) {
@@ -489,9 +498,9 @@ var ThreadWatcher = {
           while (match = regexp.exec(postObj.com)) {
             if (QuoteYou.db.get({
               siteID,
-              boardID:  match[1] ? encodeURIComponent(match[1]) : boardID,
+              boardID: match[1] ? encodeURIComponent(match[1]) : boardID,
               threadID: match[2] || threadID,
-              postID:   match[3] || match[2] || threadID
+              postID: match[3] || match[2] || threadID
             })) {
               quotesYou = true;
               break;
@@ -500,7 +509,7 @@ var ThreadWatcher = {
         }
 
         if (!unread || (!quotingYou && quotesYou)) {
-          if (Filter.isHidden(site.Build.parseJSON(postObj, {siteID, boardID}))) { continue; }
+          if (Filter.isHidden(site.Build.parseJSON(postObj, { siteID, boardID }))) { continue; }
         }
 
         unread++;
@@ -508,17 +517,17 @@ var ThreadWatcher = {
       }
 
       if (!newData) { newData = {}; }
-      $.extend(newData, {last, replies, isDead, isArchived, unread, quotingYou});
+      $.extend(newData, { last, replies, isDead, isArchived, unread, quotingYou });
       return ThreadWatcher.update(siteID, boardID, threadID, newData);
 
     } else if (this.status === 404) {
-      const archiveURL = g.sites[siteID]?.urls.archivedThreadJSON?.({siteID, boardID, threadID});
+      const archiveURL = g.sites[siteID]?.urls.archivedThreadJSON?.({ siteID, boardID, threadID });
       if (!isArchiveURL && archiveURL) {
-        return ThreadWatcher.fetch(archiveURL, {siteID, force}, [thread, true], ThreadWatcher.parseStatus);
+        return ThreadWatcher.fetch(archiveURL, { siteID, force }, [thread, true], ThreadWatcher.parseStatus);
       } else if (site.mayLackJSON && (data.last == null)) {
-        return ThreadWatcher.update(siteID, boardID, threadID, {last: -1});
+        return ThreadWatcher.update(siteID, boardID, threadID, { last: -1 });
       } else {
-        return ThreadWatcher.update(siteID, boardID, threadID, {isDead: true});
+        return ThreadWatcher.update(siteID, boardID, threadID, { isDead: true });
       }
     }
   },
@@ -539,7 +548,7 @@ var ThreadWatcher = {
         for (var threadID in threads) {
           var data = threads[threadID];
           if (data && (typeof data === 'object')) {
-            (groupByBoard ? cont : all).push({siteID, boardID, threadID, data});
+            (groupByBoard ? cont : all).push({ siteID, boardID, threadID, data });
           }
         }
       }
@@ -556,12 +565,12 @@ var ThreadWatcher = {
     );
     $.on(x, 'click', ThreadWatcher.cb.rm);
 
-    let {excerpt, isArchived} = data;
+    let { excerpt, isArchived } = data;
     if (!excerpt) { excerpt = `/${boardID}/ - No.${threadID}`; }
     if (Conf['Show Site Prefix']) { excerpt = ThreadWatcher.prefixes[siteID] + excerpt; }
 
     const link = $.el('a', {
-      href: g.sites[siteID]?.urls.thread({siteID, boardID, threadID}, isArchived) || '',
+      href: g.sites[siteID]?.urls.thread({ siteID, boardID, threadID }, isArchived) || '',
       title: excerpt,
       className: 'watcher-link'
     }
@@ -613,7 +622,7 @@ var ThreadWatcher = {
 
   setPrefixes(threads) {
     const prefixes = $.dict();
-    for (var {siteID} of threads) {
+    for (var { siteID } of threads) {
       if (siteID in prefixes) { continue; }
       var len = 0;
       var prefix = '';
@@ -640,15 +649,15 @@ var ThreadWatcher = {
     const nodes = [];
     const threads = ThreadWatcher.getAll();
     ThreadWatcher.setPrefixes(threads);
-    for (var {siteID, boardID, threadID, data} of threads) {
+    for (var { siteID, boardID, threadID, data } of threads) {
       // Add missing excerpt for threads added by Auto Watch
       var thread;
       if ((data.excerpt == null) && (siteID === g.SITE.ID) && (thread = g.threads.get(`${boardID}.${threadID}`)) && thread.OP) {
-        ThreadWatcher.db.extend({boardID, threadID, val: {excerpt: Get.threadExcerpt(thread)}});
+        ThreadWatcher.db.extend({ boardID, threadID, val: { excerpt: Get.threadExcerpt(thread) } });
       }
       nodes.push(ThreadWatcher.makeLine(siteID, boardID, threadID, data));
     }
-    const {list} = ThreadWatcher;
+    const { list } = ThreadWatcher;
     $.rmAll(list);
     $.add(list, nodes);
 
@@ -658,10 +667,10 @@ var ThreadWatcher = {
   refresh() {
     ThreadWatcher.build();
 
-    g.threads.forEach(function(thread) {
+    g.threads.forEach(function (thread) {
       const isWatched = ThreadWatcher.isWatched(thread);
       if (thread.OP) {
-        for (var post of [thread.OP, ...Array.from(thread.OP.clones)]) {
+        for (var post of [thread.OP, ...thread.OP.clones]) {
           var toggler;
           if (toggler = $('.watch-thread-link', post.nodes.info)) {
             ThreadWatcher.setToggler(toggler, isWatched);
@@ -672,7 +681,7 @@ var ThreadWatcher = {
     });
 
     if (Conf['Pin Watched Threads']) {
-      return $.event('SortIndex', {deferred: Conf['Index Mode'] !== 'catalog'});
+      return $.event('SortIndex', { deferred: Conf['Index Mode'] !== 'catalog' });
     }
   },
 
@@ -684,7 +693,7 @@ var ThreadWatcher = {
 
   update(siteID, boardID, threadID, newData) {
     let data, key, line, val;
-    if (!(data = ThreadWatcher.db?.get({siteID, boardID, threadID}))) { return; }
+    if (!(data = ThreadWatcher.db?.get({ siteID, boardID, threadID }))) { return; }
     if (newData.isDead && Conf['Auto Prune']) {
       ThreadWatcher.rm(siteID, boardID, threadID);
       return;
@@ -702,7 +711,7 @@ var ThreadWatcher = {
     let n = 0;
     for (key in newData) { val = newData[key]; if (data[key] !== val) { n++; } }
     if (!n) { return; }
-    ThreadWatcher.db.extend({siteID, boardID, threadID, val: newData});
+    ThreadWatcher.db.extend({ siteID, boardID, threadID, val: newData });
     if (line = $(`#watched-threads > [data-site-i-d='${siteID}'][data-full-i-d='${boardID}.${threadID}']`, ThreadWatcher.dialog)) {
       const newLine = ThreadWatcher.makeLine(siteID, boardID, threadID, data);
       $.replace(line, newLine);
@@ -714,20 +723,20 @@ var ThreadWatcher = {
 
   set404(boardID, threadID, cb) {
     let data;
-    if (!(data = ThreadWatcher.db?.get({boardID, threadID}))) { return cb(); }
+    if (!(data = ThreadWatcher.db?.get({ boardID, threadID }))) { return cb(); }
     if (Conf['Auto Prune']) {
-      ThreadWatcher.db.delete({boardID, threadID});
+      ThreadWatcher.db.delete({ boardID, threadID });
       return cb();
     }
     if (data.isDead && !((data.isArchived != null) || (data.page != null) || (data.lastPage != null) || (data.unread != null) || (data.quotingYou != null))) { return cb(); }
-    return ThreadWatcher.db.extend({boardID, threadID, val: {isDead: true, isArchived: undefined, page: undefined, lastPage: undefined, unread: undefined, quotingYou: undefined}}, cb);
+    return ThreadWatcher.db.extend({ boardID, threadID, val: { isDead: true, isArchived: undefined, page: undefined, lastPage: undefined, unread: undefined, quotingYou: undefined } }, cb);
   },
 
   toggle(thread) {
-    const siteID   = g.SITE.ID;
-    const boardID  = thread.board.ID;
+    const siteID = g.SITE.ID;
+    const boardID = thread.board.ID;
     const threadID = thread.ID;
-    if (ThreadWatcher.db.get({boardID, threadID})) {
+    if (ThreadWatcher.db.get({ boardID, threadID })) {
       return ThreadWatcher.rm(siteID, boardID, threadID);
     } else {
       return ThreadWatcher.add(thread);
@@ -735,12 +744,12 @@ var ThreadWatcher = {
   },
 
   add(thread, cb) {
-    const data     = {};
-    const siteID   = g.SITE.ID;
-    const boardID  = thread.board.ID;
+    const data = {};
+    const siteID = g.SITE.ID;
+    const boardID = thread.board.ID;
     const threadID = thread.ID;
     if (thread.isDead) {
-      if (Conf['Auto Prune'] && ThreadWatcher.db.get({boardID, threadID})) {
+      if (Conf['Auto Prune'] && ThreadWatcher.db.get({ boardID, threadID })) {
         ThreadWatcher.rm(siteID, boardID, threadID, cb);
         return;
       }
@@ -751,13 +760,13 @@ var ThreadWatcher = {
   },
 
   addRaw(boardID, threadID, data, cb) {
-    const oldData = ThreadWatcher.db.get({boardID, threadID, defaultValue: $.dict()});
+    const oldData = ThreadWatcher.db.get({ boardID, threadID, defaultValue: $.dict() });
     delete oldData.last;
     delete oldData.modified;
     $.extend(oldData, data);
-    ThreadWatcher.db.set({boardID, threadID, val: oldData}, cb);
+    ThreadWatcher.db.set({ boardID, threadID, val: oldData }, cb);
     ThreadWatcher.refresh();
-    const thread = {siteID: g.SITE.ID, boardID, threadID, data, force: true};
+    const thread = { siteID: g.SITE.ID, boardID, threadID, data, force: true };
     if (Conf['Show Page'] && !data.isDead) {
       return ThreadWatcher.fetchBoard([thread]);
     } else if (ThreadWatcher.unreadEnabled && Conf['Show Unread Count']) {
@@ -766,7 +775,7 @@ var ThreadWatcher = {
   },
 
   rm(siteID, boardID, threadID, cb) {
-    ThreadWatcher.db.delete({siteID, boardID, threadID}, cb);
+    ThreadWatcher.db.delete({ siteID, boardID, threadID }, cb);
     return ThreadWatcher.refresh();
   },
 
@@ -774,7 +783,7 @@ var ThreadWatcher = {
     init() {
       if (!Conf['Thread Watcher']) { return; }
       const menu = (this.menu = new UI.Menu('thread watcher'));
-      $.on($('.menu-button', ThreadWatcher.dialog), 'click', function(e) {
+      $.on($('.menu-button', ThreadWatcher.dialog), 'click', function (e) {
         return menu.toggle(e, this, ThreadWatcher);
       });
       return this.addMenuEntries();
@@ -783,15 +792,15 @@ var ThreadWatcher = {
     addHeaderMenuEntry() {
       if (g.VIEW !== 'thread') { return; }
       const entryEl = $.el('a',
-        {href: 'javascript:;'});
+        { href: 'javascript:;' });
       Header.menu.addEntry({
         el: entryEl,
         order: 60,
         open() {
-          const [addClass, rmClass, text] = Array.from(!!ThreadWatcher.db.get({boardID: g.BOARD.ID, threadID: g.THREADID}) ?
+          const [addClass, rmClass, text] = !!ThreadWatcher.db.get({ boardID: g.BOARD.ID, threadID: g.THREADID }) ?
             ['unwatch-thread', 'watch-thread', 'Unwatch thread']
-          :
-            ['watch-thread', 'unwatch-thread', 'Watch thread']);
+            :
+            ['watch-thread', 'unwatch-thread', 'Watch thread'];
           $.addClass(entryEl, addClass);
           $.rmClass(entryEl, rmClass);
           entryEl.textContent = text;
@@ -855,7 +864,7 @@ var ThreadWatcher = {
         }
       });
 
-      for (var {text, title, cb, open} of entries) {
+      for (var { text, title, cb, open } of entries) {
         var entry = {
           el: $.el('a', {
             textContent: text,
@@ -896,3 +905,4 @@ var ThreadWatcher = {
     }
   }
 };
+export default ThreadWatcher;

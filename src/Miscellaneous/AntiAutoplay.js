@@ -1,9 +1,13 @@
+import Callbacks from "../classes/Callbacks";
+import $ from "../platform/$";
+import $$ from "../platform/$$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var AntiAutoplay = {
+const AntiAutoplay = {
   init() {
     if (!Conf['Disable Autoplaying Sounds']) { return; }
     $.addClass(doc, 'anti-autoplay');
@@ -11,7 +15,7 @@ var AntiAutoplay = {
     window.addEventListener('loadstart', (e => this.stop(e.target)), true);
     Callbacks.Post.push({
       name: 'Disable Autoplaying Sounds',
-      cb:   this.node
+      cb: this.node
     });
     return $.ready(() => this.process(d.body));
   },
@@ -44,3 +48,4 @@ var AntiAutoplay = {
     return $.addClass(el, 'autoplay-removed');
   }
 };
+export default AntiAutoplay;

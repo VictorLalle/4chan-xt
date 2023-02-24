@@ -1,3 +1,5 @@
+import Callbacks from "../classes/Callbacks";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -9,7 +11,7 @@ const RevealSpoilers = {
 
     return Callbacks.Post.push({
       name: 'Reveal Spoiler Thumbnails',
-      cb:   this.node
+      cb: this.node
     });
   },
 
@@ -17,7 +19,7 @@ const RevealSpoilers = {
     if (this.isClone) { return; }
     for (var file of this.files) {
       if (file.thumb && file.isSpoiler) {
-        var {thumb} = file;
+        var { thumb } = file;
         // Remove old width and height.
         thumb.removeAttribute('style');
         // Enforce thumbnail size if thumbnail is replaced.
@@ -31,3 +33,4 @@ const RevealSpoilers = {
     }
   }
 };
+export default RevealSpoilers;

@@ -1,23 +1,20 @@
+import $ from "../platform/$";
+import $$ from "../platform/$$";
+import Callbacks from "./Callbacks";
+import PostClone from "./Post.Clone";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-class Post {
-  static initClass() {
-  
-    this.deadMark =
-      // \u00A0 is nbsp
-      $.el('span', {
-        textContent: '\u00A0(Dead)',
-        className:   'qmark-dead'
-      }
-      );
-  }
+export default class Post {
+  // \u00A0 is nbsp
+  static deadMark = $.el('span', { textContent: '\u00A0(Dead)', className: 'qmark-dead' });
+
   toString() { return this.ID; }
 
-  constructor(root, thread, board, flags={}) {
+  constructor(root, thread, board, flags = {}) {
     // <% if (readJSON('/.tests_enabled')) { %>
     // @normalizedOriginal = Test.normalize root
     // <% } %>
@@ -25,14 +22,14 @@ class Post {
     this.thread = thread;
     this.board = board;
     $.extend(this, flags);
-    this.ID       = +root.id.match(/\d*$/)[0];
-    this.postID   = this.ID;
+    this.ID = +root.id.match(/\d*$/)[0];
+    this.postID = this.ID;
     this.threadID = this.thread.ID;
-    this.boardID  = this.board.ID;
-    this.siteID   = g.SITE.ID;
-    this.fullID   = `${this.board}.${this.ID}`;
-    this.context  = this;
-    this.isReply  = (this.ID !== this.threadID);
+    this.boardID = this.board.ID;
+    this.siteID = g.SITE.ID;
+    this.fullID = `${this.board}.${this.ID}`;
+    this.context = this;
+    this.isReply = (this.ID !== this.threadID);
 
     root.dataset.fullID = this.fullID;
 
@@ -53,17 +50,17 @@ class Post {
     }
 
     this.info = {
-      subject:   this.nodes.subject?.textContent || undefined,
-      name:      this.nodes.name?.textContent,
-      email:     this.nodes.email ? decodeURIComponent(this.nodes.email.href.replace(/^mailto:/, '')) : undefined,
-      tripcode:  this.nodes.tripcode?.textContent,
-      uniqueID:  this.nodes.uniqueID?.textContent,
-      capcode:   this.nodes.capcode?.textContent.replace('## ', ''),
-      pass:      this.nodes.pass?.title.match(/\d*$/)[0],
-      flagCode:  this.nodes.flag?.className.match(/flag-(\w+)/)?.[1].toUpperCase(),
+      subject: this.nodes.subject?.textContent || undefined,
+      name: this.nodes.name?.textContent,
+      email: this.nodes.email ? decodeURIComponent(this.nodes.email.href.replace(/^mailto:/, '')) : undefined,
+      tripcode: this.nodes.tripcode?.textContent,
+      uniqueID: this.nodes.uniqueID?.textContent,
+      capcode: this.nodes.capcode?.textContent.replace('## ', ''),
+      pass: this.nodes.pass?.title.match(/\d*$/)[0],
+      flagCode: this.nodes.flag?.className.match(/flag-(\w+)/)?.[1].toUpperCase(),
       flagCodeTroll: this.nodes.flag?.className.match(/bfl-(\w+)/)?.[1].toUpperCase(),
-      flag:      this.nodes.flag?.title,
-      date:      this.nodes.date ? g.SITE.parseDate(this.nodes.date) : undefined
+      flag: this.nodes.flag?.title,
+      date: this.nodes.date ? g.SITE.parseDate(this.nodes.date) : undefined
     };
 
     if (Conf['Anonymize']) {
@@ -78,7 +75,7 @@ class Post {
     this.parseQuotes();
     this.parseFiles();
 
-    this.isDead   = false;
+    this.isDead = false;
     this.isHidden = false;
 
     this.clones = [];
@@ -95,6 +92,9 @@ class Post {
     this.board.posts.push(this.ID, this);
     this.thread.posts.push(this.ID, this);
     g.posts.push(this.fullID, this);
+
+    this.isFetchedQuote = false;
+    this.isClone = false;
   }
 
   parseNodes(root) {
@@ -103,13 +103,13 @@ class Post {
     const info = $(s.infoRoot, post);
     const nodes = {
       root,
-      bottom:     this.isReply || !g.SITE.isOPContainerThread ? root : $(s.opBottom, root),
+      bottom: this.isReply || !g.SITE.isOPContainerThread ? root : $(s.opBottom, root),
       post,
       info,
-      comment:    $(s.comment, post),
+      comment: $(s.comment, post),
       quotelinks: [],
       archivelinks: [],
-      embedlinks:   []
+      embedlinks: []
     };
     for (var key in s.info) {
       var selector = s.info[key];
@@ -123,7 +123,7 @@ class Post {
     if ($.engine === 'edge') {
       Object.defineProperty(nodes, 'backlinks', {
         configurable: true,
-        enumerable:   true,
+        enumerable: true,
         get() { return post.getElementsByClassName('backlink'); }
       }
       );
@@ -252,20 +252,20 @@ class Post {
     if (!g.SITE.parseFile(this, file)) { return; }
 
     $.extend(file, {
-      url:     file.link.href,
+      url: file.link.href,
       isImage: $.isImage(file.link.href),
       isVideo: $.isVideo(file.link.href)
     }
     );
-    let size  = +file.size.match(/[\d.]+/)[0];
-    let unit  = ['B', 'KB', 'MB', 'GB'].indexOf(file.size.match(/\w+$/)[0]);
+    let size = +file.size.match(/[\d.]+/)[0];
+    let unit = ['B', 'KB', 'MB', 'GB'].indexOf(file.size.match(/\w+$/)[0]);
     while (unit-- > 0) { size *= 1024; }
     file.sizeInBytes = size;
 
     return file;
   }
 
-  kill(file, index=0) {
+  kill(file, index = 0) {
     let strong;
     if (file) {
       if (this.isDead || this.files[index].isDead) { return; }
@@ -280,7 +280,7 @@ class Post {
 
     if (!(strong = $('strong.warning', this.nodes.info))) {
       strong = $.el('strong',
-        {className: 'warning'});
+        { className: 'warning' });
       $.after($('input', this.nodes.info), strong);
     }
     strong.textContent = file ? '[File deleted]' : '[Deleted]';
@@ -337,7 +337,7 @@ class Post {
   addClone(context, contractThumb) {
     // Callbacks may not have been run yet due to anti-browser-lock delay in Main.callbackNodesDB.
     Callbacks.Post.execute(this);
-    return new Post.Clone(this, context, contractThumb);
+    return new PostClone(this, context, contractThumb);
   }
 
   rmClone(index) {
@@ -355,4 +355,3 @@ class Post {
     return this.nodes.post.style.left = (this.nodes.post.style.right = null);
   }
 }
-Post.initClass();

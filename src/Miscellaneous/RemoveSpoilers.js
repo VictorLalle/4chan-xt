@@ -1,10 +1,13 @@
+import Callbacks from "../classes/Callbacks";
+import $ from "../platform/$";
+import $$ from "../platform/$$";
+
 /*
  * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-var RemoveSpoilers = {
+const RemoveSpoilers = {
   init() {
     if (Conf['Reveal Spoilers']) {
       $.addClass(doc, 'reveal-spoilers');
@@ -14,7 +17,7 @@ var RemoveSpoilers = {
 
     Callbacks.Post.push({
       name: 'Reveal Spoilers',
-      cb:   this.node
+      cb: this.node
     });
 
     if (g.VIEW === 'archive') {
@@ -29,9 +32,10 @@ var RemoveSpoilers = {
   unspoiler(el) {
     const spoilers = $$(g.SITE.selectors.spoiler, el);
     for (var spoiler of spoilers) {
-      var span = $.el('span', {className: 'removed-spoiler'});
+      var span = $.el('span', { className: 'removed-spoiler' });
       $.replace(spoiler, span);
-      $.add(span, [...Array.from(spoiler.childNodes)]);
+      $.add(span, Array.from(spoiler.childNodes)];
     }
   }
 };
+export default RemoveSpoilers;
