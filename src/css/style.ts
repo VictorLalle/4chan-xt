@@ -1,7 +1,5 @@
-/* jshint esnext: true */
-
 // == Reprocess Font Awesome CSS == //
-var fa = (css, font) => (
+export const fa = (css: string, font: string) => (
 
 // Font Awesome CSS attribution and license
 css.match(/\/\*\![^]*?\*\//)[0] + '\n' +
@@ -24,18 +22,16 @@ css
 );
 
 // == Create CSS for Link Title Favicons == //
-var icons = (names, data) => (
+export const icons = (data: {name: string, data: string}[]) => (
 
 '/* Link Title Favicons */\n' +
-names.map((file, i) =>
-`.linkify.${file.split('.')[1]}::before {
+data.map(({ name, data }) =>
+`.linkify.${name}::before {
   content: "";
-  background: transparent url('data:image/png;base64,${data[i]}') center left no-repeat!important;
+  background: transparent url('data:image/png;base64,${data}') center left no-repeat!important;
   padding-left: 18px;
 }
 `
 ).join('')
 
 );
-
-return {fa, icons};

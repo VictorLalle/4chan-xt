@@ -1,3 +1,5 @@
+import $ from "../platform/$";
+
 export default class Notice {
   constructor(type, content, timeout, onclose) {
     this.add = this.add.bind(this);

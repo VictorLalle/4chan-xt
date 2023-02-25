@@ -1,4 +1,3 @@
-// @ts-ignore
 import ThreadWatcherPage from './ThreadWatcher/ThreadWatcher.html';
 import $ from "../platform/$";
 import Board from '../classes/Board';

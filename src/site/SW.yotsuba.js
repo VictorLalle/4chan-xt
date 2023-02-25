@@ -6,15 +6,10 @@ import $$ from "../platform/$$";
 import Captcha from "../Posting/Captcha";
 import PostSuccessful from "../Posting/PostSuccessful";
 
-// @ts-ignore
 import PostInfoPage from './SW.yotsuba.Build/PostInfo.html';
-// @ts-ignore
 import FilePage from './SW.yotsuba.Build/File.html';
-// @ts-ignore
 import PostPage from './SW.yotsuba.Build/Post.html';
-// @ts-ignore
 import CatalogThreadPage from './SW.yotsuba.Build/CatalogThread.html';
-// @ts-ignore
 import CatalogReplyPage from './SW.yotsuba.Build/CatalogReply.html';
 import ImageHost from "../Images/ImageHost";
 

@@ -1,11 +1,10 @@
 import $ from "../platform/$";
+import PassMessagePage from './PassMessage/PassMessage.html';
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-// @ts-ignore
-import PassMessagePage from './PassMessage/PassMessage.html';
 
 const PassMessage = {
   init() {

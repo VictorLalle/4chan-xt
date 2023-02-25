@@ -81,6 +81,7 @@ import QuoteYou from "../Quotelinks/QuoteYou";
 import Quotify from "../Quotelinks/Quotify";
 import Site from "../site/Site";
 import SW from "../site/SW";
+import CSS from "../css/CSS";
 
 /*
  * decaffeinate suggestions:
@@ -954,6 +955,7 @@ User agent: ${navigator.userAgent}\
   ]
 };
 export default Main;
+Main.init();
 
 // <% if (readJSON('/.tests_enabled')) { %>
 // Main.features.push ['Build Test', Test]

@@ -1,7 +1,8 @@
 import Redirect from "../Archive/Redirect";
 import $ from "../platform/$";
-// @ ts-ignore
 import ReportPage from './Report/ArchiveReport.html';
+import CSS from "../css/CSS";
+import Captcha from "../Posting/Captcha";
 
 /*
  * decaffeinate suggestions:

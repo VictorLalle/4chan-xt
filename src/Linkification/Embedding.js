@@ -1,4 +1,5 @@
 import $ from '../platform/$';
+import EmbeddingPage from './Embedding/Embed.html';
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,8 +7,6 @@ import $ from '../platform/$';
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-// @ts-ignore
-import EmbeddingPage from './Embedding/Embed.html';
 
 const Embedding = {
   init() {

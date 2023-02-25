@@ -1,4 +1,5 @@
 import $ from "../platform/$";
+import CSS from "../css/CSS";
 
 /*
  * decaffeinate suggestions:

@@ -1,5 +1,4 @@
-
-// @ts-nocheck
+// cSpell:ignore SFWY, NSFWY
 import ferongr_unreadDead from './Favicon/ferongr.unreadDead.png';
 import ferongr_unreadDeadY from './Favicon/ferongr.unreadDeadY.png';
 import ferongr_unreadSFW from './Favicon/ferongr.unreadSFW.png';
@@ -38,6 +37,7 @@ import Metro_unreadNSFW from './Favicon/Metro.unreadNSFW.png';
 import Metro_unreadNSFWY from './Favicon/Metro.unreadNSFWY.png';
 import dead from './Favicon/dead.gif';
 import empty from './Favicon/empty.gif';
+import $ from '../platform/$';
 
 /*
  * decaffeinate suggestions:

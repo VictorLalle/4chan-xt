@@ -1,4 +1,3 @@
-// @ts-ignore
 import Beep from './ThreadUpdater/beep.wav';
 import $ from "../platform/$";
 import Callbacks from '../classes/Callbacks';

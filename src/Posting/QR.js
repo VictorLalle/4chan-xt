@@ -1,4 +1,3 @@
-// @ts-ignore
 import QuickReplyPage from './QR/QuickReply.html';
 import $ from '../platform/$';
 import Callbacks from '../classes/Callbacks';

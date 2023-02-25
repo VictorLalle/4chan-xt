@@ -1,4 +1,37 @@
-![screenshot](https://ccd0.github.io/4chan-x/img/screenshot.png)
+# 4chan XT
+
+**This repo is work in progress!** Use the build from the [repo this is forked from](https://github.com/ccd0/4chan-x) in the meantime.
+
+The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/JavaScript. It is named XT both as a continuation of eXTended, and a T for TypeScript. The goals of this project is to first get a working bundle from js/ts files, and then gradually convert js files to ts and add types as needed.
+
+## TODO
+
+- look for TODO comments
+- find alternative for `<% if (`
+- meta info in compilation step
+- actual userscript and extension builds
+
+## Other notes
+
+- A lot of files have circular dependencies, but rollup can handle that, but for some scripts that add to the same object I had to merge them, like Posting/QR and site/SW.yotsuba.js
+- tsconfig.json has `"checkJs": true,`, and a lot of js files report type errors when opened because of unknown properties on objects and reassigning variables with different types. These errors don't block the bundle at this moment.
+- old files in the builds directory stay as reference until the new builds are functional, new files go in the builds/test directory
+- old build scripts are also kept around for reference until the new build output is fully functional
+- the es 2020 target was choses for optional chaining
+
+## Recommendations
+
+- Visual studio code
+- Format on save using default formatter
+- extensions
+  - streetsidesoftware.code-spell-checker
+  - EditorConfig.EditorConfig
+
+---
+
+Original readme:
+
+![screenshot](./img/screenshot.png)
 # 4chan X
 4chan X is a script that adds various features to anonymous imageboards. It was originally developed for 4chan but has no affiliation with it.
 
@@ -90,4 +123,3 @@ If you encounter a bug, try the steps [here](https://github.com/ccd0/4chan-x/blo
 - [Frequently Asked Questions](https://github.com/ccd0/4chan-x/wiki/Frequently-Asked-Questions)
 - [Report Bugs](https://github.com/ccd0/4chan-x/issues)
 - [Contributing](https://github.com/ccd0/4chan-x/blob/master/CONTRIBUTING.md)
-

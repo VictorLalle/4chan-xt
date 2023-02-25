@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-// @ts-ignore
 import Callbacks from '../classes/Callbacks';
 import CatalogThread from '../classes/CatalogThread';
 import Notice from '../classes/Notice';
@@ -23,9 +22,8 @@ import ThreadWatcher from '../Monitoring/ThreadWatcher';
 import $$ from '../platform/$$';
 import $ from '../platform/$';
 import QuotePreview from '../Quotelinks/QuotePreview';
-// @ts-ignore
+
 import NavLinksPage from './Index/NavLinks.html';
-// @ts-ignore
 import PageListPage from './Index/PageList.html';
 
 const Index = {

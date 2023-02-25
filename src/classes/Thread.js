@@ -1,4 +1,5 @@
 import SimpleDict from "./SimpleDict";
+import $ from "../platform/$";
 
 /*
  * decaffeinate suggestions:
