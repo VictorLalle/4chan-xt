@@ -3,9 +3,6 @@ import inlineFile from "./rollup-plugin-inline-file.js";
 
 rollup({
   input: '../src/main/Main.js',
-  output: {
-    dir: '../builds/test/'
-  },
   plugins: [
     inlineFile({
       include: ["**/*.html", "**/*.css"],
@@ -17,5 +14,14 @@ rollup({
         return Buffer.from(input).toString('base64');
       }
     })
-  ]
+  ],
+  output: {
+    format: "es",
+    name: "bundle.js",
+  }
+}).then(async bundle => {
+  const bundledResult = await bundle.write({
+    // file: '../builds/test/rollupOutput.js',
+    dir: '../builds/test/'
+  });
 });

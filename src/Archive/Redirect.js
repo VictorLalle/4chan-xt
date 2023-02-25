@@ -1,9 +1,12 @@
+import Notice from '../classes/Notice.js';
+import $ from '../platform/$.js';
+import CrossOrigin from '../platform/CrossOrigin.js';
+import archives from './archives.js';
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-import archives from './archives.js';
 
 const Redirect = {
   // TODO check
@@ -25,7 +28,7 @@ const Redirect = {
       file: $.dict()
     };
 
-    archives = $.dict();
+    const archives = $.dict();
     for (data of Conf['archives']) {
       var name, software, uid;
       for (var key of ['boards', 'files']) {
@@ -104,7 +107,7 @@ const Redirect = {
   },
 
   parse(responses, cb) {
-    archives = [];
+    const archives = [];
     const archiveUIDs = $.dict();
     for (var response of responses) {
       for (var data of response) {

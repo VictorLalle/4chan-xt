@@ -75,7 +75,7 @@ import QuoteCT from "../Quotelinks/QuoteCT";
 import QuoteInline from "../Quotelinks/QuoteInline";
 import QuoteOP from "../Quotelinks/QuoteOP";
 import QuotePreview from "../Quotelinks/QuotePreview";
-import { QuoteStrikeThrough } from "../Quotelinks/QuoteStrikeThrough";
+import QuoteStrikeThrough from "../Quotelinks/QuoteStrikeThrough";
 import QuoteThreading from "../Quotelinks/QuoteThreading";
 import QuoteYou from "../Quotelinks/QuoteYou";
 import Quotify from "../Quotelinks/Quotify";
