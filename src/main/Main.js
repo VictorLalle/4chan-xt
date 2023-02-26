@@ -780,8 +780,10 @@ const Main = {
       return;
     }
 
-    const div = $.el('div',
-      { innerHTML: '${errors.length} errors occurred.&{Main.reportLink(errors)} [<a href="javascript:;">show</a>]' });
+    const div = $.el('div', {
+      innerHTML:
+        `${errors.length} errors occurred.${Main.reportLink(errors).innerHTML} [<a href="javascript:;">show</a>]`
+    });
     $.on(div.lastElementChild, 'click', function () {
       let ref;
       return [this.textContent, logs.hidden] = ref = this.textContent === 'show' ? (

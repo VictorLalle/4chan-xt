@@ -9,11 +9,9 @@ import ImageHost from "../Images/ImageHost";
 import { g, Conf } from "../globals/globals";
 import BoardConfig from "../General/BoardConfig";
 
-import PostInfoPage from './SW.yotsuba.Build/PostInfo.html';
-import FilePage from './SW.yotsuba.Build/File.html';
-import PostPage from './SW.yotsuba.Build/Post.html';
-import CatalogThreadPage from './SW.yotsuba.Build/CatalogThread.html';
-import CatalogReplyPage from './SW.yotsuba.Build/CatalogReply.html';
+import generatePostInfoHtml from './SW.yotsuba.Build/PostInfoHtml';
+import generateFileHtml from "./SW.yotsuba.Build/FileHtml";
+import generateCatalogThreadHtml from "./SW.yotsuba.Build/CatalogThreadHtml";
 
 /*
  * decaffeinate suggestions:
@@ -517,9 +515,9 @@ $\
 
       /* Post Info */
 
+      let capcodeDescription, capcodePlural, capcodeLC;
       if (capcode) {
-        let capcodeDescription, capcodePlural;
-        const capcodeLC = capcode.toLowerCase();
+        capcodeLC = capcode.toLowerCase();
         if (capcode === 'Founder') {
           capcodePlural = 'the Founder';
           capcodeDescription = "4chan's Founder";
@@ -535,29 +533,38 @@ $\
 
       const url = this.threadURL(boardID, threadID);
       const postLink = `${url}#p${ID}`;
-      const quoteLink = this.sameThread(boardID, threadID) ?
-        `javascript:quote('${+ID}');`
-        :
-        `${url}#q${ID}`;
+      const quoteLink = this.sameThread(boardID, threadID) ? `javascript:quote('${+ID}');` : `${url}#q${ID}`;
 
-      const postInfo = { innerHTML: PostInfoPage };
+      const postInfo = {
+        innerHTML: generatePostInfoHtml(
+          ID, o, subject, capcode, email, name, tripcode, pass, capcodeLC, capcodePlural, staticPath, gifIcon,
+          capcodeDescription, uniqueID, flag, flagCode, flagCodeTroll, dateUTC, dateText, postLink, quoteLink, boardID,
+          threadID,
+        )
+      };
 
       /* File Info */
 
-      if (file) {
-        const protocol = /^https?:(?=\/\/i\.4cdn\.org\/)/;
-        const fileURL = file.url.replace(protocol, '');
-        const shortFilename = this.shortFilename(file.name);
-        const fileThumb = file.isSpoiler ? this.spoilerThumb(boardID) : file.thumbURL.replace(protocol, '');
-      }
 
-      const fileBlock = { innerHTML: FilePage };
+      const protocol = /^https?:(?=\/\/i\.4cdn\.org\/)/;
+      const fileURL = file?.url?.replace(protocol, '');
+      const shortFilename = this.shortFilename(file?.name);
+      const fileThumb = file?.isSpoiler ? this.spoilerThumb(boardID) : file?.thumbURL?.replace(protocol, '');
+
+      const fileBlock = {
+        innerHTML: generateFileHtml(file, ID, boardID, fileURL, shortFilename, fileThumb, o, staticPath, gifIcon)
+      };
 
       /* Whole Post */
 
       const postClass = o.isReply ? 'reply' : 'op';
 
-      const wholePost = { innerHTML: PostPage };
+      const wholePost = {
+        innerHTML: (o.isReply ? `<div class="sideArrows" id="sa${ID}">&gt;&gt;</div>` : '') +
+          `<div id="p${ID}" class="post ${postClass}${o.capcodeHighlight ? ' highlightPost' : ''}">` +
+          (o.isReply ? postInfo.innerHTML + fileBlock.innerHTML : fileBlock.innerHTML + postInfo.innerHTML) +
+          `<blockquote class="postMessage" id="m${ID}">${commentHTML.innerHTML}</blockquote></div>`
+      };
 
       const container = $.el('div', {
         className: `postContainer ${postClass}Container`,
@@ -656,7 +663,10 @@ $\
       const postCount = data.replies + 1;
       const fileCount = data.images + !!data.ext;
 
-      const container = $.el('div', { innerHTML: CatalogThreadPage });
+      const container = $.el('div', {
+        innerHTML:
+          generateCatalogThreadHtml(thread, src, imgClass, data, postCount, fileCount, pageCount, staticPath, gifIcon)
+      });
       $.before(thread.OP.nodes.info, [...Array.from(container.childNodes)]);
 
       for (var br of $$('br', thread.OP.nodes.comment)) {
@@ -693,7 +703,12 @@ $\
 
       const link = this.postURL(thread.board.ID, thread.ID, data.no);
       return $.el('div', { className: 'catalog-reply' },
-        { innerHTML: CatalogReplyPage });
+        {
+          innerHTML: `<span><time data-utc="${data.time * 1000}" data-abbrev="1">...</time>: </span> ` +
+            `<a class="catalog-reply-excerpt" href="${link}">${excerpt}</a> ` +
+            `<a class="catalog-reply-preview" href="${link}">...</a>`
+        }
+      );
     }
   }
 };

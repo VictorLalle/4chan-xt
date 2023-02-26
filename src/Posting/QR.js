@@ -108,7 +108,10 @@ var QR = {
     if (origToggle = $.id('togglePostFormLink')) {
       const link = $.el('h1',
         { className: "qr-link-container" });
-      $.extend(link, { innerHTML: '<a href="javascript:;" class="qr-link">?{g.VIEW === "thread"}{Reply to Thread}{Start a Thread}</a>' });
+      $.extend(link, {
+        innerHTML:
+          `<a href="javascript:;" class="qr-link">${g.VIEW === "thread" ? "Reply to Thread" : "Start a Thread"}</a>`
+      });
 
       QR.link = link.firstElementChild;
       $.on(link.firstChild, 'click', function () {
@@ -1868,7 +1871,10 @@ var QR = {
 
     error(className, message, link) {
       const div = $.el('div', { className });
-      $.extend(div, { innerHTML: `${message}?{link}{ [<a href="${link}" target="_blank">More info</a>]}<br>[<a href="javascript:;">delete post</a>] [<a href="javascript:;">delete all</a>]` });
+      $.extend(div, {
+        innerHTML: message + (link ? ` [<a href="${link}" target="_blank">More info</a>]` : '') +
+          `<br>[<a href="javascript:;">delete post</a>] [<a href="javascript:;">delete all</a>]`
+      });
       (this.errors || (this.errors = [])).push(div);
       const [rm, rmAll] = Array.from($$('a', div));
       $.on(div, 'click', () => {
