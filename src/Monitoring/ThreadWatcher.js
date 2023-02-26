@@ -13,6 +13,12 @@ import PostRedirect from '../Posting/PostRedirect';
 import QuoteYou from '../Quotelinks/QuoteYou';
 import Unread from './Unread';
 import UnreadIndex from './UnreadIndex';
+import Header from '../General/Header';
+import Index from '../General/Index';
+import { Conf, g } from '../globals/globals';
+import Menu from '../Menu/Menu';
+import UI from '../General/UI';
+import Get from '../General/Get';
 
 /*
  * decaffeinate suggestions:
@@ -46,25 +52,25 @@ const ThreadWatcher = {
     this.unreaddb = Unread.db || UnreadIndex.db || new DataBoard('lastReadPosts');
     this.unreadEnabled = Conf['Remember Last Read Post'];
 
-    $.on(d, 'QRPostSuccessful', this.cb.post);
+    $.on(document, 'QRPostSuccessful', this.cb.post);
     $.on(sc, 'click', this.toggleWatcher);
     $.on(this.refreshButton, 'click', this.buttonFetchAll);
     $.on(this.closeButton, 'click', this.toggleWatcher);
 
     this.menu.addHeaderMenuEntry();
-    $.onExists(doc, 'body', this.addDialog);
+    $.onExists(document.documentElement, 'body', this.addDialog);
 
     switch (g.VIEW) {
       case 'index':
-        $.on(d, 'IndexUpdate', this.cb.onIndexUpdate);
+        $.on(document, 'IndexUpdate', this.cb.onIndexUpdate);
         break;
       case 'thread':
-        $.on(d, 'ThreadUpdate', this.cb.onThreadRefresh);
+        $.on(document, 'ThreadUpdate', this.cb.onThreadRefresh);
         break;
     }
 
     if (Conf['Fixed Thread Watcher']) {
-      $.addClass(doc, 'fixed-watcher');
+      $.addClass(document.documentElement, 'fixed-watcher');
     }
     if (!Conf['Persistent Thread Watcher']) {
       $.addClass(ThreadWatcher.shortcut, 'disabled');
@@ -166,7 +172,7 @@ const ThreadWatcher = {
   addDialog() {
     if (!Main.isThisPageLegit()) { return; }
     ThreadWatcher.build();
-    return $.prepend(d.body, ThreadWatcher.dialog);
+    return $.prepend(document.body, ThreadWatcher.dialog);
   },
 
   toggleWatcher() {
@@ -337,7 +343,7 @@ const ThreadWatcher = {
     const { db } = ThreadWatcher;
     const interval = Conf['Show Page'] || (ThreadWatcher.unreadEnabled && Conf['Show Unread Count']) ? 5 * $.MINUTE : 2 * $.HOUR;
     const now = Date.now();
-    if ((now - interval >= ((middle = db.data.lastChecked || 0)) || middle > now) && !d.hidden && !!d.hasFocus()) {
+    if ((now - interval >= ((middle = db.data.lastChecked || 0)) || middle > now) && !document.hidden && !!document.hasFocus()) {
       ThreadWatcher.fetchAllStatus(interval);
     }
     return ThreadWatcher.timeout = setTimeout(ThreadWatcher.fetchAuto, interval);

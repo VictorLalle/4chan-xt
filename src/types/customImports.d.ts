@@ -40,3 +40,11 @@ declare module '*/package.json' {
   }
   export default meta;
 }
+declare module '*/version.json' {
+  const versionInfo: {
+    version: string,
+    /** ISO */
+    date: string,
+  }
+  export default versionInfo;
+}

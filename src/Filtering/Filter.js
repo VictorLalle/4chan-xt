@@ -1,7 +1,10 @@
 import Callbacks from "../classes/Callbacks";
 import Notice from "../classes/Notice";
 import Config from "../config/Config";
+import Get from "../General/Get";
 import Settings from "../General/Settings";
+import { g, Conf } from "../globals/globals";
+import Menu from "../Menu/Menu";
 import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
@@ -23,7 +26,7 @@ const Filter = {
     if ((g.VIEW === 'catalog') && !Conf['Filter in Native Catalog']) { return; }
 
     if (!Conf['Filtered Backlinks']) {
-      $.addClass(doc, 'hide-backlinks');
+      $.addClass(document.documentElement, 'hide-backlinks');
     }
 
     for (var key in Config.filter) {

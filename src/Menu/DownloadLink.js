@@ -1,5 +1,7 @@
+import { g, Conf } from "../globals/globals";
 import ImageCommon from "../Images/ImageCommon";
 import $ from "../platform/$";
+import Menu from "./Menu";
 
 const DownloadLink = {
   init() {

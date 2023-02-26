@@ -1,5 +1,7 @@
 import Callbacks from "../classes/Callbacks";
 import Fetcher from "../classes/Fetcher";
+import Get from "../General/Get";
+import { g, Conf } from "../globals/globals";
 import ExpandComment from "../Miscellaneous/ExpandComment";
 import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
@@ -55,7 +57,7 @@ const QuoteInline = {
 
     const { boardID, threadID, postID } = Get.postDataFromLink(this);
     if (Conf['Inline Cross-thread Quotes Only'] && (g.VIEW === 'thread') && g.posts.get(`${boardID}.${postID}`)?.nodes.root.offsetParent) { return; } // exists and not hidden
-    if ($.hasClass(doc, 'catalog-mode')) { return; }
+    if ($.hasClass(document.documentElement, 'catalog-mode')) { return; }
 
     e.preventDefault();
     const quoter = Get.postFromNode(this);

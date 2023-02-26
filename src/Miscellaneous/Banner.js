@@ -1,5 +1,7 @@
 import DataBoard from "../classes/DataBoard";
+import { Conf, g } from "../globals/globals";
 import Main from "../main/Main";
+import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
 
@@ -16,7 +18,7 @@ const Banner = {
       this.db = new DataBoard('customTitles', null, true);
     }
 
-    $.asap((() => d.body), () => $.asap((() => $('hr')), Banner.ready));
+    $.asap((() => document.body), () => $.asap((() => $('hr')), Banner.ready));
 
     // Let 4chan's JS load the banner if enabled; otherwise, load it ourselves.
     if (g.BOARD.ID !== 'f') {
@@ -58,7 +60,7 @@ const Banner = {
       Unread.title = title;
       return Unread.update();
     } else {
-      return d.title = title;
+      return document.title = title;
     }
   },
 

@@ -1,5 +1,6 @@
 import SimpleDict from "./SimpleDict";
 import $ from "../platform/$";
+import { g } from "../globals/globals";
 
 /*
  * decaffeinate suggestions:

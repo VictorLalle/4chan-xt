@@ -1,5 +1,9 @@
 import Callbacks from "../classes/Callbacks";
 import DataBoard from "../classes/DataBoard";
+import Get from "../General/Get";
+import UI from "../General/UI";
+import { g, Conf } from "../globals/globals";
+import Menu from "../Menu/Menu";
 import $ from "../platform/$";
 import Recursive from "./Recursive";
 
@@ -14,7 +18,7 @@ const PostHiding = {
     if (!['index', 'thread'].includes(g.VIEW) || (!Conf['Reply Hiding Buttons'] && !(Conf['Menu'] && Conf['Reply Hiding Link']))) { return; }
 
     if (Conf['Reply Hiding Buttons']) {
-      $.addClass(doc, "reply-hide");
+      $.addClass(document.documentElement, "reply-hide");
     }
 
     this.db = new DataBoard('hiddenPosts');

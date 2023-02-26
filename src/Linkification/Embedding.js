@@ -1,4 +1,12 @@
+import Get from '../General/Get';
+import Header from '../General/Header';
+import UI from '../General/UI';
+import { g, Conf } from '../globals/globals';
+import ImageHost from '../Images/ImageHost';
+import Main from '../main/Main';
 import $ from '../platform/$';
+import $$ from '../platform/$$';
+import CrossOrigin from '../platform/CrossOrigin';
 import EmbeddingPage from './Embedding/Embed.html';
 /*
  * decaffeinate suggestions:
@@ -18,8 +26,8 @@ const Embedding = {
       this.dialog = UI.dialog('embedding',
         { innerHTML: EmbeddingPage });
       this.media = $('#media-embed', this.dialog);
-      $.one(d, '4chanXInitFinished', this.ready);
-      $.on(d, 'IndexRefreshInternal', () => g.posts.forEach(function (post) {
+      $.one(document, '4chanXInitFinished', this.ready);
+      $.on(document, 'IndexRefreshInternal', () => g.posts.forEach(function (post) {
         for (post of [post, ...post.clones]) {
           for (var embed of post.nodes.embedlinks) {
             Embedding.cb.catalogRemove.call(embed);
@@ -28,7 +36,7 @@ const Embedding = {
       }));
     }
     if (Conf['Link Title']) {
-      return $.on(d, '4chanXInitFinished PostsInserted', function () {
+      return $.on(document, '4chanXInitFinished PostsInserted', function () {
         for (var key in Embedding.types) {
           var service = Embedding.types[key];
           if (service.title?.batchSize) {
@@ -106,7 +114,7 @@ const Embedding = {
     post.nodes.embedlinks.push(embed);
 
     if (Conf['Auto-embed'] && !Conf['Floating Embeds'] && !post.isFetchedQuote) {
-      if ($.hasClass(doc, 'catalog-mode')) {
+      if ($.hasClass(document.documentElement, 'catalog-mode')) {
         return $.addClass(embed, 'embed-removed');
       } else {
         return Embedding.cb.toggle.call(embed);
@@ -120,9 +128,9 @@ const Embedding = {
     $.on($('.close', Embedding.dialog), 'click', Embedding.closeFloat);
     $.on($('.move', Embedding.dialog), 'mousedown', Embedding.dragEmbed);
     $.on($('.jump', Embedding.dialog), 'click', function () {
-      if (doc.contains(Embedding.lastEmbed)) { return Header.scrollTo(Embedding.lastEmbed); }
+      if (document.documentElement.contains(Embedding.lastEmbed)) { return Header.scrollTo(Embedding.lastEmbed); }
     });
-    return $.add(d.body, Embedding.dialog);
+    return $.add(document.body, Embedding.dialog);
   },
 
   closeFloat() {
@@ -135,12 +143,12 @@ const Embedding = {
     // only webkit can handle a blocking div
     const { style } = Embedding.media;
     if (Embedding.dragEmbed.mouseup) {
-      $.off(d, 'mouseup', Embedding.dragEmbed);
+      $.off(document, 'mouseup', Embedding.dragEmbed);
       Embedding.dragEmbed.mouseup = false;
       style.pointerEvents = '';
       return;
     }
-    $.on(d, 'mouseup', Embedding.dragEmbed);
+    $.on(document, 'mouseup', Embedding.dragEmbed);
     Embedding.dragEmbed.mouseup = true;
     return style.pointerEvents = 'none';
   },
@@ -203,7 +211,7 @@ const Embedding = {
   cb: {
     click(e) {
       e.preventDefault();
-      if (!$.hasClass(this, 'embedded') && (Conf['Floating Embeds'] || $.hasClass(doc, 'catalog-mode'))) {
+      if (!$.hasClass(this, 'embedded') && (Conf['Floating Embeds'] || $.hasClass(document.documentElement, 'catalog-mode'))) {
         let div;
         if (!(div = Embedding.media.firstChild)) { return; }
         $.replace(div, Embedding.cb.embed(this));
@@ -239,7 +247,7 @@ const Embedding = {
     },
 
     catalogRemove() {
-      const isCatalog = $.hasClass(doc, 'catalog-mode');
+      const isCatalog = $.hasClass(document.documentElement, 'catalog-mode');
       if ((isCatalog && $.hasClass(this, 'embedded')) || (!isCatalog && $.hasClass(this, 'embed-removed'))) {
         Embedding.cb.toggle.call(this);
         return $.toggleClass(this, 'embed-removed');
@@ -599,7 +607,7 @@ const Embedding = {
       var onMessage = function (e) {
         if ((e.source === el.contentWindow) && (e.origin === 'https://twitframe.com')) {
           $.off(window, 'message', onMessage);
-          return (cont || el).style.height = `${+$.minmax(e.data.height, 250, 0.8 * doc.clientHeight)}px`;
+          return (cont || el).style.height = `${+$.minmax(e.data.height, 250, 0.8 * document.documentElement.clientHeight)}px`;
         }
       };
       $.on(window, 'message', onMessage);

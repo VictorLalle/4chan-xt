@@ -1,4 +1,5 @@
 import DataBoard from "../classes/DataBoard";
+import { Conf, g } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -13,7 +14,7 @@ const PostSuccessful = {
   },
 
   ready() {
-    if (d.title !== 'Post successful!') { return; }
+    if (document.title !== 'Post successful!') { return; }
 
     let [_, threadID, postID] = $('h1').nextSibling.textContent.match(/thread:(\d+),no:(\d+)/);
     postID = +postID;

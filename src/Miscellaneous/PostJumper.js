@@ -1,5 +1,7 @@
 import Callbacks from "../classes/Callbacks";
+import { Conf, g, E } from "../globals/globals";
 import $ from "../platform/$";
+import $$ from "../platform/$$";
 
 /*
  * decaffeinate suggestions:

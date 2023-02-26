@@ -9,11 +9,16 @@
     "checkJs": true,
     "noEmit": true,
     "types": [
-      "@violentmonkey/types"
+      "@violentmonkey/types",
+      "@types/chrome"
     ],
     "lib": [
       "DOM",
       "ES2020"
     ],
+    "outDir": "builds/test/tsOutput",
   },
+  "exclude": [
+    "builds/test/tsOutput"
+  ]
 }

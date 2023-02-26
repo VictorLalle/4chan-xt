@@ -1,5 +1,8 @@
 import Callbacks from "../classes/Callbacks";
 import Post from "../classes/Post";
+import Get from "../General/Get";
+import Index from "../General/Index";
+import { g, Conf } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
@@ -14,7 +17,7 @@ const ExpandThread = {
   init() {
     if (!((g.VIEW === 'index') && Conf['Thread Expansion'])) { return; }
     if (Conf['JSON Index']) {
-      return $.on(d, 'IndexRefreshInternal', this.onIndexRefresh);
+      return $.on(document, 'IndexRefreshInternal', this.onIndexRefresh);
     } else {
       return Callbacks.Thread.push({
         name: 'Expand Thread',
@@ -43,7 +46,7 @@ const ExpandThread = {
       delete ExpandThread.statuses[threadID];
     }
 
-    if (!refresh) { return $.off(d, 'IndexRefreshInternal', this.onIndexRefresh); }
+    if (!refresh) { return $.off(document, 'IndexRefreshInternal', this.onIndexRefresh); }
   },
 
   onIndexRefresh() {

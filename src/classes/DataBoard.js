@@ -1,3 +1,4 @@
+import { Conf, g } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -9,7 +10,6 @@ import $ from "../platform/$";
  */
 export default class DataBoard {
   static keys = ['hiddenThreads', 'hiddenPosts', 'lastReadPosts', 'yourPosts', 'watchedThreads', 'watcherLastModified', 'customTitles'];
-  static changes = [];
 
   constructor(key, sync, dontClean) {
     this.onSync = this.onSync.bind(this);
@@ -21,10 +21,12 @@ export default class DataBoard {
     // Chrome also fires the onChanged callback on the current tab,
     // so we only start syncing when we're ready.
     var init = () => {
-      $.off(d, '4chanXInitFinished', init);
+      $.off(document, '4chanXInitFinished', init);
       return this.sync = sync;
     };
-    $.on(d, '4chanXInitFinished', init);
+    $.on(document, '4chanXInitFinished', init);
+
+    this.changes = [];
   }
 
   initData(data) {

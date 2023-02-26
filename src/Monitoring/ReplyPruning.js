@@ -1,5 +1,9 @@
 import Callbacks from "../classes/Callbacks";
+import Header from "../General/Header";
+import UI from "../General/UI";
+import { g, Conf, E } from "../globals/globals";
 import $ from "../platform/$";
+import QuoteThreading from "../Quotelinks/QuoteThreading";
 
 /*
  * decaffeinate suggestions:
@@ -105,8 +109,8 @@ const ReplyPruning = {
 
     $.on(ReplyPruning.inputs.enabled, 'change', ReplyPruning.update);
     $.on(ReplyPruning.inputs.replies, 'change', ReplyPruning.update);
-    $.on(d, 'ThreadUpdate', ReplyPruning.updateCount);
-    $.on(d, 'ThreadUpdate', ReplyPruning.update);
+    $.on(document, 'ThreadUpdate', ReplyPruning.updateCount);
+    $.on(document, 'ThreadUpdate', ReplyPruning.update);
 
     return ReplyPruning.update();
   },
@@ -128,7 +132,7 @@ const ReplyPruning = {
       0;
 
     // Record position from bottom of document
-    const oldPos = d.body.clientHeight - window.scrollY;
+    const oldPos = document.body.clientHeight - window.scrollY;
 
     const { posts } = ReplyPruning.thread;
 
@@ -166,7 +170,7 @@ const ReplyPruning = {
 
     // Maintain position in thread when posts are added/removed above
     if ((hidden1 !== hidden2) && ((boardTop = Header.getTopOf($('.board'))) < 0)) {
-      return window.scrollBy(0, Math.max(d.body.clientHeight - oldPos, window.scrollY + boardTop) - window.scrollY);
+      return window.scrollBy(0, Math.max(document.body.clientHeight - oldPos, window.scrollY + boardTop) - window.scrollY);
     }
   }
 };

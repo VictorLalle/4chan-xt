@@ -1,5 +1,7 @@
 import Callbacks from "../classes/Callbacks";
 import RandomAccessList from "../classes/RandomAccessList";
+import Header from "../General/Header";
+import { Conf, g } from "../globals/globals";
 import ReplyPruning from "../Monitoring/ReplyPruning";
 import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
@@ -33,7 +35,7 @@ const QuoteThreading = {
     $.on(this.input, 'change', this.setEnabled);
     $.on(this.input, 'change', this.rethread);
     $.on(this.threadNewLink.firstElementChild, 'click', this.rethread);
-    $.on(d, '4chanXInitFinished', () => { return this.ready = true; });
+    $.on(document, '4chanXInitFinished', () => { return this.ready = true; });
 
     Header.menu.addEntry(this.entry = {
       el: this.controls,

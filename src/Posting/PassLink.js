@@ -1,3 +1,5 @@
+import { g, Conf } from "../globals/globals";
+import Main from "../main/Main";
 import $ from "../platform/$";
 /*
  * decaffeinate suggestions:

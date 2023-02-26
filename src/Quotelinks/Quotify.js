@@ -1,6 +1,7 @@
 import Redirect from "../Archive/Redirect";
 import Callbacks from "../classes/Callbacks";
 import Post from "../classes/Post";
+import { g, Conf } from "../globals/globals";
 import ExpandComment from "../Miscellaneous/ExpandComment";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
@@ -15,7 +16,7 @@ const Quotify = {
   init() {
     if (!['index', 'thread'].includes(g.VIEW) || !Conf['Resurrect Quotes']) { return; }
 
-    $.addClass(doc, 'resurrect-quotes');
+    $.addClass(document.documentElement, 'resurrect-quotes');
 
     if (Conf['Comment Expansion']) {
       ExpandComment.callbacks.push(this.node);

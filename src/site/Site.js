@@ -1,5 +1,7 @@
+import { Conf, g } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
+import SW from "./SW";
 
 /*
  * decaffeinate suggestions:
@@ -23,7 +25,7 @@ const Site = {
       this.set(hostname);
       cb();
     }
-    return $.onExists(doc, 'body', () => {
+    return $.onExists(document.documentElement, 'body', () => {
       for (var software in SW) {
         var changes;
         if (changes = SW[software].detect?.()) {

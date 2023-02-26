@@ -1,4 +1,6 @@
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import Menu from "./Menu";
 
 /*
  * decaffeinate suggestions:
@@ -22,7 +24,7 @@ const ReportLink = {
       order: 10,
       open(post) {
         ReportLink.url = `//sys.${location.hostname.split('.')[1]}.org/${post.board}/imgboard.php?mode=report&no=${post}`;
-        if (d.cookie.indexOf('pass_enabled=1') >= 0) {
+        if (document.cookie.indexOf('pass_enabled=1') >= 0) {
           ReportLink.dims = 'width=350,height=275';
         } else {
           ReportLink.dims = 'width=400,height=550';

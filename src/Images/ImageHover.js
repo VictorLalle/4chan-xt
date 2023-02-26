@@ -1,6 +1,10 @@
 import Callbacks from "../classes/Callbacks";
+import Header from "../General/Header";
+import UI from "../General/UI";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
 import ImageCommon from "./ImageCommon";
+import Volume from "./Volume";
 
 /*
  * decaffeinate suggestions:
@@ -38,7 +42,7 @@ const ImageHover = {
   mouseover(post, file) {
     return function (e) {
       let el, height, width;
-      if (!doc.contains(this)) { return; }
+      if (!document.documentElement.contains(this)) { return; }
       const { isVideo } = file;
       if (file.isExpanding || file.isExpanded || g.SITE.isThumbExpanded?.(file)) { return; }
       const error = ImageHover.error(post, file);
@@ -69,8 +73,8 @@ const ImageHover = {
       }
       if (file.dimensions) {
         [width, height] = (file.dimensions.split('x').map((x) => +x));
-        const maxWidth = doc.clientWidth;
-        const maxHeight = doc.clientHeight - UI.hover.padding;
+        const maxWidth = document.documentElement.clientWidth;
+        const maxHeight = document.documentElement.clientHeight - UI.hover.padding;
         const scale = Math.min(1, maxWidth / width, maxHeight / height);
         width *= scale;
         height *= scale;

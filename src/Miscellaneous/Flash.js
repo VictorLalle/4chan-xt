@@ -1,3 +1,4 @@
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
 
 /*

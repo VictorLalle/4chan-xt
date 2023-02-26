@@ -3,11 +3,19 @@ import typescript from '@rollup/plugin-typescript';
 import setupFileInliner from "./rollup-plugin-inline-file.js";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from 'url';
+import generateMetadata from "../src/meta/metadata.js";
+import { readFile, writeFile } from "fs/promises";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 (async () => {
-  const inlineFile = await setupFileInliner();
+  const packageJsonFile = await readFile(resolve(__dirname, '../package.json'));
+  const packageJson = JSON.parse(packageJsonFile.toString());
+
+  const metadata = await generateMetadata(packageJson);
+  await writeFile(resolve(__dirname, `../builds/test/${packageJson.meta.path}.meta.js`), metadata);
+
+  const inlineFile = await setupFileInliner(packageJson);
 
   const bundle = await rollup({
     input: resolve(__dirname, '../src/main/Main.js'),
@@ -28,18 +36,26 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
         wrap: false,
         transformer(input) {
           const data = JSON.parse(input);
-          return `export default ${JSON.stringify(data.meta)};`;
+          return `export default ${JSON.stringify(data.meta, undefined, 1)};`;
+        }
+      }),
+      inlineFile({
+        include: "**/*.json",
+        exclude: "**/package.json",
+        wrap: false,
+        transformer(input) {
+          return `export default ${input};`;
         }
       })
-    ],
-    output: {
-      format: "es",
-      name: "bundle.js",
-    }
+    ]
   });
 
   const bundledResult = await bundle.write({
+    banner: metadata,
     // file: '../builds/test/rollupOutput.js',
-    dir: resolve(__dirname, '../builds/test/')
+    name: "bundle.js",
+    dir: resolve(__dirname, '../builds/test/'),
+    format: "iife",
+    generatedCode: { constBindings: false }
   });
 })();

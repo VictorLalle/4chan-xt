@@ -19,6 +19,7 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 - old build scripts are also kept around for reference until the new build output is fully functional
 - the es 2020 target was choses for optional chaining
 - @violentmonkey/types was chosen over @types/greasemonkey because @types/greasemonkey only declares the GM object, and not GM\_ functions
+- I don't really understand PostClone, so that might have bugs after migration
 
 ## Recommendations
 

@@ -7,7 +7,7 @@ import $ from "../platform/$";
  */
 const PostRedirect = {
   init() {
-    return $.on(d, 'QRPostSuccessful', e => {
+    return $.on(document, 'QRPostSuccessful', e => {
       if (!e.detail.redirect) { return; }
       this.event = e;
       this.delays = 0;

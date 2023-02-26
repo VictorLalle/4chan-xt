@@ -1,3 +1,5 @@
+import Header from "../General/Header";
+import { Conf, g } from "../globals/globals";
 import $ from "../platform/$";
 /*
  * decaffeinate suggestions:
@@ -7,10 +9,10 @@ import $ from "../platform/$";
 const PSAHiding = {
   init() {
     if (!Conf['Announcement Hiding'] || !g.SITE.selectors.psa) { return; }
-    $.addClass(doc, 'hide-announcement');
-    $.onExists(doc, g.SITE.selectors.psa, this.setup);
+    $.addClass(document.documentElement, 'hide-announcement');
+    $.onExists(document.documentElement, g.SITE.selectors.psa, this.setup);
     return $.ready(function () {
-      if (!$(g.SITE.selectors.psa)) { return $.rmClass(doc, 'hide-announcement'); }
+      if (!$(g.SITE.selectors.psa)) { return $.rmClass(document.documentElement, 'hide-announcement'); }
     });
   },
 
@@ -50,7 +52,7 @@ const PSAHiding = {
     }
 
     PSAHiding.sync(Conf['hiddenPSAList']);
-    $.rmClass(doc, 'hide-announcement');
+    $.rmClass(document.documentElement, 'hide-announcement');
 
     return $.sync('hiddenPSAList', PSAHiding.sync);
   },
@@ -81,8 +83,7 @@ const PSAHiding = {
     } else {
       $.add(psa, Array.from(content.childNodes));
     }
-    // TODO check if hr exists
-    return PSAHiding.hr.hidden = psa.hidden;
+    if (PSAHiding.hr) PSAHiding.hr.hidden = psa.hidden;
   }
 };
 export default PSAHiding;

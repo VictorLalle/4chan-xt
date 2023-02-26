@@ -1,4 +1,5 @@
 import Callbacks from "../classes/Callbacks";
+import { Conf, g } from "../globals/globals";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
 
@@ -10,7 +11,7 @@ import $$ from "../platform/$$";
 const RemoveSpoilers = {
   init() {
     if (Conf['Reveal Spoilers']) {
-      $.addClass(doc, 'reveal-spoilers');
+      $.addClass(document.documentElement, 'reveal-spoilers');
     }
 
     if (!Conf['Remove Spoilers']) { return; }

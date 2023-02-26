@@ -1,4 +1,5 @@
 import Notice from '../classes/Notice.js';
+import { Conf } from '../globals/globals.js';
 import $ from '../platform/$.js';
 import CrossOrigin from '../platform/CrossOrigin.js';
 import archives from './archives.js';

@@ -1,5 +1,7 @@
 import Callbacks from "../classes/Callbacks";
 import Post from "../classes/Post";
+import Index from "../General/Index";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -17,7 +19,7 @@ const RelativeDates = {
       Index.enabled
     ) {
       this.flush();
-      $.on(d, 'visibilitychange PostsInserted', this.flush);
+      $.on(document, 'visibilitychange PostsInserted', this.flush);
     }
 
     if (Conf['Relative Post Dates']) {
@@ -101,7 +103,7 @@ const RelativeDates = {
   stale: [],
   flush() {
     // No point in changing the dates until the user sees them.
-    if (d.hidden) { return; }
+    if (document.hidden) { return; }
 
     const now = new Date();
     for (var data of RelativeDates.stale) { RelativeDates.update(data, now); }
@@ -163,7 +165,7 @@ const RelativeDates = {
   markStale(data) {
     if (RelativeDates.stale.includes(data)) { return; } // We can call RelativeDates.update() multiple times.
     if (data instanceof Post && !g.posts.get(data.fullID)) { return; } // collected post.
-    if (data instanceof Element && !doc.contains(data)) { return; } // removed catalog reply.
+    if (data instanceof Element && !document.documentElement.contains(data)) { return; } // removed catalog reply.
     return RelativeDates.stale.push(data);
   }
 };

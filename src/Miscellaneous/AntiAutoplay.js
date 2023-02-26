@@ -1,4 +1,5 @@
 import Callbacks from "../classes/Callbacks";
+import { Conf } from "../globals/globals";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
 
@@ -10,14 +11,14 @@ import $$ from "../platform/$$";
 const AntiAutoplay = {
   init() {
     if (!Conf['Disable Autoplaying Sounds']) { return; }
-    $.addClass(doc, 'anti-autoplay');
-    for (var audio of $$('audio[autoplay]', doc)) { this.stop(audio); }
+    $.addClass(document.documentElement, 'anti-autoplay');
+    for (var audio of $$('audio[autoplay]', document.documentElement)) { this.stop(audio); }
     window.addEventListener('loadstart', (e => this.stop(e.target)), true);
     Callbacks.Post.push({
       name: 'Disable Autoplaying Sounds',
       cb: this.node
     });
-    return $.ready(() => this.process(d.body));
+    return $.ready(() => this.process(document.body));
   },
 
   stop(audio) {

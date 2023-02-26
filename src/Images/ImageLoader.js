@@ -1,4 +1,6 @@
 import Callbacks from "../classes/Callbacks";
+import Header from "../General/Header";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -17,14 +19,14 @@ const ImageLoader = {
       cb: this.node
     });
 
-    $.on(d, 'PostsInserted', function () {
+    $.on(document, 'PostsInserted', function () {
       if (ImageLoader.prefetchEnabled || replace) {
         return g.posts.forEach(ImageLoader.prefetchAll);
       }
     });
 
     if (Conf['Replace WEBM']) {
-      $.on(d, 'scroll visibilitychange 4chanXInitFinished PostsInserted', this.playVideos);
+      $.on(document, 'scroll visibilitychange 4chanXInitFinished PostsInserted', this.playVideos);
     }
 
     if (!Conf['Image Prefetching'] || !['index', 'thread'].includes(g.VIEW)) { return; }
@@ -82,8 +84,8 @@ const ImageLoader = {
     }
     const replace = Conf[`Replace ${type}`] && !/spoiler/.test(thumb.src || thumb.dataset.src);
     if (!replace && !ImageLoader.prefetchEnabled) { return; }
-    if ($.hasClass(doc, 'catalog-mode')) { return; }
-    if (![post, ...post.clones].some(clone => doc.contains(clone.nodes.root))) { return; }
+    if ($.hasClass(document.documentElement, 'catalog-mode')) { return; }
+    if (![post, ...post.clones].some(clone => document.documentElement.contains(clone.nodes.root))) { return; }
     file.isPrefetched = true;
     if (file.videoThumb) {
       for (clone of post.clones) { clone.file.thumb.preload = 'auto'; }

@@ -1,7 +1,11 @@
 import Callbacks from "../classes/Callbacks";
 import DataBoard from "../classes/DataBoard";
 import RandomAccessList from "../classes/RandomAccessList";
+import Get from "../General/Get";
+import Header from "../General/Header";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import QuoteYou from "../Quotelinks/QuoteYou";
 import Favicon from "./Favicon";
 import ThreadWatcher from "./ThreadWatcher";
 
@@ -50,16 +54,16 @@ const Unread = {
 
   node() {
     Unread.thread = this;
-    Unread.title = d.title;
+    Unread.title = document.title;
     Unread.lastReadPost = Unread.db?.get({
       boardID: this.board.ID,
       threadID: this.ID
     }) || 0;
     Unread.readCount = 0;
     for (var ID of this.posts.keys) { if (+ID <= Unread.lastReadPost) { Unread.readCount++; } }
-    $.one(d, '4chanXInitFinished', Unread.ready);
-    $.on(d, 'PostsInserted', Unread.onUpdate);
-    $.on(d, 'ThreadUpdate', function (e) { if (e.detail[404]) { return Unread.update(); } });
+    $.one(document, '4chanXInitFinished', Unread.ready);
+    $.on(document, 'PostsInserted', Unread.onUpdate);
+    $.on(document, 'ThreadUpdate', function (e) { if (e.detail[404]) { return Unread.update(); } });
     const resetLink = $.el('a', {
       href: 'javascript:;',
       className: 'unread-reset',
@@ -78,8 +82,8 @@ const Unread = {
     Unread.setLine(true);
     Unread.read();
     Unread.update();
-    $.on(d, 'scroll visibilitychange', Unread.read);
-    if (Conf['Unread Line']) { return $.on(d, 'visibilitychange', Unread.setLine); }
+    $.on(document, 'scroll visibilitychange', Unread.read);
+    if (Conf['Unread Line']) { return $.on(document, 'visibilitychange', Unread.setLine); }
   },
 
   positionPrev() {
@@ -213,7 +217,7 @@ const Unread = {
       Unread.saveLastReadPost();
     }
 
-    if (d.hidden || !Unread.posts.size) { return; }
+    if (document.hidden || !Unread.posts.size) { return; }
 
     let count = 0;
     while (Unread.position) {
@@ -262,7 +266,7 @@ const Unread = {
 
   setLine(force) {
     if (!Conf['Unread Line']) { return; }
-    if (Unread.hr.hidden || d.hidden || (force === true)) {
+    if (Unread.hr.hidden || document.hidden || (force === true)) {
       const oldPosition = Unread.linePosition;
       if (Unread.linePosition = Unread.positionPrev()) {
         if (Unread.linePosition !== oldPosition) {
@@ -288,7 +292,7 @@ const Unread = {
         Unread.title.replace('-', (Unread.thread.isArchived ? '- Archived -' : '- 404 -'))
         :
         Unread.title;
-      d.title = `${titleQuotingYou}${titleCount}${titleDead}`;
+      document.title = `${titleQuotingYou}${titleCount}${titleDead}`;
     }
 
     Unread.saveThreadWatcherCount();

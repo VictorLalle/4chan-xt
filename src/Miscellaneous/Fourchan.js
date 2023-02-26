@@ -1,4 +1,6 @@
 import Callbacks from "../classes/Callbacks";
+import BoardConfig from "../General/BoardConfig";
+import { g } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
@@ -109,11 +111,11 @@ const Fourchan = {
       this.nodes.comment.normalize();
     }
     var cb = () => {
-      if (!doc.contains(this.nodes.comment)) { return; }
-      $.off(d, 'PostsInserted', cb);
+      if (!document.documentElement.contains(this.nodes.comment)) { return; }
+      $.off(document, 'PostsInserted', cb);
       return $.event('mathjax', null, this.nodes.comment);
     };
-    $.on(d, 'PostsInserted', cb);
+    $.on(document, 'PostsInserted', cb);
     return cb();
   }
 };

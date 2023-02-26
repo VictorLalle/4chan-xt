@@ -8,6 +8,12 @@ import $$ from '../platform/$$';
 import CrossOrigin from '../platform/CrossOrigin';
 import Captcha from './Captcha';
 import meta from '../../package.json';
+import Header from '../General/Header';
+import { Conf, g } from '../globals/globals';
+import Menu from '../Menu/Menu';
+import UI from '../General/UI';
+import BoardConfig from '../General/BoardConfig';
+import Get from '../General/Get';
 
 /*
  * decaffeinate suggestions:
@@ -49,7 +55,7 @@ var QR = {
 
     this.posts = [];
 
-    $.on(d, '4chanXInitFinished', () => BoardConfig.ready(QR.initReady));
+    $.on(document, '4chanXInitFinished', () => BoardConfig.ready(QR.initReady));
 
     Callbacks.Post.push({
       name: 'Quick Reply',
@@ -128,17 +134,17 @@ var QR = {
       if (navLinksBot = $('.navLinksBot')) { $.prepend(navLinksBot, linkBot); }
     }
 
-    $.on(d, 'QRGetFile', QR.getFile);
-    $.on(d, 'QRDrawFile', QR.drawFile);
-    $.on(d, 'QRSetFile', QR.setFile);
+    $.on(document, 'QRGetFile', QR.getFile);
+    $.on(document, 'QRDrawFile', QR.drawFile);
+    $.on(document, 'QRSetFile', QR.setFile);
 
-    $.on(d, 'paste', QR.paste);
-    $.on(d, 'dragover', QR.dragOver);
-    $.on(d, 'drop', QR.dropFile);
-    $.on(d, 'dragstart dragend', QR.drag);
+    $.on(document, 'paste', QR.paste);
+    $.on(document, 'dragover', QR.dragOver);
+    $.on(document, 'drop', QR.dropFile);
+    $.on(document, 'dragstart dragend', QR.drag);
 
-    $.on(d, 'IndexRefreshInternal', QR.generatePostableThreadsList);
-    $.on(d, 'ThreadUpdate', QR.statusCheck);
+    $.on(document, 'IndexRefreshInternal', QR.generatePostableThreadsList);
+    $.on(document, 'ThreadUpdate', QR.statusCheck);
 
     if (!Conf['Persistent QR']) { return; }
     QR.open();
@@ -202,7 +208,7 @@ var QR = {
   focus() {
     return $.queueTask(function () {
       if (!QR.inBubble()) {
-        QR.hasFocus = d.activeElement && QR.nodes.el.contains(d.activeElement);
+        QR.hasFocus = document.activeElement && QR.nodes.el.contains(document.activeElement);
         return QR.nodes.el.classList.toggle('focus', QR.hasFocus);
       }
     });
@@ -210,7 +216,7 @@ var QR = {
 
   inBubble() {
     const bubbles = $$('iframe[src^="https://www.google.com/recaptcha/api2/frame"]');
-    return bubbles.includes(d.activeElement) || bubbles.some(el => (getComputedStyle(el).visibility !== 'hidden') && (el.getBoundingClientRect().bottom > 0));
+    return bubbles.includes(document.activeElement) || bubbles.some(el => (getComputedStyle(el).visibility !== 'hidden') && (el.getBoundingClientRect().bottom > 0));
   },
 
   hide() {
@@ -233,7 +239,7 @@ var QR = {
   },
 
   blur() {
-    if (QR.nodes.el.contains(d.activeElement)) { return d.activeElement.blur(); }
+    if (QR.nodes.el.contains(document.activeElement)) { return document.activeElement.blur(); }
   },
 
   toggleSJIS(e) {
@@ -288,8 +294,8 @@ var QR = {
     const notice = new Notice('warning', el);
     QR.notifications.push(notice);
     if (!Header.areNotificationsEnabled) {
-      if (d.hidden && !QR.cooldown.auto) { return alert(el.textContent); }
-    } else if (d.hidden || !(focusOverride || d.hasFocus())) {
+      if (document.hidden && !QR.cooldown.auto) { return alert(el.textContent); }
+    } else if (document.hidden || !(focusOverride || document.hasFocus())) {
       const notif = new Notification(el.textContent, {
         body: el.textContent,
         icon: Favicon.logo
@@ -367,7 +373,7 @@ var QR = {
     let range;
     e?.preventDefault();
     if (!QR.postingIsEnabled) { return; }
-    const sel = d.getSelection();
+    const sel = document.getSelection();
     const post = Get.postFromNode(this);
     const { root } = post.nodes;
     const postRange = new Range();
@@ -478,8 +484,8 @@ var QR = {
   drag(e) {
     // Let it drag anything from the page.
     const toggle = e.type === 'dragstart' ? $.off : $.on;
-    toggle(d, 'dragover', QR.dragOver);
-    return toggle(d, 'drop', QR.dropFile);
+    toggle(document, 'dragover', QR.dragOver);
+    return toggle(document, 'drop', QR.dropFile);
   },
 
   dragOver(e) {
@@ -570,7 +576,7 @@ var QR = {
       QR.handleFile(file, files.length);
     }
     if (files.length !== 1) { $.addClass(QR.nodes.el, 'dump'); }
-    if ((d.activeElement === QR.nodes.fileButton) && $.hasClass(QR.nodes.fileSubmit, 'has-file')) {
+    if ((document.activeElement === QR.nodes.fileButton) && $.hasClass(QR.nodes.fileSubmit, 'has-file')) {
       return QR.nodes.filename.focus();
     }
   },
@@ -705,7 +711,7 @@ var QR = {
     window.addEventListener('focus', QR.focus, true);
     window.addEventListener('blur', QR.focus, true);
     // We don't receive blur events from captcha iframe.
-    $.on(d, 'click', QR.focus);
+    $.on(document, 'click', QR.focus);
 
     // XXX Workaround for image pasting in Firefox, obsolete as of v50.
     // https://bugzilla.mozilla.org/show_bug.cgi?id=906420
@@ -741,7 +747,7 @@ var QR = {
     QR.cooldown.setup();
     QR.captcha.init();
 
-    $.add(d.body, dialog);
+    $.add(document.body, dialog);
     QR.captcha.setup();
     QR.oekaki.setup();
 
@@ -835,14 +841,14 @@ var QR = {
       if (!err) { err = 'Original comment required.'; }
     }
 
-    if (QR.captcha.isEnabled && !((QR.captcha === Captcha.v2) && /\b_ct=/.test(d.cookie) && threadID) && !(err && !force)) {
+    if (QR.captcha.isEnabled && !((QR.captcha === Captcha.v2) && /\b_ct=/.test(document.cookie) && threadID) && !(err && !force)) {
       captcha = QR.captcha.getOne(!!threadID);
       if (QR.captcha === Captcha.v2) {
         if (!captcha) { captcha = Captcha.cache.request(!!threadID); }
       }
       if (!captcha) {
         err = 'No valid captcha.';
-        QR.captcha.setup(!QR.cooldown.auto || (d.activeElement === QR.nodes.status));
+        QR.captcha.setup(!QR.cooldown.auto || (document.activeElement === QR.nodes.status));
       }
     }
 
@@ -1006,7 +1012,7 @@ var QR = {
       } else { // stop auto-posting
         QR.cooldown.auto = false;
       }
-      QR.captcha.setup(QR.cooldown.auto && [QR.nodes.status, d.body].includes(d.activeElement));
+      QR.captcha.setup(QR.cooldown.auto && [QR.nodes.status, document.body].includes(document.activeElement));
       QR.status();
       QR.error(err);
       return;
@@ -1038,7 +1044,7 @@ var QR = {
 
     if (postsCount) {
       post.rm();
-      QR.captcha.setup(d.activeElement === QR.nodes.status);
+      QR.captcha.setup(document.activeElement === QR.nodes.status);
     } else if (Conf['Persistent QR']) {
       post.rm();
       if (Conf['Auto Hide QR']) {
@@ -1114,7 +1120,7 @@ var QR = {
     return QR.status();
   },
 
-  Cooldown: {
+  cooldown: {
     seconds: 0,
     delays: {
       deletion: 60
@@ -1436,7 +1442,7 @@ var QR = {
     },
 
     load(cb) {
-      if ($('script[src^="//s.4cdn.org/js/tegaki"]', d.head)) {
+      if ($('script[src^="//s.4cdn.org/js/tegaki"]', document.head)) {
         return cb();
       } else {
         const style = $.el('link', {
@@ -1452,7 +1458,7 @@ var QR = {
         };
         $.on(style, 'load', onload);
         $.on(script, 'load', onload);
-        return $.add(d.head, [style, script]);
+        return $.add(document.head, [style, script]);
       }
     },
 
@@ -1600,7 +1606,7 @@ var QR = {
       let m;
       if (QR.persona.pwd != null) {
         return QR.persona.pwd;
-      } else if (m = d.cookie.match(/4chan_pass=([^;]+)/)) {
+      } else if (m = document.cookie.match(/4chan_pass=([^;]+)/)) {
         return decodeURIComponent(m[1]);
       } else {
         return '';
@@ -1851,7 +1857,7 @@ var QR = {
         var post = QR.posts[i];
         if ((errors = post.errors)) {
           for (var error of errors) {
-            if (doc.contains(error)) {
+            if (document.documentElement.contains(error)) {
               post.rm();
               break;
             }
@@ -1883,7 +1889,7 @@ var QR = {
     dismissErrors(test = () => true) {
       if (this.errors) {
         for (var error of this.errors) {
-          if (doc.contains(error) && test(error)) {
+          if (document.documentElement.contains(error) && test(error)) {
             error.parentNode.previousElementSibling.click();
           }
         }

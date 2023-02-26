@@ -2,8 +2,12 @@ import Notice from "../classes/Notice";
 import Config from "../config/Config";
 import Filter from "../Filtering/Filter";
 import ThreadHiding from "../Filtering/ThreadHiding";
+import BoardConfig from "../General/BoardConfig";
+import Get from "../General/Get";
+import Header from "../General/Header";
 import Index from "../General/Index";
 import Settings from "../General/Settings";
+import { Conf, g } from "../globals/globals";
 import FappeTyme from "../Images/FappeTyme";
 import Gallery from "../Images/Gallery";
 import ImageExpand from "../Images/ImageExpand";
@@ -36,13 +40,13 @@ const Keybinds = {
     }
 
     var init = function () {
-      $.off(d, '4chanXInitFinished', init);
-      $.on(d, 'keydown', Keybinds.keydown);
+      $.off(document, '4chanXInitFinished', init);
+      $.on(document, 'keydown', Keybinds.keydown);
       for (var node of $$('[accesskey]')) {
         node.removeAttribute('accesskey');
       }
     };
-    return $.on(d, '4chanXInitFinished', init);
+    return $.on(document, '4chanXInitFinished', init);
   },
 
   sync(key, hotkey) {

@@ -1,3 +1,4 @@
+import { Conf } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
@@ -37,7 +38,7 @@ const SWTinyboard = {
   ],
 
   detect() {
-    for (var script of $$('script:not([src])', d.head)) {
+    for (var script of $$('script:not([src])', document.head)) {
       var m;
       if (m = script.textContent.match(/\bvar configRoot=(".*?")/)) {
         var properties = $.dict();
@@ -270,7 +271,7 @@ $\
     const { text, link, thumb } = file;
     if ($.x(`ancestor::${this.xpath.postContainer}[1]`, text) !== post.nodes.root) { return false; } // file belongs to a reply
     if (!(infoNode = link.nextSibling?.textContent.includes('(') ? link.nextSibling : link.nextElementSibling)) { return false; }
-    if (!(info = infoNode.textContent.match(/\((.*,\s*)?([\d.]+ ?[KMG]?B).*\)/))) { return false; }
+    if (!(info = infoNode.textContent.match(/\((.*,\s*)?([\document.]+ ?[KMG]?B).*\)/))) { return false; }
     const nameNode = $('.postfilename', text);
     $.extend(file, {
       name: nameNode ? (nameNode.title || nameNode.textContent) : link.pathname.match(/[^/]*$/)[0],

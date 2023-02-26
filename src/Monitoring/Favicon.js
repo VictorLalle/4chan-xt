@@ -38,17 +38,17 @@ import Metro_unreadNSFWY from './Favicon/Metro.unreadNSFWY.png';
 import dead from './Favicon/dead.gif';
 import empty from './Favicon/empty.gif';
 import $ from '../platform/$';
+import { Conf } from '../globals/globals';
 
 /*
  * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
 const Favicon = {
   init() {
-    return $.asap((() => d.head && (Favicon.el = $('link[rel="shortcut icon"]', d.head))), Favicon.initAsap);
+    return $.asap((() => document.head && (Favicon.el = $('link[rel="shortcut icon"]', document.head))), Favicon.initAsap);
   },
 
   set(status) {
@@ -56,7 +56,7 @@ const Favicon = {
     if (Favicon.el) {
       Favicon.el.href = Favicon[status];
       // `favicon.href = href` doesn't work on Firefox.
-      return $.add(d.head, Favicon.el);
+      return $.add(document.head, Favicon.el);
     }
   },
 
@@ -131,7 +131,7 @@ const Favicon = {
       items[i] = t + items[i++];
     }
 
-    [f.unreadDead, f.unreadDeadY, f.unreadSFW, f.unreadSFWY, f.unreadNSFW, f.unreadNSFWY] = Array.from(items);
+    [f.unreadDead, f.unreadDeadY, f.unreadSFW, f.unreadSFWY, f.unreadNSFW, f.unreadNSFWY] = items;
     return f.update();
   },
 

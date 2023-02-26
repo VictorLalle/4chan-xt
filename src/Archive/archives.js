@@ -1,3 +1,4 @@
+// This file is needed in the build step, keep it .js
 const archives = [{
   "uid": 3,
   "name": "4plebs",

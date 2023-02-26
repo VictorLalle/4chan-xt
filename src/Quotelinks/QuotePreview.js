@@ -1,3 +1,9 @@
+import Callbacks from "../classes/Callbacks";
+import Fetcher from "../classes/Fetcher";
+import Get from "../General/Get";
+import Header from "../General/Header";
+import UI from "../General/UI";
+import { Conf, g } from "../globals/globals";
 import ExpandComment from "../Miscellaneous/ExpandComment";
 import $ from "../platform/$";
 
@@ -13,7 +19,7 @@ const QuotePreview = {
     if (!Conf['Quote Previewing']) { return; }
 
     if (g.VIEW === 'archive') {
-      $.on(d, 'mouseover', function (e) {
+      $.on(document, 'mouseover', function (e) {
         if ((e.target.nodeName === 'A') && $.hasClass(e.target, 'quotelink')) {
           return QuotePreview.mouseover.call(e.target, e);
         }
@@ -40,7 +46,7 @@ const QuotePreview = {
 
   mouseover(e) {
     let origin;
-    if (($.hasClass(this, 'inlined') && !$.hasClass(doc, 'catalog-mode')) || !d.contains(this)) { return; }
+    if (($.hasClass(this, 'inlined') && !$.hasClass(document.documentElement, 'catalog-mode')) || !document.contains(this)) { return; }
 
     const { boardID, threadID, postID } = Get.postDataFromLink(this);
 

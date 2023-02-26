@@ -7,6 +7,16 @@
 import galleryPage from './Gallery/Gallery.html';
 import $ from '../platform/$';
 import Callbacks from '../classes/Callbacks';
+import Notice from '../classes/Notice';
+import Main from '../main/Main';
+import Keybinds from '../Miscellaneous/Keybinds';
+import $$ from '../platform/$$';
+import ImageCommon from './ImageCommon';
+import Sauce from './Sauce';
+import Volume from './Volume';
+import Header from '../General/Header';
+import { Conf, g } from '../globals/globals';
+import UI from '../General/UI';
 
 const Gallery = {
   init() {
@@ -58,9 +68,9 @@ const Gallery = {
     const { cb } = Gallery;
 
     if (Conf['Fullscreen Gallery']) {
-      $.one(d, 'fullscreenchange mozfullscreenchange webkitfullscreenchange', () => $.on(d, 'fullscreenchange mozfullscreenchange webkitfullscreenchange', cb.close));
-      doc.mozRequestFullScreen?.();
-      doc.webkitRequestFullScreen?.(Element.ALLOW_KEYBOARD_INPUT);
+      $.one(document, 'fullscreenchange mozfullscreenchange webkitfullscreenchange', () => $.on(document, 'fullscreenchange mozfullscreenchange webkitfullscreenchange', cb.close));
+      document.documentElement.mozRequestFullScreen?.();
+      document.documentElement.webkitRequestFullScreen?.(Element.ALLOW_KEYBOARD_INPUT);
     }
 
     Gallery.images = [];
@@ -108,8 +118,8 @@ const Gallery = {
       nodes.menu.addEntry(entry);
     }
 
-    $.on(d, 'keydown', cb.keybinds);
-    if (Conf['Keybinds']) { $.off(d, 'keydown', Keybinds.keydown); }
+    $.on(document, 'keydown', cb.keybinds);
+    if (Conf['Keybinds']) { $.off(document, 'keydown', Keybinds.keydown); }
 
     $.on(window, 'resize', Gallery.cb.setHeight);
 
@@ -129,9 +139,9 @@ const Gallery = {
         }
       }
     }
-    $.addClass(doc, 'gallery-open');
+    $.addClass(document.documentElement, 'gallery-open');
 
-    $.add(d.body, dialog);
+    $.add(document.body, dialog);
 
     nodes.thumbs.scrollTop = 0;
     nodes.current.parentElement.scrollTop = 0;
@@ -140,7 +150,7 @@ const Gallery = {
     if (!thumb) { thumb = Gallery.images[Gallery.images.length - 1]; }
     if (thumb) { Gallery.open(thumb); }
 
-    doc.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     return nodes.total.textContent = Gallery.images.length;
   },
 
@@ -216,7 +226,7 @@ const Gallery = {
       if (Conf['Show Controls']) { ImageCommon.addControls(file); }
     }
 
-    doc.classList.toggle('gal-pdf', file.nodeName === 'IFRAME');
+    document.documentElement.classList.toggle('gal-pdf', file.nodeName === 'IFRAME');
     Gallery.cb.setHeight();
     nodes.count.textContent = +thumb.dataset.id + 1;
     nodes.name.download = (nodes.name.textContent = thumb.title);
@@ -414,24 +424,24 @@ const Gallery = {
       $.off(Gallery.nodes.current, 'error', Gallery.error);
       ImageCommon.pause(Gallery.nodes.current);
       $.rm(Gallery.nodes.el);
-      $.rmClass(doc, 'gallery-open');
+      $.rmClass(document.documentElement, 'gallery-open');
       if (Conf['Fullscreen Gallery']) {
-        $.off(d, 'fullscreenchange mozfullscreenchange webkitfullscreenchange', Gallery.cb.close);
-        d.mozCancelFullScreen?.();
-        d.webkitExitFullscreen?.();
+        $.off(document, 'fullscreenchange mozfullscreenchange webkitfullscreenchange', Gallery.cb.close);
+        document.mozCancelFullScreen?.();
+        document.webkitExitFullscreen?.();
       }
       delete Gallery.nodes;
       delete Gallery.fileIDs;
-      doc.style.overflow = '';
+      document.documentElement.style.overflow = '';
 
-      $.off(d, 'keydown', Gallery.cb.keybinds);
-      if (Conf['Keybinds']) { $.on(d, 'keydown', Keybinds.keydown); }
+      $.off(document, 'keydown', Gallery.cb.keybinds);
+      if (Conf['Keybinds']) { $.on(document, 'keydown', Keybinds.keydown); }
       $.off(window, 'resize', Gallery.cb.setHeight);
       return clearTimeout(Gallery.timeoutID);
     },
 
     setFitness() {
-      return (this.checked ? $.addClass : $.rmClass)(doc, `gal-${this.name.toLowerCase().replace(/\s+/g, '-')}`);
+      return (this.checked ? $.addClass : $.rmClass)(document.documentElement, `gal-${this.name.toLowerCase().replace(/\s+/g, '-')}`);
     },
 
     setHeight: $.debounce(100, function () {
@@ -442,7 +452,7 @@ const Gallery = {
       if (Conf['Stretch to Fit'] && (dim = g.posts.get(current.dataset.post)?.files[+current.dataset.file].dimensions)) {
         const [width, height] = dim.split('x');
         let containerWidth = frame.clientWidth;
-        let containerHeight = doc.clientHeight - 25;
+        let containerHeight = document.documentElement.clientHeight - 25;
         if (((current.dataRotate || 0) % 180) === 90) {
           [containerWidth, containerHeight] = [containerHeight, containerWidth];
         }
@@ -454,7 +464,7 @@ const Gallery = {
       }
 
       if (((current.dataRotate || 0) % 180) === 90) {
-        style.maxWidth = Conf['Fit Height'] ? `${doc.clientHeight - 25}px` : 'none';
+        style.maxWidth = Conf['Fit Height'] ? `${document.documentElement.clientHeight - 25}px` : 'none';
         style.maxHeight = Conf['Fit Width'] ? `${frame.clientWidth}px` : 'none';
         margin = (current.clientWidth - current.clientHeight) / 2;
         return style.margin = `${margin}px ${-margin}px`;

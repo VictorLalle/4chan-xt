@@ -1,4 +1,5 @@
 import $ from "../platform/$";
+import QR from "./QR";
 
 /*
  * decaffeinate suggestions:
@@ -7,7 +8,7 @@ import $ from "../platform/$";
  */
 const CaptchaT = {
   init() {
-    if (d.cookie.indexOf('pass_enabled=1') >= 0) { return; }
+    if (document.cookie.indexOf('pass_enabled=1') >= 0) { return; }
     if (!(this.isEnabled = !!$('#t-root') || !$.id('postForm'))) { return; }
 
     const root = $.el('div', { className: 'captcha-root' });

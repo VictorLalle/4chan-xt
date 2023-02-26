@@ -1,4 +1,5 @@
 import Callbacks from "../classes/Callbacks";
+import { g, Conf } from "../globals/globals";
 
 /*
  * decaffeinate suggestions:

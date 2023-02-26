@@ -5,10 +5,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export default async function setupFileInliner() {
-  const packageJson = await readFile(resolve(__dirname, '../package.json'));
-  const packageJsonParsed = JSON.parse(packageJson.toString());
-
+export default async function setupFileInliner(packageJson) {
   /** @param {string} string */
   const escape = (string) => string.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\\${');
 
@@ -46,7 +43,7 @@ export default async function setupFileInliner() {
 
           code = escape(code);
           code = code.replace(/<%= meta\.(\w+) %>/g, (match, $1) => {
-            return escape(packageJsonParsed.meta[$1]);
+            return escape(packageJson.meta[$1]);
           });
           return `export default \`${code}\`;`;
         }

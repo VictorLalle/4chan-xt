@@ -5,6 +5,10 @@ import $$ from "../platform/$$";
 import meta from '../../package.json';
 import Index from "../General/Index";
 import Site from "../site/Site";
+import Header from "../General/Header";
+import { g, Conf } from "../globals/globals";
+import UI from "../General/UI";
+import Get from "../General/Get";
 
 /*
  * decaffeinate suggestions:

@@ -1,3 +1,4 @@
+import { g } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
 

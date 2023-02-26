@@ -1,6 +1,10 @@
 import Callbacks from "../classes/Callbacks";
 import DataBoard from "../classes/DataBoard";
 import Notice from "../classes/Notice";
+import Get from "../General/Get";
+import Header from "../General/Header";
+import { Conf, g } from "../globals/globals";
+import Menu from "../Menu/Menu";
 import ExpandComment from "../Miscellaneous/ExpandComment";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
@@ -17,7 +21,7 @@ const QuoteYou = {
 
     this.db = new DataBoard('yourPosts');
     $.sync('Remember Your Posts', enabled => Conf['Remember Your Posts'] = enabled);
-    $.on(d, 'QRPostSuccessful', function (e) {
+    $.on(document, 'QRPostSuccessful', function (e) {
       const cb = PostRedirect.delay();
       return $.get('Remember Your Posts', Conf['Remember Your Posts'], function (items) {
         if (!items['Remember Your Posts']) { return; }
@@ -29,11 +33,11 @@ const QuoteYou = {
     if (!['index', 'thread', 'archive'].includes(g.VIEW)) { return; }
 
     if (Conf['Highlight Own Posts']) {
-      $.addClass(doc, 'highlight-own');
+      $.addClass(document.documentElement, 'highlight-own');
     }
 
     if (Conf['Highlight Posts Quoting You']) {
-      $.addClass(doc, 'highlight-you');
+      $.addClass(document.documentElement, 'highlight-you');
     }
 
     if (Conf['Comment Expansion']) {
@@ -133,7 +137,7 @@ const QuoteYou = {
       const { highlight } = g.SITE.classes;
       if (highlighted = $(`.${highlight}`)) { $.rmClass(highlighted, highlight); }
 
-      if (!QuoteYou.lastRead || !doc.contains(QuoteYou.lastRead) || !$.hasClass(QuoteYou.lastRead, 'quotesYou')) {
+      if (!QuoteYou.lastRead || !document.documentElement.contains(QuoteYou.lastRead) || !$.hasClass(QuoteYou.lastRead, 'quotesYou')) {
         if (!(post = (QuoteYou.lastRead = $('.quotesYou')))) {
           new Notice('warning', 'No posts are currently quoting you, loser.', 20);
           return;

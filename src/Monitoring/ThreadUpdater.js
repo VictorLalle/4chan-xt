@@ -8,6 +8,9 @@ import Config from '../config/Config';
 import Settings from '../General/Settings';
 import QuoteThreading from '../Quotelinks/QuoteThreading';
 import Unread from './Unread';
+import Header from '../General/Header';
+import { g, Conf } from '../globals/globals';
+import UI from '../General/UI';
 
 /*
  * decaffeinate suggestions:
@@ -37,8 +40,8 @@ const ThreadUpdater = {
     } else {
       this.dialog = (sc = UI.dialog('updater',
         { innerHTML: '<div class="move"></div><span id="update-status" class="empty"></span><span id="update-timer" class="empty" title="Update now"></span>' }));
-      $.addClass(doc, 'float');
-      $.ready(() => $.add(d.body, sc));
+      $.addClass(document.documentElement, 'float');
+      $.ready(() => $.add(document.body, sc));
     }
 
     this.checkPostCount = 0;
@@ -112,8 +115,8 @@ const ThreadUpdater = {
 
     ThreadUpdater.cb.interval.call($.el('input', { value: Conf['Interval'] }));
 
-    $.on(d, 'QRPostSuccessful', ThreadUpdater.cb.checkpost);
-    $.on(d, 'visibilitychange', ThreadUpdater.cb.visibility);
+    $.on(document, 'QRPostSuccessful', ThreadUpdater.cb.checkpost);
+    $.on(document, 'visibilitychange', ThreadUpdater.cb.visibility);
 
     return ThreadUpdater.setInterval();
   },
@@ -144,7 +147,7 @@ const ThreadUpdater = {
     },
 
     visibility() {
-      if (d.hidden) { return; }
+      if (document.hidden) { return; }
       // Reset the counter when we focus this tab.
       ThreadUpdater.outdateCount = 0;
       if (ThreadUpdater.seconds > ThreadUpdater.interval) {
@@ -153,10 +156,7 @@ const ThreadUpdater = {
     },
 
     scrollBG() {
-      return ThreadUpdater.scrollBG = Conf['Scroll BG'] ?
-        () => true
-        :
-        () => !d.hidden;
+      return ThreadUpdater.scrollBG = Conf['Scroll BG'] ? () => true : () => !document.hidden;
     },
 
     interval(e) {
@@ -254,7 +254,7 @@ const ThreadUpdater = {
     const { interval } = ThreadUpdater;
     if (Conf['Optional Increase']) {
       // Lower the max refresh rate limit on visible tabs.
-      const limit = d.hidden ? 10 : 5;
+      const limit = document.hidden ? 10 : 5;
       const j = Math.min(ThreadUpdater.outdateCount, limit);
 
       // 1 second to 100, 30 to 300.
@@ -409,7 +409,7 @@ const ThreadUpdater = {
 
       Main.callbackNodes('Post', posts);
 
-      if (d.hidden || !d.hasFocus()) {
+      if (document.hidden || !document.hasFocus()) {
         if (Conf['Beep Quoting You'] && (Unread.postsQuotingYou?.size > unreadQYCount)) {
           ThreadUpdater.playBeep();
           if (Conf['Beep']) { ThreadUpdater.playBeep(); }
@@ -419,7 +419,7 @@ const ThreadUpdater = {
       }
 
       const scroll = Conf['Auto Scroll'] && ThreadUpdater.scrollBG() &&
-        ((ThreadUpdater.root.getBoundingClientRect().bottom - doc.clientHeight) < 25);
+        ((ThreadUpdater.root.getBoundingClientRect().bottom - document.documentElement.clientHeight) < 25);
 
       let firstPost = null;
       for (post of posts) {
@@ -432,7 +432,7 @@ const ThreadUpdater = {
 
       if (scroll) {
         if (Conf['Bottom Scroll']) {
-          window.scrollTo(0, d.body.clientHeight);
+          window.scrollTo(0, document.body.clientHeight);
         } else {
           if (firstPost) { Header.scrollTo(firstPost); }
         }

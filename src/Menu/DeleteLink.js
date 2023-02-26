@@ -1,5 +1,8 @@
 import Notice from "../classes/Notice";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import QR from "../Posting/QR";
+import Menu from "./Menu";
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns

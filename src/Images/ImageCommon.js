@@ -1,6 +1,10 @@
 import Redirect from "../Archive/Redirect";
 import Notice from "../classes/Notice";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import CrossOrigin from "../platform/CrossOrigin";
+import ImageHost from "./ImageHost";
+import Volume from "./Volume";
 
 /*
  * decaffeinate suggestions:
@@ -139,7 +143,7 @@ const ImageCommon = {
           hidden: true
         }
         );
-        $.add(d.body, a);
+        $.add(document.body, a);
         a.click();
         return $.rm(a);
       } else {

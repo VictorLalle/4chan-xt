@@ -22,9 +22,14 @@ import ThreadWatcher from '../Monitoring/ThreadWatcher';
 import $$ from '../platform/$$';
 import $ from '../platform/$';
 import QuotePreview from '../Quotelinks/QuotePreview';
+import { Conf, g } from '../globals/globals';
+import Header from './Header';
+import UI from './UI';
+import Menu from '../Menu/Menu';
 
 import NavLinksPage from './Index/NavLinks.html';
 import PageListPage from './Index/PageList.html';
+import BoardConfig from './BoardConfig';
 
 const Index = {
   showHiddenThreads: false,
@@ -39,8 +44,8 @@ const Index = {
     if (g.VIEW !== 'index') { return; }
 
     // For IndexRefresh events
-    $.one(d, '4chanXInitFinished', this.cb.initFinished);
-    $.on(d, 'PostsInserted', this.cb.postsInserted);
+    $.one(document, '4chanXInitFinished', this.cb.initFinished);
+    $.on(document, 'PostsInserted', this.cb.postsInserted);
 
     if (!this.enabledOn(g.BOARD)) { return; }
 
@@ -70,10 +75,10 @@ const Index = {
     this.currentPage = this.getCurrentPage();
     this.processHash();
 
-    $.addClass(doc, 'index-loading', `${Conf['Index Mode'].replace(/\ /g, '-')}-mode`);
+    $.addClass(document.documentElement, 'index-loading', `${Conf['Index Mode'].replace(/\ /g, '-')}-mode`);
     $.on(window, 'popstate', this.cb.popstate);
-    $.on(d, 'scroll', this.scroll);
-    $.on(d, 'SortIndex', this.cb.resort);
+    $.on(document, 'scroll', this.scroll);
+    $.on(document, 'SortIndex', this.cb.resort);
 
     // Header refresh button
     this.button = $.el('a', {
@@ -111,7 +116,7 @@ const Index = {
         return $.event('change', null, input);
       }
     };
-    $.on(d, 'OpenSettings', () => $.on($.id('fourchanx-settings'), 'change', watchSettings));
+    $.on(document, 'OpenSettings', () => $.on($.id('fourchanx-settings'), 'change', watchSettings));
 
     const sortEntry = UI.checkbox('Per-Board Sort Type', 'Per-board sort type', (typeof Conf['Index Sort'] === 'object'));
     sortEntry.title = 'Set the sorting order of each board independently.';
@@ -185,9 +190,9 @@ const Index = {
 
     this.update(true);
 
-    $.onExists(doc, 'title + *', () => d.title = d.title.replace(/\ -\ Page\ \d+/, ''));
+    $.onExists(document.documentElement, 'title + *', () => document.title = document.title.replace(/\ -\ Page\ \d+/, ''));
 
-    $.onExists(doc, '.board > .thread > .postContainer, .board + *', function () {
+    $.onExists(document.documentElement, '.board > .thread > .postContainer, .board + *', function () {
       let el;
       g.SITE.Build.hat = $('.board > .thread > img:first-child');
       if (g.SITE.Build.hat) {
@@ -196,7 +201,7 @@ const Index = {
             return $.prepend(thread.nodes.root, g.SITE.Build.hat.cloneNode(false));
           }
         });
-        $.addClass(doc, 'hats-enabled');
+        $.addClass(document.documentElement, 'hats-enabled');
         $.addStyle(`.catalog-thread::after {background-image: url(${g.SITE.Build.hat.src});}`);
       }
 
@@ -213,7 +218,7 @@ const Index = {
       // - Combine the two and you get a download canceller!
       //   Does not work on Firefox unfortunately. bugzil.la/939713
       try {
-        d.implementation.createDocument(null, null, null).appendChild(board);
+        document.implementation.createDocument(null, null, null).appendChild(board);
       } catch (error) { }
 
       for (el of $$('.navLinks')) { $.rm(el); }
@@ -230,12 +235,12 @@ const Index = {
       if (pagelist = $('.pagelist')) {
         $.replace(pagelist, Index.pagelist);
       }
-      return $.rmClass(doc, 'index-loading');
+      return $.rmClass(document.documentElement, 'index-loading');
     });
   },
 
   scroll() {
-    if (Index.req || !Index.liveThreadData || (Conf['Index Mode'] !== 'infinite') || (window.scrollY <= (doc.scrollHeight - (300 + window.innerHeight)))) { return; }
+    if (Index.req || !Index.liveThreadData || (Conf['Index Mode'] !== 'infinite') || (window.scrollY <= (document.documentElement.scrollHeight - (300 + window.innerHeight)))) { return; }
     if (Index.pageNum == null) { Index.pageNum = Index.currentPage; } // Avoid having to pushState to keep track of the current page
 
     const pageNum = ++Index.pageNum;
@@ -330,7 +335,7 @@ const Index = {
       if (!Index.initFinishedFired) { return; }
       let n = 0;
       g.posts.forEach(function (post) {
-        if (!post.isFetchedQuote && !post.indexRefreshSeen && doc.contains(post.nodes.root)) {
+        if (!post.isFetchedQuote && !post.indexRefreshSeen && document.documentElement.contains(post.nodes.root)) {
           post.indexRefreshSeen = true;
           return n++;
         }
@@ -404,11 +409,11 @@ const Index = {
     },
 
     hover() {
-      return doc.classList.toggle('catalog-hover-expand', Conf['Catalog Hover Expand']);
+      return document.documentElement.classList.toggle('catalog-hover-expand', Conf['Catalog Hover Expand']);
     },
 
     hoverToggle(e) {
-      if (Conf['Catalog Hover Toggle'] && $.hasClass(doc, 'catalog-mode') && !$.modifiedClick(e) && !$.x('ancestor-or-self::a', e.target)) {
+      if (Conf['Catalog Hover Toggle'] && $.hasClass(document.documentElement, 'catalog-mode') && !$.modifiedClick(e) && !$.x('ancestor-or-self::a', e.target)) {
         let thread;
         const input = Index.inputs['Catalog Hover Expand'];
         input.checked = !input.checked;
@@ -462,7 +467,7 @@ const Index = {
     },
 
     catalogReplies() {
-      if (Conf['Show Replies'] && $.hasClass(doc, 'catalog-hover-expand') && !this.catalogView.nodes.replies) {
+      if (Conf['Show Replies'] && $.hasClass(document.documentElement, 'catalog-hover-expand') && !this.catalogView.nodes.replies) {
         return Index.buildCatalogReplies(this);
       }
     },
@@ -470,9 +475,9 @@ const Index = {
     hoverAdjust() {
       // Prevent hovered catalog threads from going offscreen.
       let x;
-      if (!$.hasClass(doc, 'catalog-hover-expand')) { return; }
+      if (!$.hasClass(document.documentElement, 'catalog-hover-expand')) { return; }
       const rect = this.post.getBoundingClientRect();
-      if (x = $.minmax(0, -rect.left, doc.clientWidth - rect.right)) {
+      if (x = $.minmax(0, -rect.left, document.documentElement.clientWidth - rect.right)) {
         const { style } = this.post;
         style.left = `${x}px`;
         style.right = `${-x}px`;
@@ -636,7 +641,7 @@ const Index = {
 
   setupMode() {
     for (var mode of ['paged', 'infinite', 'all pages', 'catalog']) {
-      $[mode === Conf['Index Mode'] ? 'addClass' : 'rmClass'](doc, `${mode.replace(/\ /g, '-')}-mode`);
+      $[mode === Conf['Index Mode'] ? 'addClass' : 'rmClass'](document.documentElement, `${mode.replace(/\ /g, '-')}-mode`);
     }
     Index.selectMode.value = Conf['Index Mode'];
     Index.cb.size();
@@ -754,7 +759,7 @@ const Index = {
     }
 
     // Hard refresh in case of incomplete page load.
-    if (!firstTime && (d.readyState !== 'loading') && !$('.board + *')) {
+    if (!firstTime && (document.readyState !== 'loading') && !$('.board + *')) {
       location.reload();
       return;
     }
@@ -798,7 +803,7 @@ const Index = {
       }
     } catch (error) {
       err = error;
-      c.error(`Index failure: ${err.message}`, err.stack);
+      console.error(`Index failure: ${err.message}`, err.stack);
       if (notice) {
         notice.setType('error');
         notice.el.lastElementChild.textContent = 'Index refresh failed.';

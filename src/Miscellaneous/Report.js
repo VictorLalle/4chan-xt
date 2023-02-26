@@ -3,6 +3,7 @@ import $ from "../platform/$";
 import ReportPage from './Report/ArchiveReport.html';
 import CSS from "../css/CSS";
 import Captcha from "../Posting/Captcha";
+import { Conf, g } from "../globals/globals";
 
 /*
  * decaffeinate suggestions:
@@ -27,7 +28,7 @@ const Report = {
     new MutationObserver(function () {
       Report.fit('iframe[src^="https://www.google.com/recaptcha/api2/frame"]');
       return Report.fit('body');
-    }).observe(d.body, {
+    }).observe(document.body, {
       childList: true,
       attributes: true,
       subtree: true
@@ -38,8 +39,8 @@ const Report = {
 
   fit(selector) {
     let el;
-    if (!((el = $(selector, doc)) && (getComputedStyle(el).visibility !== 'hidden'))) { return; }
-    const dy = (el.getBoundingClientRect().bottom - doc.clientHeight) + 8;
+    if (!((el = $(selector, document.documentElement)) && (getComputedStyle(el).visibility !== 'hidden'))) { return; }
+    const dy = (el.getBoundingClientRect().bottom - document.documentElement.clientHeight) + 8;
     if (dy > 0) { return window.resizeBy(0, dy); }
   },
 
@@ -135,7 +136,7 @@ const Report = {
       if (fieldset) {
         $.before(fieldset, line);
       } else {
-        $.add(d.body, line);
+        $.add(document.body, line);
       }
     }
   }

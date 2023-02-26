@@ -1,3 +1,5 @@
+import { Conf, g } from "../globals/globals";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns

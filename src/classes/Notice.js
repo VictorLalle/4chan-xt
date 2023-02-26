@@ -1,3 +1,4 @@
+import Header from "../General/Header";
 import $ from "../platform/$";
 
 export default class Notice {
@@ -25,11 +26,11 @@ export default class Notice {
 
   add() {
     if (this.closed) { return; }
-    if (d.hidden) {
-      $.on(d, 'visibilitychange', this.add);
+    if (document.hidden) {
+      $.on(document, 'visibilitychange', this.add);
       return;
     }
-    $.off(d, 'visibilitychange', this.add);
+    $.off(document, 'visibilitychange', this.add);
     $.add(Header.noticesRoot, this.el);
     this.el.clientHeight; // force reflow
     this.el.style.opacity = 1;
@@ -38,7 +39,7 @@ export default class Notice {
 
   close() {
     this.closed = true;
-    $.off(d, 'visibilitychange', this.add);
+    $.off(document, 'visibilitychange', this.add);
     $.rm(this.el);
     return this.onclose?.();
   }

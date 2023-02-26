@@ -1,6 +1,13 @@
 import Callbacks from "../classes/Callbacks";
 import DataBoard from "../classes/DataBoard";
+import Thread from "../classes/Thread";
+import Index from "../General/Index";
+import UI from "../General/UI";
+import { g, Conf } from "../globals/globals";
+import Main from "../main/Main";
+import Menu from "../Menu/Menu";
 import $ from "../platform/$";
+import $$ from "../platform/$$";
 
 /*
  * decaffeinate suggestions:
@@ -13,9 +20,9 @@ const ThreadHiding = {
     this.db = new DataBoard('hiddenThreads');
     if (g.VIEW === 'catalog') { return this.catalogWatch(); }
     this.catalogSet(g.BOARD);
-    $.on(d, 'IndexRefreshInternal', this.onIndexRefresh);
+    $.on(document, 'IndexRefreshInternal', this.onIndexRefresh);
     if (Conf['Thread Hiding Buttons']) {
-      $.addClass(doc, 'thread-hide');
+      $.addClass(document.documentElement, 'thread-hide');
     }
     return Callbacks.Post.push({
       name: 'Thread Hiding',

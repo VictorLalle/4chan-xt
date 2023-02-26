@@ -1,4 +1,7 @@
 import Callbacks from "../classes/Callbacks";
+import Header from "../General/Header";
+import UI from "../General/UI";
+import { Conf, g } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -78,7 +81,7 @@ const FappeTyme = {
 
   set(type, enabled) {
     this.enabled[type] = (this.nodes[type].checked = enabled);
-    return $[`${enabled ? 'add' : 'rm'}Class`](doc, `${type}Tyme`);
+    return $[`${enabled ? 'add' : 'rm'}Class`](document.documentElement, `${type}Tyme`);
   },
 
   toggle(type) {

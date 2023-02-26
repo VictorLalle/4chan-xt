@@ -6,14 +6,15 @@ import Main from "../main/Main";
 import Keybinds from "../Miscellaneous/Keybinds";
 import $$ from "../platform/$$";
 import QR from "./QR";
+import { Conf } from "../globals/globals";
 
 const Captcha = {
   Cache: {
     init() {
-      $.on(d, 'SaveCaptcha', e => {
+      $.on(document, 'SaveCaptcha', e => {
         return this.saveAPI(e.detail);
       });
-      return $.on(d, 'NoCaptcha', e => {
+      return $.on(document, 'NoCaptcha', e => {
         return this.noCaptcha(e.detail);
       });
     },
@@ -62,7 +63,7 @@ const Captcha = {
     },
 
     haveCookie() {
-      return /\b_ct=/.test(d.cookie) && (QR.posts[0].thread !== 'new');
+      return /\b_ct=/.test(document.cookie) && (QR.posts[0].thread !== 'new');
     },
 
     getOne() {
@@ -111,7 +112,7 @@ const Captcha = {
       if (cb = this.submitCB) {
         if (!this.haveCookie() || detail?.error) {
           QR.error(detail?.error || 'Failed to retrieve captcha.');
-          QR.captcha.setup(d.activeElement === QR.nodes.status);
+          QR.captcha.setup(document.activeElement === QR.nodes.status);
         }
         delete this.submitCB;
         cb();
@@ -161,7 +162,7 @@ const Captcha = {
     lifetime: 2 * $.MINUTE,
 
     init() {
-      if (d.cookie.indexOf('pass_enabled=1') >= 0) { return; }
+      if (document.cookie.indexOf('pass_enabled=1') >= 0) { return; }
       if (!(this.isEnabled = !!$('#g-recaptcha, #captcha-forced-noscript') || !$.id('postForm'))) { return; }
 
       if (this.noscript = Conf['Force Noscript Captcha'] || !Main.jsEnabled) {
@@ -169,7 +170,7 @@ const Captcha = {
       }
 
       Captcha.cache.init();
-      $.on(d, 'CaptchaCount', this.count.bind(this));
+      $.on(document, 'CaptchaCount', this.count.bind(this));
 
       const root = $.el('div', { className: 'captcha-root' });
       $.extend(root, {
@@ -213,7 +214,7 @@ const Captcha = {
       return $.queueTask(() => {
         const needed = Captcha.cache.needed();
         if (needed && !this.prevNeeded) {
-          this.setup(QR.cooldown.auto && (d.activeElement === QR.nodes.status));
+          this.setup(QR.cooldown.auto && (document.activeElement === QR.nodes.status));
         }
         return this.prevNeeded = needed;
       });
@@ -245,7 +246,7 @@ const Captcha = {
         // XXX https://bugzilla.mozilla.org/show_bug.cgi?id=1226835
         $.queueTask(() => {
           let iframe;
-          if (this.nodes.container && (d.activeElement === this.nodes.counter) && (iframe = $('iframe[src^="https://www.google.com/recaptcha/"]', this.nodes.container))) {
+          if (this.nodes.container && (document.activeElement === this.nodes.counter) && (iframe = $('iframe[src^="https://www.google.com/recaptcha/"]', this.nodes.container))) {
             iframe.focus();
             return QR.focus();
           }
@@ -324,12 +325,12 @@ const Captcha = {
 
     setupIFrame(iframe) {
       let needle;
-      if (!doc.contains(iframe)) { return; }
+      if (!document.documentElement.contains(iframe)) { return; }
       Captcha.replace.iframe(iframe);
       $.addClass(QR.nodes.el, 'captcha-open');
       this.fixQRPosition();
       $.on(iframe, 'load', this.fixQRPosition);
-      if (d.activeElement === this.nodes.counter) { iframe.focus(); }
+      if (document.activeElement === this.nodes.counter) { iframe.focus(); }
       // XXX Make sure scroll on space prevention (see src/css/style.css) doesn't cause scrolling of div
       if (['blink', 'edge'].includes($.engine) && (needle = iframe.parentNode, $$('#qr .captcha-container > div > div:first-of-type').includes(needle))) {
         return $.on(iframe.parentNode, 'scroll', function () { return this.scrollTop = 0; });
@@ -337,7 +338,7 @@ const Captcha = {
     },
 
     fixQRPosition() {
-      if (QR.nodes.el.getBoundingClientRect().bottom > doc.clientHeight) {
+      if (QR.nodes.el.getBoundingClientRect().bottom > document.documentElement.clientHeight) {
         QR.nodes.el.style.top = '';
         return QR.nodes.el.style.bottom = '0px';
       }
@@ -371,7 +372,7 @@ const Captcha = {
         timeout: Date.now() + this.lifetime
       });
 
-      const focus = (d.activeElement?.nodeName === 'IFRAME') && /https?:\/\/www\.google\.com\/recaptcha\//.test(d.activeElement.src);
+      const focus = (document.activeElement?.nodeName === 'IFRAME') && /https?:\/\/www\.google\.com\/recaptcha\//.test(document.activeElement.src);
       if (Captcha.cache.needed()) {
         if (focus) {
           if (QR.cooldown.auto || Conf['Post on Captcha Completion']) {

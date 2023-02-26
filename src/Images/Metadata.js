@@ -1,5 +1,8 @@
 import $ from "../platform/$";
 import Callbacks from "../classes/Callbacks";
+import CrossOrigin from "../platform/CrossOrigin";
+import { Conf, g } from "../globals/globals";
+import Get from "../General/Get";
 
 /*
  * decaffeinate suggestions:
@@ -51,7 +54,7 @@ const Metadata = {
         if (title == null) { $.addClass(this.parentNode, 'not-found'); }
         $.before(this, output);
         this.parentNode.tabIndex = 0;
-        if (d.activeElement === this) { this.parentNode.focus(); }
+        if (document.activeElement === this) { this.parentNode.focus(); }
         return this.tabIndex = -1;
       } else {
         $.addClass(this.parentNode, 'error');

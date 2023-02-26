@@ -1,4 +1,8 @@
+import Get from "../General/Get";
+import Header from "../General/Header";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import $$ from "../platform/$$";
 
 /*
  * decaffeinate suggestions:
@@ -36,10 +40,10 @@ const Nav = {
 
     $.add(span, [prev, $.tn(' '), next]);
     var append = function () {
-      $.off(d, '4chanXInitFinished', append);
-      return $.add(d.body, span);
+      $.off(document, '4chanXInitFinished', append);
+      return $.add(document.body, span);
     };
-    return $.on(d, '4chanXInitFinished', append);
+    return $.on(document, '4chanXInitFinished', append);
   },
 
   prev() {
@@ -52,7 +56,7 @@ const Nav = {
 
   next() {
     if (g.VIEW === 'thread') {
-      return window.scrollTo(0, d.body.scrollHeight);
+      return window.scrollTo(0, document.body.scrollHeight);
     } else {
       return Nav.scroll(+1);
     }
@@ -60,7 +64,7 @@ const Nav = {
 
   getThread() {
     if (g.VIEW === 'thread') { return g.threads.get(`${g.BOARD}.${g.THREADID}`).nodes.root; }
-    if ($.hasClass(doc, 'catalog-mode')) { return; }
+    if ($.hasClass(document.documentElement, 'catalog-mode')) { return; }
     for (var threadRoot of $$(g.SITE.selectors.thread)) {
       var thread = Get.threadFromRoot(threadRoot);
       if (thread.isHidden && !thread.stub) { continue; }
@@ -72,7 +76,7 @@ const Nav = {
 
   scroll(delta) {
     let next;
-    d.activeElement?.blur();
+    document.activeElement?.blur();
     let thread = Nav.getThread();
     if (!thread) { return; }
     const axis = delta === +1 ?
@@ -87,25 +91,25 @@ const Nav = {
       if (((delta === +1) && (top < 5)) || ((delta === -1) && (top > -5))) { thread = next; }
     }
     // Add extra space to the end of the page if necessary so that all threads can be selected by keybinds.
-    const extra = (Header.getTopOf(thread) + doc.clientHeight) - d.body.getBoundingClientRect().bottom;
-    if (extra > 0) { d.body.style.marginBottom = `${extra}px`; }
+    const extra = (Header.getTopOf(thread) + document.documentElement.clientHeight) - document.body.getBoundingClientRect().bottom;
+    if (extra > 0) { document.body.style.marginBottom = `${extra}px`; }
 
     Header.scrollTo(thread);
 
     if ((extra > 0) && !Nav.haveExtra) {
       Nav.haveExtra = true;
-      return $.on(d, 'scroll', Nav.removeExtra);
+      return $.on(document, 'scroll', Nav.removeExtra);
     }
   },
 
   removeExtra() {
-    const extra = doc.clientHeight - d.body.getBoundingClientRect().bottom;
+    const extra = document.documentElement.clientHeight - document.body.getBoundingClientRect().bottom;
     if (extra > 0) {
-      return d.body.style.marginBottom = `${extra}px`;
+      return document.body.style.marginBottom = `${extra}px`;
     } else {
-      d.body.style.marginBottom = '';
+      document.body.style.marginBottom = '';
       delete Nav.haveExtra;
-      return $.off(d, 'scroll', Nav.removeExtra);
+      return $.off(document, 'scroll', Nav.removeExtra);
     }
   }
 };

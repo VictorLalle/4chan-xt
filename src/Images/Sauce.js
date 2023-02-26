@@ -1,6 +1,7 @@
 import Callbacks from "../classes/Callbacks";
 import Notice from "../classes/Notice";
 import Filter from "../Filtering/Filter";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -15,7 +16,7 @@ const Sauce = {
   init() {
     let link;
     if (!['index', 'thread'].includes(g.VIEW) || !Conf['Sauce']) { return; }
-    $.addClass(doc, 'show-sauce');
+    $.addClass(document.documentElement, 'show-sauce');
 
     const links = [];
     for (link of Conf['sauces'].split('\n')) {

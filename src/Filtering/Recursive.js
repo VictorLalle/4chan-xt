@@ -1,4 +1,5 @@
 import Callbacks from "../classes/Callbacks";
+import { g } from "../globals/globals";
 import $ from "../platform/$";
 
 /*

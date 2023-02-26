@@ -1,5 +1,9 @@
 import Callbacks from "../classes/Callbacks";
 import Config from "../config/Config";
+import Get from "../General/Get";
+import Header from "../General/Header";
+import UI from "../General/UI";
+import { Conf, g } from "../globals/globals";
 import Nav from "../Miscellaneous/Nav";
 import $ from "../platform/$";
 import ImageCommon from "./ImageCommon";
@@ -25,7 +29,7 @@ const ImageExpand = {
 
     $.on(this.EAI, 'click', this.cb.toggleAll);
     Header.addShortcut('expand-all', this.EAI, 520);
-    $.on(d, 'scroll visibilitychange', this.cb.playVideos);
+    $.on(document, 'scroll visibilitychange', this.cb.playVideos);
     this.videoControls = $.el('span', { className: 'video-controls' });
     $.extend(this.videoControls, { innerHTML: " <a href=\"javascript:;\" title=\"You can also contract the video by dragging it to the left.\">contract</a>" });
 
@@ -79,7 +83,7 @@ const ImageExpand = {
       const threadRoot = Nav.getThread();
       const toggle = function (post) {
         const { file } = post;
-        if (!file || (!file.isImage && !file.isVideo) || !doc.contains(post.nodes.root)) { return; }
+        if (!file || (!file.isImage && !file.isVideo) || !document.documentElement.contains(post.nodes.root)) { return; }
         if (ImageExpand.on &&
           ((!Conf['Expand spoilers'] && file.isSpoiler) ||
             (!Conf['Expand videos'] && file.isVideo) ||
@@ -125,7 +129,7 @@ const ImageExpand = {
     },
 
     setFitness() {
-      return $[this.checked ? 'addClass' : 'rmClass'](doc, this.name.toLowerCase().replace(/\s+/g, '-'));
+      return $[this.checked ? 'addClass' : 'rmClass'](document.documentElement, this.name.toLowerCase().replace(/\s+/g, '-'));
     }
   },
 
@@ -156,7 +160,7 @@ const ImageExpand = {
     if (el = file.fullImage) {
       const top = Header.getTopOf(el);
       bottom = top + el.getBoundingClientRect().height;
-      oldHeight = d.body.clientHeight;
+      oldHeight = document.body.clientHeight;
       ({ scrollY } = window);
     }
 
@@ -171,10 +175,10 @@ const ImageExpand = {
 
     if (!el) { return; }
 
-    if (doc.contains(el)) {
+    if (document.documentElement.contains(el)) {
       if (bottom <= 0) {
         // For images entirely above us, scroll to remain in place.
-        window.scrollBy(0, ((scrollY - window.scrollY) + d.body.clientHeight) - oldHeight);
+        window.scrollBy(0, ((scrollY - window.scrollY) + document.body.clientHeight) - oldHeight);
       } else {
         // For images not above us that would be moved above us, scroll to the thumbnail.
         Header.scrollToIfNeeded(post.nodes.root);
@@ -262,7 +266,7 @@ const ImageExpand = {
     if (!file.isExpanding) { return; } // contracted before the image loaded
 
     const bottom = Header.getTopOf(file.thumb) + file.thumb.getBoundingClientRect().height;
-    const oldHeight = d.body.clientHeight;
+    const oldHeight = document.body.clientHeight;
     const { scrollY } = window;
 
     $.addClass(post.nodes.root, 'expanded-image');
@@ -271,14 +275,14 @@ const ImageExpand = {
     delete file.isExpanding;
 
     // Scroll to keep our place in the thread when images are expanded above us.
-    if (doc.contains(post.nodes.root) && (bottom <= 0)) {
-      window.scrollBy(0, ((scrollY - window.scrollY) + d.body.clientHeight) - oldHeight);
+    if (document.documentElement.contains(post.nodes.root) && (bottom <= 0)) {
+      window.scrollBy(0, ((scrollY - window.scrollY) + document.body.clientHeight) - oldHeight);
     }
 
     // Scroll to display full image.
     if (file.scrollIntoView) {
       delete file.scrollIntoView;
-      const imageBottom = Math.min(doc.clientHeight - file.fullImage.getBoundingClientRect().bottom - 25, Header.getBottomOf(file.fullImage));
+      const imageBottom = Math.min(document.documentElement.clientHeight - file.fullImage.getBoundingClientRect().bottom - 25, Header.getBottomOf(file.fullImage));
       if (imageBottom < 0) {
         window.scrollBy(0, Math.min(-imageBottom, Header.getTopOf(file.fullImage)));
       }
@@ -296,8 +300,8 @@ const ImageExpand = {
       return;
     }
     fullImage.controls = false;
-    $.asap((() => doc.contains(fullImage)), function () {
-      if (!d.hidden && Header.isNodeVisible(fullImage)) {
+    $.asap((() => document.documentElement.contains(fullImage)), function () {
+      if (!document.hidden && Header.isNodeVisible(fullImage)) {
         return fullImage.play();
       } else {
         return post.file.wasPlaying = true;

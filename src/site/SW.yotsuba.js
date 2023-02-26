@@ -5,13 +5,15 @@ import $ from "../platform/$";
 import $$ from "../platform/$$";
 import Captcha from "../Posting/Captcha";
 import PostSuccessful from "../Posting/PostSuccessful";
+import ImageHost from "../Images/ImageHost";
+import { g, Conf } from "../globals/globals";
+import BoardConfig from "../General/BoardConfig";
 
 import PostInfoPage from './SW.yotsuba.Build/PostInfo.html';
 import FilePage from './SW.yotsuba.Build/File.html';
 import PostPage from './SW.yotsuba.Build/Post.html';
 import CatalogThreadPage from './SW.yotsuba.Build/CatalogThread.html';
 import CatalogReplyPage from './SW.yotsuba.Build/CatalogReply.html';
-import ImageHost from "../Images/ImageHost";
 
 /*
  * decaffeinate suggestions:
@@ -146,14 +148,14 @@ $\
   isThisPageLegit() {
     // not 404 error page or similar.
     return ['boards.4chan.org', 'boards.4channel.org'].includes(location.hostname) &&
-      d.doctype &&
-      !$('link[href*="favicon-status.ico"]', d.head) &&
-      !['4chan - Temporarily Offline', '4chan - Error', '504 Gateway Time-out', 'MathJax Equation Source'].includes(d.title);
+      document.doctype &&
+      !$('link[href*="favicon-status.ico"]', document.head) &&
+      !['4chan - Temporarily Offline', '4chan - Error', '504 Gateway Time-out', 'MathJax Equation Source'].includes(document.title);
   },
 
   is404() {
     // XXX Sometimes threads don't 404 but are left over as stubs containing one garbage reply post.
-    return ['4chan - Temporarily Offline', '4chan - 404 Not Found'].includes(d.title) || ((g.VIEW === 'thread') && $('.board') && !$('.opContainer'));
+    return ['4chan - Temporarily Offline', '4chan - 404 Not Found'].includes(document.title) || ((g.VIEW === 'thread') && $('.board') && !$('.opContainer'));
   },
 
   isIncomplete() {
@@ -178,7 +180,7 @@ $\
         if (SWYotsuba.regexp.pass.test(location.href)) {
           PassMessage.init();
         } else {
-          $.onExists(doc, 'body', () => $.addStyle(CSS.www));
+          $.onExists(document.documentElement, 'body', () => $.addStyle(CSS.www));
           Captcha.replace.init();
         }
         return;
@@ -206,7 +208,7 @@ $\
   },
 
   scriptData() {
-    for (var script of $$('script:not([src])', d.head)) {
+    for (var script of $$('script:not([src])', document.head)) {
       if (/\bcooldowns *=/.test(script.textContent)) { return script.textContent; }
     }
     return '';
@@ -256,7 +258,7 @@ $\
   parseFile(post, file) {
     let info;
     const { text, link, thumb } = file;
-    if (!(info = link.nextSibling?.textContent.match(/\(([\d.]+ [KMG]?B).*\)/))) { return false; }
+    if (!(info = link.nextSibling?.textContent.match(/\(([\document.]+ [KMG]?B).*\)/))) { return false; }
     $.extend(file, {
       name: text.title || link.title || link.textContent,
       size: info[1],

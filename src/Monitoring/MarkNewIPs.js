@@ -1,4 +1,5 @@
 import Callbacks from "../classes/Callbacks";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -19,7 +20,7 @@ const MarkNewIPs = {
   node() {
     MarkNewIPs.ipCount = this.ipCount;
     MarkNewIPs.postCount = this.posts.keys.length;
-    return $.on(d, 'ThreadUpdate', MarkNewIPs.onUpdate);
+    return $.on(document, 'ThreadUpdate', MarkNewIPs.onUpdate);
   },
 
   onUpdate(e) {

@@ -1,7 +1,12 @@
 import Callbacks from "../classes/Callbacks";
 import DataBoard from "../classes/DataBoard";
+import Get from "../General/Get";
+import Header from "../General/Header";
+import Index from "../General/Index";
+import { g, Conf } from "../globals/globals";
 import ExpandThread from "../Miscellaneous/ExpandThread";
 import $ from "../platform/$";
+import QuoteYou from "../Quotelinks/QuoteYou";
 import ThreadWatcher from "./ThreadWatcher";
 
 /*
@@ -26,8 +31,8 @@ const UnreadIndex = {
       cb: this.node
     });
 
-    $.on(d, 'IndexRefreshInternal', this.onIndexRefresh);
-    return $.on(d, 'PostsInserted PostsRemoved', this.onPostsInserted);
+    $.on(document, 'IndexRefreshInternal', this.onIndexRefresh);
+    return $.on(document, 'PostsInserted PostsRemoved', this.onPostsInserted);
   },
 
   node() {

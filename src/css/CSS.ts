@@ -42,17 +42,18 @@ import www from './www.css';
 import yotsubaB from './yotsuba-b.css';
 import yotsuba from './yotsuba.css';
 import { fa, icons } from './style';
+import { g } from '../globals/globals';
 
 // <%
-  // var inc       = require['style'];
-  // var faCSS     = read('/node_modules/font-awesome/css/font-awesome.css');
-  // var faWebFont = readBase64('/node_modules/font-awesome/fonts/fontawesome-webfont.woff');
-  // var mainCSS   = ['font-awesome', 'style', 'yotsuba', 'yotsuba-b', 'futaba', 'burichan', 'tomorrow', 'photon', 'spooky'].map(x => read(`${x}.css`)).join('');
+// var inc       = require['style'];
+// var faCSS     = read('/node_modules/font-awesome/css/font-awesome.css');
+// var faWebFont = readBase64('/node_modules/font-awesome/fonts/fontawesome-webfont.woff');
+// var mainCSS   = ['font-awesome', 'style', 'yotsuba', 'yotsuba-b', 'futaba', 'burichan', 'tomorrow', 'photon', 'spooky'].map(x => read(`${x}.css`)).join('');
 //   var iconNames = files.filter(f => /^linkify\.[^.]+\.png$/.test(f));
 //   var icons     = iconNames.map(readBase64);
 // %>
 
-const mainCSS = fontAwesome + style + yotsuba +yotsubaB+futaba+burichan+tomorrow + photon + spooky;
+const mainCSS = fontAwesome + style + yotsuba + yotsubaB + futaba + burichan + tomorrow + photon + spooky;
 const faIcons: { name: string, data: string }[] = [
   { name: "Audio", data: linkifyAudio },
   { name: "Bitchute", data: linkifyBitchute },
@@ -85,11 +86,11 @@ const CSS = {
 
   www,
 
-  sub: function(css: string) {
+  sub: function (css: string) {
     var variables = {
       site: g.SITE.selectors
     };
-    return css.replace(/\$[\w\$]+/g, function(name) {
+    return css.replace(/\$[\w\$]+/g, function (name) {
       var words = name.slice(1).split('$');
       var sel = variables;
       for (var i = 0; i < words.length; i++) {

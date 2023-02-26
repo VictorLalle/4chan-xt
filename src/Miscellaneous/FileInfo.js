@@ -1,8 +1,10 @@
 import Callbacks from "../classes/Callbacks";
 import Filter from "../Filtering/Filter";
+import { g, Conf, E } from "../globals/globals";
 import ImageCommon from "../Images/ImageCommon";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
+import SW from "../site/SW";
 
 /*
  * decaffeinate suggestions:

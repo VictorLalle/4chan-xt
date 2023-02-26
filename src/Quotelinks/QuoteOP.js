@@ -1,4 +1,6 @@
 import Callbacks from "../classes/Callbacks";
+import Get from "../General/Get";
+import { g, Conf } from "../globals/globals";
 import ExpandComment from "../Miscellaneous/ExpandComment";
 import $ from "../platform/$";
 

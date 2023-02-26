@@ -1,4 +1,6 @@
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import Menu from "./Menu";
 
 /*
  * decaffeinate suggestions:
@@ -33,10 +35,10 @@ const CopyTextLink = {
       value: CopyTextLink.text
     }
     );
-    $.add(d.body, el);
+    $.add(document.body, el);
     el.select();
     try {
-      d.execCommand('copy');
+      document.execCommand('copy');
     } catch (error) { }
     return $.rm(el);
   }

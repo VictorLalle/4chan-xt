@@ -1,4 +1,7 @@
 import Callbacks from "../classes/Callbacks";
+import Header from "../General/Header";
+import UI from "../General/UI";
+import { g, Conf, E } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -36,8 +39,8 @@ const ThreadStats = {
     } else {
       this.dialog = (sc = UI.dialog('thread-stats',
         { innerHTML: "<div class=\"move\" title=\"" + E(statsTitle) + "\">" + (statsHTML).innerHTML + "</div>" }));
-      $.addClass(doc, 'float');
-      $.ready(() => $.add(d.body, sc));
+      $.addClass(document.documentElement, 'float');
+      $.ready(() => $.add(document.body, sc));
     }
 
     this.postCountEl = $('#post-count', sc);
@@ -58,8 +61,8 @@ const ThreadStats = {
     ThreadStats.count();
     ThreadStats.update();
     ThreadStats.fetchPage();
-    $.on(d, 'PostsInserted', () => $.queueTask(ThreadStats.onPostsInserted));
-    return $.on(d, 'ThreadUpdate', ThreadStats.onUpdate);
+    $.on(document, 'PostsInserted', () => $.queueTask(ThreadStats.onPostsInserted));
+    return $.on(document, 'ThreadUpdate', ThreadStats.onUpdate);
   },
 
   count() {

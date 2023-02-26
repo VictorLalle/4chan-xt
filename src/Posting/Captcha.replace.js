@@ -1,4 +1,7 @@
+import { g, Conf } from "../globals/globals";
+import Main from "../main/Main";
 import $ from "../platform/$";
+import Captcha from "./Captcha";
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,7 +9,7 @@ import $ from "../platform/$";
  */
 const CaptchaReplace = {
   init() {
-    if ((g.SITE.software !== 'yotsuba') || (d.cookie.indexOf('pass_enabled=1') >= 0)) { return; }
+    if ((g.SITE.software !== 'yotsuba') || (document.cookie.indexOf('pass_enabled=1') >= 0)) { return; }
 
     if (Conf['Force Noscript Captcha'] && Main.jsEnabled) {
       $.ready(Captcha.replace.noscript);
@@ -15,9 +18,9 @@ const CaptchaReplace = {
 
     if (Conf['captchaLanguage'].trim()) {
       if (['boards.4chan.org', 'boards.4channel.org'].includes(location.hostname)) {
-        return $.onExists(doc, '#captchaFormPart', node => $.onExists(node, 'iframe[src^="https://www.google.com/recaptcha/"]', Captcha.replace.iframe));
+        return $.onExists(document.documentElement, '#captchaFormPart', node => $.onExists(node, 'iframe[src^="https://www.google.com/recaptcha/"]', Captcha.replace.iframe));
       } else {
-        return $.onExists(doc, 'iframe[src^="https://www.google.com/recaptcha/"]', Captcha.replace.iframe);
+        return $.onExists(document.documentElement, 'iframe[src^="https://www.google.com/recaptcha/"]', Captcha.replace.iframe);
       }
     }
   },

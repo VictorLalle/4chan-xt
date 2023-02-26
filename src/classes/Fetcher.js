@@ -4,6 +4,11 @@ import Post from "./Post";
 import Thread from "./Thread";
 import $ from "../platform/$";
 import Main from "../main/Main";
+import Index from "../General/Index";
+import { E, g, Conf } from "../globals/globals";
+import ImageHost from "../Images/ImageHost";
+import CrossOrigin from "../platform/CrossOrigin";
+import Get from "../General/Get";
 
 /*
  * decaffeinate suggestions:
@@ -83,7 +88,8 @@ export default class Fetcher {
     $.add(nodes.root, nodes.post);
 
     // Indicate links to the containing post.
-    for (var quote of clone.nodes.quotelinks.concat(clone.nodes.backlinks)) {
+    const quotes = [...clone.nodes.quotelinks, ...clone.nodes.backlinks];
+    for (var quote of quotes) {
       var { boardID, postID } = Get.postDataFromLink(quote);
       if ((postID === this.quoter.ID) && (boardID === this.quoter.board.ID)) {
         $.addClass(quote, 'forwardlink');
@@ -98,7 +104,7 @@ export default class Fetcher {
         href: `//s.4cdn.org/css/flags.${cssVersion}.css`
       }
       );
-      $.add(d.head, Fetcher.flagCSS);
+      $.add(document.head, Fetcher.flagCSS);
     }
 
     $.rmAll(this.root);

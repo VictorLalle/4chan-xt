@@ -66,7 +66,6 @@ import Unread from "../Monitoring/Unread";
 import UnreadIndex from "../Monitoring/UnreadIndex";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
-import Captcha from "../Posting/Captcha";
 import PassLink from "../Posting/PassLink";
 import PostRedirect from "../Posting/PostRedirect";
 import QR from "../Posting/QR";
@@ -83,6 +82,12 @@ import Site from "../site/Site";
 import SW from "../site/SW";
 import CSS from "../css/CSS";
 import meta from '../../package.json';
+import Header from "../General/Header";
+import { Conf, g } from "../globals/globals";
+import Menu from "../Menu/Menu";
+import BoardConfig from "../General/BoardConfig";
+import CaptchaReplace from "../Posting/Captcha.replace";
+import Get from "../General/Get";
 
 /*
  * decaffeinate suggestions:
@@ -111,23 +116,23 @@ const Main = {
     } catch (error1) { }
 
     // Detect multiple copies of 4chan X
-    if (doc && $.hasClass(doc, 'fourchan-x')) { return; }
-    $.asap(docSet, function () {
-      $.addClass(doc, 'fourchan-x', 'seaweedchan');
-      if ($.engine) { return $.addClass(doc, `ua-${$.engine}`); }
+    if (document.documentElement && $.hasClass(document.documentElement, 'fourchan-x')) { return; }
+    $.asap(() => document.documentElement, function () {
+      $.addClass(document.documentElement, 'fourchan-x', 'seaweedchan');
+      if ($.engine) { return $.addClass(document.documentElement, `ua-${$.engine}`); }
     });
-    $.on(d, '4chanXInitFinished', function () {
+    $.on(document, '4chanXInitFinished', function () {
       if (Main.expectInitFinished) {
         return delete Main.expectInitFinished;
       } else {
         new Notice('error', 'Error: Multiple copies of 4chan X are enabled.');
-        return $.addClass(doc, 'tainted');
+        return $.addClass(document.documentElement, 'tainted');
       }
     });
 
     // Detect "mounted" event from Kissu
     var mountedCB = function () {
-      d.removeEventListener('mounted', mountedCB, true);
+      document.removeEventListener('mounted', mountedCB, true);
       Main.isMounted = true;
       return Main.mountedCBs.map((cb) =>
         (() => {
@@ -136,7 +141,7 @@ const Main = {
           } catch (error2) { }
         })());
     };
-    d.addEventListener('mounted', mountedCB, true);
+    document.addEventListener('mounted', mountedCB, true);
 
     // Flatten default values from Config into Conf
     var flatten = function (parent, obj) {
@@ -165,7 +170,7 @@ const Main = {
           return fromCharCode0.apply(this, arguments);
         };
       });
-      $.asap(docSet, () => $.onExists(doc, 'iframe[srcdoc]', $.rm));
+      $.asap(() => document.documentElement, () => $.onExists(document.documentElement, 'iframe[srcdoc]', $.rm));
     }
 
     flatten(null, Config);
@@ -200,7 +205,7 @@ const Main = {
     if (
       /\.4chan(?:nel)?\.org$/.test(location.hostname) &&
       !SW.yotsuba.regexp.pass.test(location.href) &&
-      !$$('script:not([src])', d).filter(s => /this\[/.test(s.textContent)).length
+      !$$('script:not([src])').filter(s => /this\[/.test(s.textContent)).length
     ) {
       ($.getSync || $.get)({ 'jsWhitelist': Conf['jsWhitelist'] }, ({ jsWhitelist }) => $.addCSP(`script-src ${jsWhitelist.replace(/^#.*$/mg, '').replace(/[\s;]+/g, ' ').trim()}`));
     }
@@ -214,7 +219,7 @@ const Main = {
         location.replace('https://' + location.host + location.pathname + location.search + location.hash);
         return;
       }
-      return $.asap(docSet, function () {
+      return $.asap(() => document.documentElement, function () {
 
         // Don't hide the local storage warning behind a settings panel.
         if ($.cantSet) {
@@ -292,7 +297,7 @@ const Main = {
       document.documentElement.classList.add('js-enabled');
       return window.FCX = {};
     });
-    Main.jsEnabled = $.hasClass(doc, 'js-enabled');
+    Main.jsEnabled = $.hasClass(document.documentElement, 'js-enabled');
 
     // XXX https://bugs.chromium.org/p/chromium/issues/detail?id=920638
     $.ajaxPageInit?.();
@@ -306,7 +311,7 @@ const Main = {
     }
 
     if (g.VIEW === 'file') {
-      $.asap((() => d.readyState !== 'loading'), function () {
+      $.asap((() => document.readyState !== 'loading'), function () {
         let video;
         if ((g.SITE.software === 'yotsuba') && Conf['404 Redirect'] && g.SITE.is404?.()) {
           const pathname = location.pathname.split(/\/+/);
@@ -333,7 +338,7 @@ const Main = {
     g.posts = new SimpleDict();
 
     // set up CSS when <head> is completely loaded
-    $.onExists(doc, 'body', Main.initStyle);
+    $.onExists(document.documentElement, 'body', Main.initStyle);
 
     // c.time 'All initializations'
     for (var [name, feature] of Main.features) {
@@ -360,27 +365,27 @@ const Main = {
     if (!Main.isThisPageLegit()) { return; }
 
     // disable the mobile layout
-    // TODO check if exists
-    $('link[href*=mobile]', d.head).disabled = true;
-    doc.dataset.host = location.host;
-    $.addClass(doc, `sw-${g.SITE.software}`);
-    $.addClass(doc, g.VIEW === 'thread' ? 'thread-view' : g.VIEW);
-    $.onExists(doc, '.ad-cnt, .adg-rects > .desktop', ad => $.onExists(ad, 'img, iframe', () => $.addClass(doc, 'ads-loaded')));
-    if (Conf['Autohiding Scrollbar']) { $.addClass(doc, 'autohiding-scrollbar'); }
+    const mobileLink = $('link[href*=mobile]', document.head);
+    if (mobileLink) mobileLink.disabled = true;
+    document.documentElement.dataset.host = location.host;
+    $.addClass(document.documentElement, `sw-${g.SITE.software}`);
+    $.addClass(document.documentElement, g.VIEW === 'thread' ? 'thread-view' : g.VIEW);
+    $.onExists(document.documentElement, '.ad-cnt, .adg-rects > .desktop', ad => $.onExists(ad, 'img, iframe', () => $.addClass(document.documentElement, 'ads-loaded')));
+    if (Conf['Autohiding Scrollbar']) { $.addClass(document.documentElement, 'autohiding-scrollbar'); }
     $.ready(function () {
-      if ((d.body.clientHeight > doc.clientHeight) && ((window.innerWidth === doc.clientWidth) !== Conf['Autohiding Scrollbar'])) {
+      if ((document.body.clientHeight > document.documentElement.clientHeight) && ((window.innerWidth === document.documentElement.clientWidth) !== Conf['Autohiding Scrollbar'])) {
         Conf['Autohiding Scrollbar'] = !Conf['Autohiding Scrollbar'];
         $.set('Autohiding Scrollbar', Conf['Autohiding Scrollbar']);
-        return $.toggleClass(doc, 'autohiding-scrollbar');
+        return $.toggleClass(document.documentElement, 'autohiding-scrollbar');
       }
     });
     $.addStyle(CSS.sub(CSS.boards), 'fourchanx-css');
     Main.bgColorStyle = $.el('style', { id: 'fourchanx-bgcolor-css' });
 
     let keyboard = false;
-    $.on(d, 'mousedown', () => keyboard = false);
-    $.on(d, 'keydown', function (e) { if (e.keyCode === 9) { return keyboard = true; } }); // tab
-    window.addEventListener('focus', (() => doc.classList.toggle('keyboard-focus', keyboard)), true);
+    $.on(document, 'mousedown', () => keyboard = false);
+    $.on(document, 'keydown', function (e) { if (e.keyCode === 9) { return keyboard = true; } }); // tab
+    window.addEventListener('focus', (() => document.documentElement.classList.toggle('keyboard-focus', keyboard)), true);
 
     return Main.setClass();
   },
@@ -393,7 +398,7 @@ const Main = {
       if (mainStyleSheet = $.id('base-css')) {
         style = mainStyleSheet.href.match(/catalog_(\w+)/)?.[1].replace('_new', '').replace(/_+/g, '-');
         if (knownStyles.includes(style)) {
-          $.addClass(doc, style);
+          $.addClass(document.documentElement, style);
           return;
         }
       }
@@ -404,7 +409,7 @@ const Main = {
     const setStyle = function () {
       // Use preconfigured CSS for 4chan's default themes.
       if (g.SITE.software === 'yotsuba') {
-        $.rmClass(doc, style);
+        $.rmClass(document.documentElement, style);
         style = null;
         for (var styleSheet of styleSheets) {
           if (styleSheet.href === mainStyleSheet?.href) {
@@ -415,7 +420,7 @@ const Main = {
           }
         }
         if (style) {
-          $.addClass(doc, style);
+          $.addClass(document.documentElement, style);
           $.rm(Main.bgColorStyle);
           return;
         }
@@ -425,13 +430,13 @@ const Main = {
       const div = g.SITE.bgColoredEl();
       div.style.position = 'absolute';
       div.style.visibility = 'hidden';
-      $.add(d.body, div);
+      $.add(document.body, div);
       let bgColor = window.getComputedStyle(div).backgroundColor;
       $.rm(div);
       const rgb = bgColor.match(/[\d.]+/g);
       // Use body background if reply background is transparent
       if (!/^rgb\(/.test(bgColor)) {
-        const s = window.getComputedStyle(d.body);
+        const s = window.getComputedStyle(document.body);
         bgColor = `${s.backgroundColor} ${s.backgroundImage} ${s.backgroundRepeat} ${s.backgroundPosition}`;
       }
       let css = `\
@@ -453,10 +458,10 @@ const Main = {
       return $.after($.id('fourchanx-css'), Main.bgColorStyle);
     };
 
-    $.onExists(d.head, g.SITE.selectors.styleSheet, function (el) {
+    $.onExists(document.head, g.SITE.selectors.styleSheet, function (el) {
       mainStyleSheet = el;
       if (g.SITE.software === 'yotsuba') {
-        styleSheets = $$('link[rel="alternate stylesheet"]', d.head);
+        styleSheets = $$('link[rel="alternate stylesheet"]', document.head);
       }
       new MutationObserver(setStyle).observe(mainStyleSheet, {
         attributes: true,
@@ -466,7 +471,7 @@ const Main = {
       return setStyle();
     });
     if (!mainStyleSheet) {
-      for (var styleSheet of $$('link[rel="stylesheet"]', d.head)) {
+      for (var styleSheet of $$('link[rel="stylesheet"]', document.head)) {
         $.on(styleSheet, 'load', setStyle);
       }
       return setStyle();
@@ -635,7 +640,7 @@ const Main = {
       }
       var anyRemoved = false;
       for (var el of record.removedNodes) {
-        if ((Get.postFromRoot(el)?.nodes.root === el) && !doc.contains(el)) {
+        if ((Get.postFromRoot(el)?.nodes.root === el) && !document.documentElement.contains(el)) {
           anyRemoved = true;
           break;
         }
@@ -747,16 +752,16 @@ const Main = {
   handleErrors(errors) {
     // Detect conflicts with 4chan X v2
     let error;
-    if (d.body && $.hasClass(d.body, 'fourchan_x') && !$.hasClass(doc, 'tainted')) {
+    if (document.body && $.hasClass(document.body, 'fourchan_x') && !$.hasClass(document.documentElement, 'tainted')) {
       new Notice('error', 'Error: Multiple copies of 4chan X are enabled.');
-      $.addClass(doc, 'tainted');
+      $.addClass(document.documentElement, 'tainted');
     }
 
     // Detect conflicts with native extension
-    if (g.SITE.testNativeExtension && !$.hasClass(doc, 'tainted')) {
+    if (g.SITE.testNativeExtension && !$.hasClass(document.documentElement, 'tainted')) {
       const { enabled } = g.SITE.testNativeExtension();
       if (enabled) {
-        $.addClass(doc, 'tainted');
+        $.addClass(document.documentElement, 'tainted');
         if (Conf['Disable Native Extension'] && !Main.isFirstRun) {
           const msg = $.el('div',
             { innerHTML: 'Failed to disable the native extension. You may need to <a href="' + meta.faq + '#blocking-native-extension" target="_blank">block it</a>.' });
@@ -796,7 +801,7 @@ const Main = {
   },
 
   parseError(data, reportLink) {
-    c.error(data.message, data.error.stack);
+    console.error(data.message, data.error.stack);
     const message = $.el('div',
       { innerHTML: '${data.message}?{reportLink}{&{reportLink}}' });
     const error = $.el('div',
@@ -870,11 +875,10 @@ User agent: ${navigator.userAgent}\
   mountedCBs: [],
 
   features: [
-    ['Polyfill', Polyfill],
     ['Board Configuration', BoardConfig],
     ['Normalize URL', NormalizeURL],
     ['Delay Redirect on Post', PostRedirect],
-    ['Captcha Configuration', Captcha.replace],
+    ['Captcha Configuration', CaptchaReplace],
     ['Image Host Rewriting', ImageHost],
     ['Redirect', Redirect],
     ['Header', Header],

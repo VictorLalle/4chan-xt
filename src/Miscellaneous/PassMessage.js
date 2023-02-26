@@ -1,3 +1,4 @@
+import { Conf } from "../globals/globals";
 import $ from "../platform/$";
 import PassMessagePage from './PassMessage/PassMessage.html';
 /*
@@ -24,7 +25,7 @@ const PassMessage = {
       if (hd = $.id('hd')) {
         return $.after(hd, msg);
       } else {
-        return $.prepend(d.body, msg);
+        return $.prepend(document.body, msg);
       }
     });
   }

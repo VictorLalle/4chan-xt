@@ -15,6 +15,9 @@ import Keybinds from "../Miscellaneous/Keybinds";
 import Unread from "../Monitoring/Unread";
 import $$ from "../platform/$$";
 import $ from "../platform/$";
+import Header from "./Header";
+import { g, Conf } from "../globals/globals";
+import Menu from "../Menu/Menu";
 
 // <% if (readJSON('/.tests_enabled')) { %>
 var Test = {
@@ -50,7 +53,7 @@ var Test = {
       });
     }
 
-    return $.on(d, 'keydown', this.cb.keydown);
+    return $.on(document, 'keydown', this.cb.keydown);
   },
 
   assert(condition) {
@@ -143,12 +146,12 @@ var Test = {
           var y = post2.normalizedOriginal;
           if (!x.isEqualNode(y)) {
             fail = true;
-            c.log(`${post.fullID} differs`);
+            console.log(`${post.fullID} differs`);
             var [x2, y2] = Array.from(Test.firstDiff(x, y));
-            c.log(x2);
-            c.log(y2);
-            c.log(x.outerHTML);
-            c.log(y.outerHTML);
+            console.log(x2);
+            console.log(y2);
+            console.log(x.outerHTML);
+            console.log(y.outerHTML);
           }
 
           for (var key in Config.filter) {
@@ -157,9 +160,9 @@ var Test = {
               var val2 = Filter.values(key, post2);
               if ((val1.length !== val2.length) || !val1.every((x, i) => x === val2[i])) {
                 fail = true;
-                c.log(`${post.fullID} has filter bug in ${key}`);
-                c.log(val1);
-                c.log(val2);
+                console.log(`${post.fullID} has filter bug in ${key}`);
+                console.log(val1);
+                console.log(val2);
               }
             }
           }
@@ -167,7 +170,7 @@ var Test = {
           if (fail) {
             Test.postsFailed++;
           } else {
-            c.log(`${post.fullID} correct`);
+            console.log(`${post.fullID} correct`);
           }
           Test.postsRemaining--;
           if (Test.postsRemaining === 0) { Test.report(); }
@@ -238,8 +241,8 @@ var Test = {
         return new Notice('success', `Orders same (${list1.length} posts)`, 5);
       } else {
         new Notice('warning', 'Orders differ.', 30);
-        c.log(list1);
-        return c.log(list2);
+        console.log(list1);
+        return console.log(list2);
       }
     },
 

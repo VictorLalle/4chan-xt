@@ -1,3 +1,7 @@
+import BoardConfig from "../General/BoardConfig";
+import { g } from "../globals/globals";
+import SimpleDict from "./SimpleDict";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -26,7 +30,7 @@ export default class Board {
       thread_global: 300 // inter-board thread cooldown
     };
     // Pass users have reduced cooldowns.
-    if (d.cookie.indexOf('pass_enabled=1') >= 0) {
+    if (document.cookie.indexOf('pass_enabled=1') >= 0) {
       for (var key of ['reply', 'image']) {
         c[key] = Math.ceil(c[key] / 2);
       }

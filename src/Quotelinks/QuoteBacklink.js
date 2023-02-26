@@ -1,5 +1,9 @@
 import Callbacks from "../classes/Callbacks";
+import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import QuoteInline from "./QuoteInline";
+import QuotePreview from "./QuotePreview";
+import QuoteYou from "./QuoteYou";
 
 /*
  * decaffeinate suggestions:
@@ -28,7 +32,7 @@ const QuoteBacklink = {
     // Add a class to differentiate when backlinks are at
     // the top (default) or bottom of a post
     if (this.bottomBacklinks = Conf['Bottom Backlinks']) {
-      $.addClass(doc, 'bottom-backlinks');
+      $.addClass(document.documentElement, 'bottom-backlinks');
     }
 
     Callbacks.Post.push({

@@ -1,3 +1,4 @@
+import { Conf } from "../globals/globals";
 import $ from "../platform/$";
 
 /*
@@ -8,7 +9,7 @@ import $ from "../platform/$";
 const Anonymize = {
   init() {
     if (!Conf['Anonymize']) { return; }
-    return $.addClass(doc, 'anonymize');
+    return $.addClass(document.documentElement, 'anonymize');
   }
 };
 export default Anonymize;

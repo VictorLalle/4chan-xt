@@ -27,6 +27,8 @@ import Unread from '../Monitoring/Unread';
 import $$ from '../platform/$$';
 import $ from '../platform/$';
 import meta from '../../package.json';
+import { Conf, g } from '../globals/globals';
+import Header from './Header';
 
 const Settings = {
   init() {
@@ -50,8 +52,8 @@ const Settings = {
     add('Advanced', this.advanced);
     add('Keybinds', this.keybinds);
 
-    $.on(d, 'AddSettingsSection', Settings.addSection);
-    $.on(d, 'OpenSettings', e => Settings.open(e.detail));
+    $.on(document, 'AddSettingsSection', Settings.addSection);
+    $.on(document, 'OpenSettings', e => Settings.open(e.detail));
 
     if ((g.SITE.software === 'yotsuba') && Conf['Disable Native Extension']) {
       if ($.hasStorage) {
@@ -101,14 +103,14 @@ const Settings = {
     }
     links.pop();
     $.add($('.sections-list', dialog), links);
-    if (openSection !== 'none') { (sectionToOpen ? sectionToOpen : links[0]).click(); }
+    if (openSection !== 'none') { (sectionToOpen ? sectionToOpen : links[0])?.click(); }
 
     $.on($('.close', dialog), 'click', Settings.close);
     $.on(window, 'beforeunload', Settings.close);
     $.on(dialog, 'click', Settings.close);
     $.on(dialog.firstElementChild, 'click', e => e.stopPropagation());
 
-    $.add(d.body, dialog);
+    $.add(document.body, dialog);
 
     return $.event('OpenSettings', null, dialog);
   },
@@ -116,7 +118,7 @@ const Settings = {
   close() {
     if (!Settings.dialog) { return; }
     // Unfocus current field to trigger change event.
-    d.activeElement?.blur();
+    document.activeElement?.blur();
     $.rm(Settings.dialog);
     return delete Settings.dialog;
   },
@@ -160,7 +162,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
       }
     },
     ads(cb) {
-      return $.onExists(doc, '.adg-rects > .desktop', ad => $.onExists(ad, 'iframe', function () {
+      return $.onExists(document.documentElement, '.adg-rects > .desktop', ad => $.onExists(ad, 'iframe', function () {
         const url = Redirect.to('thread', { boardID: 'qa', threadID: 362590 });
         return cb($.el('li',
           {
@@ -366,7 +368,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
       } catch (error) {
         const err = error;
         output.textContent = 'Import failed due to an error.';
-        return c.error(err.stack);
+        return console.error(err.stack);
       }
     };
     return reader.readAsText(file);

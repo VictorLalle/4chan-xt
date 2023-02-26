@@ -1,3 +1,7 @@
+import Notice from "../classes/Notice";
+import { g, Conf } from "../globals/globals";
+import $ from "../platform/$";
+
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -13,10 +17,9 @@ var BoardConfig = {
     if (g.SITE.software !== 'yotsuba') { return; }
     const now = Date.now();
     if (now - (2 * $.HOUR) >= ((middle = Conf['boardConfig'].lastChecked || 0)) || middle > now) {
-      return $.ajax(`${location.protocol}//a.4cdn.org/boards.json`,
-        {onloadend: this.load});
+      return $.ajax(`${location.protocol}//a.4cdn.org/boards.json`, { onloadend: this.load });
     } else {
-      const {boards} = Conf['boardConfig'];
+      const { boards } = Conf['boardConfig'];
       return this.set(boards);
     }
   },
@@ -28,14 +31,16 @@ var BoardConfig = {
       for (var board of this.response.boards) {
         boards[board.board] = board;
       }
-      $.set('boardConfig', {boards, lastChecked: Date.now()});
+      $.set('boardConfig', { boards, lastChecked: Date.now() });
     } else {
-      ({boards} = Conf['boardConfig']);
-      const err = (() => { switch (this.status) {
-        case 0:   return 'Connection Error';
-        case 200: return 'Invalid Data';
-        default:          return `Error ${this.statusText} (${this.status})`;
-      } })();
+      ({ boards } = Conf['boardConfig']);
+      const err = (() => {
+        switch (this.status) {
+          case 0: return 'Connection Error';
+          case 200: return 'Invalid Data';
+          default: return `Error ${this.statusText} (${this.status})`;
+        }
+      })();
       new Notice('warning', `Failed to load board configuration. ${err}`, 20);
     }
     return BoardConfig.set(boards);
@@ -98,3 +103,4 @@ var BoardConfig = {
     return (this.boards || Conf['boardConfig'].boards)?.[boardID]?.title || '';
   }
 };
+export default BoardConfig;

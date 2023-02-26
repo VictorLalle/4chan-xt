@@ -1,4 +1,7 @@
 import Callbacks from "../classes/Callbacks";
+import { g, Conf } from "../globals/globals";
+import ImageHost from "../Images/ImageHost";
+import ExpandComment from "../Miscellaneous/ExpandComment";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
 import Embedding from "./Embedding";
