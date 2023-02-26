@@ -1,6 +1,5 @@
 import { createFilter } from "@rollup/pluginutils";
-import { readFile } from 'fs/promises';
-import { dirname, resolve } from "path";
+import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

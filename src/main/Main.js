@@ -83,7 +83,7 @@ import SW from "../site/SW";
 import CSS from "../css/CSS";
 import meta from '../../package.json';
 import Header from "../General/Header";
-import { Conf, g } from "../globals/globals";
+import { Conf, E, g } from "../globals/globals";
 import Menu from "../Menu/Menu";
 import BoardConfig from "../General/BoardConfig";
 import CaptchaReplace from "../Posting/Captcha.replace";
@@ -803,7 +803,7 @@ const Main = {
   parseError(data, reportLink) {
     console.error(data.message, data.error.stack);
     const message = $.el('div',
-      { innerHTML: '${data.message}?{reportLink}{&{reportLink}}' });
+      { innerHTML: E(data.message) + ((reportLink) ? (reportLink).innerHTML : "") });
     const error = $.el('div',
       { textContent: `${data.error.name || 'Error'}: ${data.error.message || 'see console for details'}` });
     const lines = data.error.stack?.match(/\d+(?=:\d+\)?$)/mg)?.join().replace(/^/, ' at ') || '';
@@ -960,7 +960,7 @@ User agent: ${navigator.userAgent}\
   ]
 };
 export default Main;
-Main.init();
+$.ready(() => Main.init());
 
 // <% if (readJSON('/.tests_enabled')) { %>
 // Main.features.push ['Build Test', Test]

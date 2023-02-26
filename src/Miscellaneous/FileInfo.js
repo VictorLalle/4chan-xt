@@ -82,9 +82,9 @@ const FileInfo = {
     f() { return { innerHTML: "<a href=\"javascript:;\" class=\"fa fa-times quick-filter-md5\"></a>" }; },
     p() { return { innerHTML: ((this.file.isSpoiler) ? "Spoiler, " : "") }; },
     s() { return { innerHTML: E(this.file.size) }; },
-    B() { return { innerHTML: E(Math.round(this.file.sizeInBytes)) + " Bytes" }; },
-    K() { return { innerHTML: E(Math.round(this.file.sizeInBytes / 1024)) + " KB" }; },
-    M() { return { innerHTML: E(Math.round(this.file.sizeInBytes / 1048576 * 100) / 100) + " MB" }; },
+    B() { return { innerHTML: Math.round(this.file.sizeInBytes) + " Bytes" }; },
+    K() { return { innerHTML: (Math.round(this.file.sizeInBytes / 1024)) + " KB" }; },
+    M() { return { innerHTML: (Math.round(this.file.sizeInBytes / 1048576 * 100) / 100) + " MB" }; },
     r() { return { innerHTML: E(this.file.dimensions || "PDF") }; },
     g() { return { innerHTML: ((this.file.tag) ? ", " + E(this.file.tag) : "") }; },
     '%'() { return { innerHTML: "%" }; }

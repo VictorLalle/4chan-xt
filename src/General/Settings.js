@@ -27,7 +27,7 @@ import Unread from '../Monitoring/Unread';
 import $$ from '../platform/$$';
 import $ from '../platform/$';
 import meta from '../../package.json';
-import { Conf, g } from '../globals/globals';
+import { Conf, E, g } from '../globals/globals';
 import Header from './Header';
 
 const Settings = {
@@ -203,7 +203,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
           if (arr instanceof Array) {
             var description = arr[1];
             var div = $.el('div',
-              { innerHTML: '<label><input type="checkbox" name="${key}">${key}</label><span class="description">: ${description}</span>' });
+              { innerHTML: `<label><input type="checkbox" name="${key}">${key}</label><span class="description">: ${description}</span>` });
             div.dataset.name = key;
             var input = $('input', div);
             $.on(input, 'change', $.cb.checked);
@@ -228,7 +228,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     for (var keyFS in Config.main) {
       var obj = Config.main[keyFS];
       var fs = $.el('fieldset',
-        { innerHTML: '<legend>${keyFS}</legend>' });
+        { innerHTML: `<legend>${keyFS}</legend>` });
       addCheckboxes(fs, obj);
       if (keyFS === 'Posting and Captchas') {
         $.add(fs, $.el('p',
@@ -850,7 +850,7 @@ vp-replace
       return;
     }
     const filterTypes = Object.keys(Config.filter).filter(x => x !== 'general').map((x, i) => ({
-      innerHTML: '?{i}{,}<wbr>${x}'
+      innerHTML: (i ? "," : "") + `<wbr>${E(x)}`
     }));
     $.extend(div, { innerHTML: FilterGuidePage });
     return $('.warning', div).hidden = Conf['Filter'];
@@ -1132,7 +1132,7 @@ vp-replace
     for (key in Config.hotkeys) {
       var arr = Config.hotkeys[key];
       var tr = $.el('tr',
-        { innerHTML: '<td>${arr[1]}</td><td><input class="field"></td>' });
+        { innerHTML: `<td>${arr[1]}</td><td><input class="field"></td>` });
       var input = $('input', tr);
       input.name = key;
       input.spellcheck = false;

@@ -1868,7 +1868,7 @@ var QR = {
 
     error(className, message, link) {
       const div = $.el('div', { className });
-      $.extend(div, { innerHTML: '${message}?{link}{ [<a href="${link}" target="_blank">More info</a>]}<br>[<a href="javascript:;">delete post</a>] [<a href="javascript:;">delete all</a>]' });
+      $.extend(div, { innerHTML: `${message}?{link}{ [<a href="${link}" target="_blank">More info</a>]}<br>[<a href="javascript:;">delete post</a>] [<a href="javascript:;">delete all</a>]` });
       (this.errors || (this.errors = [])).push(div);
       const [rm, rmAll] = Array.from($$('a', div));
       $.on(div, 'click', () => {

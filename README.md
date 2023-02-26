@@ -6,10 +6,11 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 
 ## TODO
 
-- [ ] look for TODO comments
+- [x] look for TODO comments
 - [ ] find alternative for `<% if (`
 - [x] meta info in compilation step
 - [ ] actual userscript and extension builds
+- [ ] alternative for all the templates in some html files
 
 ## Other notes
 

@@ -99,7 +99,7 @@ $.ajax = (function () {
     pageXHR = XMLHttpRequest;
   }
 
-  (function (url, options = {}) {
+  const r = (function (url, options = {}) {
     if (options.responseType == null) { options.responseType = 'json'; }
     if (!options.type) { options.type = (options.form && 'post') || 'get'; }
     // XXX https://forums.lanik.us/viewtopic.php?f=64&t=24173&p=78310
@@ -142,7 +142,9 @@ $.ajax = (function () {
     return r;
   });
 
-  if (globalThis.chrome?.extension) {
+  if (!globalThis.chrome?.extension) {
+    return r;
+  } else {
     // # XXX https://bugs.chromium.org/p/chromium/issues/detail?id=920638
     let requestID = 0;
     const requests = $.dict();
@@ -224,7 +226,7 @@ $.ajax = (function () {
       });
     };
 
-    $.ajaxPage = function (url, options = {}) {
+    return $.ajaxPage = function (url, options = {}) {
       let req;
       let { onloadend, timeout, responseType, withCredentials, type, onprogress, form, headers } = options;
       const id = requestID++;

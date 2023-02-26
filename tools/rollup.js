@@ -5,6 +5,7 @@ import { dirname, resolve } from "path";
 import { fileURLToPath } from 'url';
 import generateMetadata from "../src/meta/metadata.js";
 import { readFile, writeFile } from "fs/promises";
+import importBase64 from "./rollup-plugin-base64.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -24,13 +25,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
       inlineFile({
         include: ["**/*.html", "**/*.css"],
       }),
-      inlineFile({
-        include: ["**/*.png", "**/*.gif", "**/*.wav", "**/*.woff"],
-        // base64 encode
-        transformer(input) {
-          return Buffer.from(input).toString('base64');
-        }
-      }),
+      importBase64({ include: ["**/*.png", "**/*.gif", "**/*.wav", "**/*.woff", "**/*.woff2"] }),
       inlineFile({
         include: "**/package.json",
         wrap: false,
