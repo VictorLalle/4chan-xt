@@ -6,10 +6,10 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 
 ## TODO
 
-- look for TODO comments
-- find alternative for `<% if (`
-- meta info in compilation step
-- actual userscript and extension builds
+- [ ] look for TODO comments
+- [ ] find alternative for `<% if (`
+- [x] meta info in compilation step
+- [ ] actual userscript and extension builds
 
 ## Other notes
 
@@ -18,6 +18,7 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 - old files in the builds directory stay as reference until the new builds are functional, new files go in the builds/test directory
 - old build scripts are also kept around for reference until the new build output is fully functional
 - the es 2020 target was choses for optional chaining
+- @violentmonkey/types was chosen over @types/greasemonkey because @types/greasemonkey only declares the GM object, and not GM\_ functions
 
 ## Recommendations
 

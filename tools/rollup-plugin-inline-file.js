@@ -1,34 +1,56 @@
 import { createFilter } from "@rollup/pluginutils";
+import { readFile } from 'fs/promises';
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 
-/**
- * @param {{
- *  include: import("@rollup/pluginutils").FilterPattern,
- *  exclude?: import("@rollup/pluginutils").FilterPattern,
- *  transformer?: (input: string) => string
- * }} opts
- * @returns {import("rollup").Plugin}
- */
-export default function inlineFile(opts) {
-  if (!opts.include) {
-    throw Error("include option should be specified");
-  }
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-  if (opts.transformer && typeof opts.transformer !== 'function') {
-    throw new Error('If transformer is given, it must be a function');
-  }
+export default async function setupFileInliner() {
+  const packageJson = await readFile(resolve(__dirname, '../package.json'));
+  const packageJsonParsed = JSON.parse(packageJson.toString());
 
-  const filter = createFilter(opts.include, opts.exclude);
+  /** @param {string} string */
+  const escape = (string) => string.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\\${');
 
-  return {
-    name: "inlineFile",
-
-    async transform(code, id) {
-      if (filter(id)) {
-        if (opts.transformer) {
-          code = opts.transformer(code);
-        }
-        return `export default ${JSON.stringify(code)};`;
-      }
+  /**
+   * @param {{
+   *  include: import("@rollup/pluginutils").FilterPattern,
+   *  exclude?: import("@rollup/pluginutils").FilterPattern,
+   *  transformer?: (input: string) => string
+   *  wrap?: boolean
+   * }} opts
+   * @returns {import("rollup").Plugin}
+   */
+  return function inlineFile(opts) {
+    if (!opts.include) {
+      throw Error("include option should be specified");
     }
+
+    if (opts.transformer && typeof opts.transformer !== 'function') {
+      throw new Error('If transformer is given, it must be a function');
+    }
+
+    const wrap = 'wrap' in opts ? opts.wrap : true;
+
+    const filter = createFilter(opts.include, opts.exclude);
+
+    return {
+      name: "inlineFile",
+
+      async transform(code, id) {
+        if (filter(id)) {
+          if (opts.transformer) {
+            code = opts.transformer(code);
+          }
+          if (!wrap) return code;
+
+          code = escape(code);
+          code = code.replace(/<%= meta\.(\w+) %>/g, (match, $1) => {
+            return escape(packageJsonParsed.meta[$1]);
+          });
+          return `export default \`${code}\`;`;
+        }
+      }
+    };
   };
 }

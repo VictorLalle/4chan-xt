@@ -1,6 +1,11 @@
 import $ from "../platform/$";
 import CaptchaReplace from "./Captcha.replace";
 import CaptchaT from "./Captcha.t";
+import meta from '../../package.json';
+import Main from "../main/Main";
+import Keybinds from "../Miscellaneous/Keybinds";
+import $$ from "../platform/$$";
+import QR from "./QR";
 
 const Captcha = {
   Cache: {
@@ -196,7 +201,7 @@ const Captcha = {
 
     noscriptURL() {
       let lang;
-      let url = 'https://www.google.com/recaptcha/api/fallback?k=<%= meta.recaptchaKey %>';
+      let url = `https://www.google.com/recaptcha/api/fallback?k=${meta.recaptchaKey}`;
       if (lang = Conf['captchaLanguage'].trim()) {
         url += `&hl=${encodeURIComponent(lang)}`;
       }
@@ -282,7 +287,7 @@ const Captcha = {
           const { classList } = document.documentElement;
           const container = document.querySelector('#qr .captcha-container');
           return container.dataset.widgetID = window.grecaptcha.render(container, {
-            sitekey: '<%= meta.recaptchaKey %>',
+            sitekey: meta.recaptchaKey,
             theme: classList.contains('tomorrow') || classList.contains('spooky') || classList.contains('dark-captcha') ? 'dark' : 'light',
             callback(response) {
               return window.dispatchEvent(new CustomEvent('captcha:success', { detail: response }));

@@ -8,7 +8,12 @@
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
-    "types": ["@types/greasemonkey"],
-    "lib": ["DOM", "ES2020"],
+    "types": [
+      "@violentmonkey/types"
+    ],
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
   },
 }

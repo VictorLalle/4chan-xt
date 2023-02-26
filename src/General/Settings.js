@@ -26,6 +26,7 @@ import ThreadUpdater from '../Monitoring/ThreadUpdater';
 import Unread from '../Monitoring/Unread';
 import $$ from '../platform/$$';
 import $ from '../platform/$';
+import meta from '../../package.json';
 
 const Settings = {
   init() {
@@ -33,7 +34,7 @@ const Settings = {
     const link = $.el('a', {
       className: 'settings-link fa fa-wrench',
       textContent: 'Settings',
-      title: '<%= meta.name %> Settings',
+      title: `${meta.name} Settings`,
       href: 'javascript:;'
     }
     );
@@ -150,7 +151,7 @@ const Settings = {
         const why = $.cantSet ? 'save your settings' : 'synchronize settings between tabs';
         return cb($.el('li', {
           textContent: `\
-<%= meta.name %> needs local storage to ${why}.
+${meta.name} needs local storage to ${why}.
 Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's privacy settings (may be listed as part of "local data" or "cookies").\
 `
         }
@@ -328,7 +329,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = $.el('a', {
-      download: `<%= meta.name %> v${g.VERSION}-${data.date}.json`,
+      download: `${meta.name} v${g.VERSION}-${data.date}.json`,
       href: url
     }
     );
@@ -761,7 +762,7 @@ mu-replace
 sp-replace
 tv-replace
 vp-replace
-[external-text:"FAQ","<%= meta.faq %>"]\
+[external-text:"FAQ","${meta.faq}"]\
 `
         );
       }

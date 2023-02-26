@@ -7,6 +7,7 @@ import Favicon from '../Monitoring/Favicon';
 import $$ from '../platform/$$';
 import CrossOrigin from '../platform/CrossOrigin';
 import Captcha from './Captcha';
+import meta from '../../package.json';
 
 /*
  * decaffeinate suggestions:
@@ -1944,7 +1945,7 @@ var QR = {
       var onerror = () => {
         $.off(el, event, onload);
         $.off(el, 'error', onerror);
-        this.fileError(`Corrupt ${isVideo ? 'video' : 'image'} or error reading metadata.`, '<%= meta.faq %>#error-reading-metadata');
+        this.fileError(`Corrupt ${isVideo ? 'video' : 'image'} or error reading metadata.`, meta.faq + '#error-reading-metadata');
         URL.revokeObjectURL(el.src);
         // XXX https://bugzilla.mozilla.org/show_bug.cgi?id=1021289
         this.nodes.el.removeAttribute('data-height');

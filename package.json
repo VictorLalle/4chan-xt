@@ -103,7 +103,7 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.0.0",
     "@rollup/pluginutils": "^5.0.2",
-    "@types/greasemonkey": "^4.0.4",
+    "@violentmonkey/types": "^0.1.5",
     "chrome-webstore-upload": "^0.4.4",
     "esprima": "^4.0.1",
     "font-awesome": "=4.7.0",
@@ -136,7 +136,6 @@
     "node": ">=14.0.0"
   },
   "type": "module",
-  "dependencies": {},
   "scripts": {
     "build": "node ./tools/rollup"
   }

@@ -2,6 +2,9 @@ import Callbacks from "../classes/Callbacks";
 import Filter from "../Filtering/Filter";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
+import meta from '../../package.json';
+import Index from "../General/Index";
+import Site from "../site/Site";
 
 /*
  * decaffeinate suggestions:
@@ -35,14 +38,14 @@ const CatalogLinks = {
             var catalogLink = link.parentNode.cloneNode(true);
             var link2 = catalogLink.firstElementChild;
             link2.href = catalogURL;
-            link2.textContent = link2.hostname === location.hostname ? '<%= meta.name %> Catalog' : 'External Catalog';
+            link2.textContent = link2.hostname === location.hostname ? `${meta.name} Catalog` : 'External Catalog';
             $.after(link.parentNode, [$.tn(' '), catalogLink]);
           }
         }
       });
     }
 
-    if ((g.SITE.software === 'yotsuba') && Conf['JSON Index'] && Conf['Use <%= meta.name %> Catalog']) {
+    if ((g.SITE.software === 'yotsuba') && Conf['JSON Index'] && Conf[`Use ${meta.name} Catalog`]) {
       Callbacks.Post.push({
         name: 'Catalog Link Rewrite',
         cb: this.node
@@ -150,7 +153,7 @@ const CatalogLinks = {
     let external, nativeCatalog;
     if (Conf['External Catalog'] && (external = CatalogLinks.external(board))) {
       return external;
-    } else if (Index.enabledOn(board) && Conf['Use <%= meta.name %> Catalog']) {
+    } else if (Index.enabledOn(board) && Conf[`Use ${meta.name} Catalog`]) {
       return CatalogLinks.jsonIndex(board, '#catalog');
     } else if (nativeCatalog = Get.url('catalog', board)) {
       return nativeCatalog;

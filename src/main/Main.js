@@ -82,6 +82,7 @@ import Quotify from "../Quotelinks/Quotify";
 import Site from "../site/Site";
 import SW from "../site/SW";
 import CSS from "../css/CSS";
+import meta from '../../package.json';
 
 /*
  * decaffeinate suggestions:
@@ -100,8 +101,8 @@ const Main = {
     try {
       let w = window;
       if ($.platform === 'crx') { w = (w.wrappedJSObject || w); }
-      if ('<%= meta.name %> antidup' in w) { return; }
-      w['<%= meta.name %> antidup'] = true;
+      if (`${meta.name} antidup` in w) { return; }
+      w[`${meta.name} antidup`] = true;
     } catch (error) { }
 
     // Don't run inside ad iframes.
@@ -802,7 +803,7 @@ const Main = {
       { textContent: `${data.error.name || 'Error'}: ${data.error.message || 'see console for details'}` });
     const lines = data.error.stack?.match(/\d+(?=:\d+\)?$)/mg)?.join().replace(/^/, ' at ') || '';
     const context = $.el('div',
-      { textContent: `(<%= meta.name %> <%= meta.fork %> v${g.VERSION} ${$.platform} on ${$.engine}${lines})` });
+      { textContent: `(${meta.name} ${meta.fork} v${g.VERSION} ${$.platform} on ${$.engine}${lines})` });
     return [message, error, context];
   },
 
@@ -821,7 +822,7 @@ const Main = {
     addDetails(`\
 [Please describe the steps needed to reproduce this error.]
 
-Script: <%= meta.name %> <%= meta.fork %> v${g.VERSION} ${$.platform}
+Script: ${meta.name} ${meta.fork} v${g.VERSION} ${$.platform}
 URL: ${location.href}
 User agent: ${navigator.userAgent}\
 `
@@ -837,8 +838,8 @@ User agent: ${navigator.userAgent}\
     if (data.error.stack) { addDetails(data.error.stack.replace(data.error.toString(), '').trim()); }
     if (data.html) { addDetails('\n`' + data.html + '`'); }
     details = details.replace(/file:\/{3}.+\//g, ''); // Remove local file paths
-    const url = '<%= meta.newIssue %>'.replace('%title', encodeURIComponent(title)).replace('%details', encodeURIComponent(details));
-    return { innerHTML: '<span class="report-error"> [<a href="${url}" target="_blank">report</a>]</span>' };
+    const url = meta.newIssue.replace('%title', encodeURIComponent(title)).replace('%details', encodeURIComponent(details));
+    return { innerHTML: `<span class="report-error"> [<a href="${url}" target="_blank">report</a>]</span>` };
   },
 
   isThisPageLegit() {
