@@ -6,11 +6,17 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 
 ## TODO
 
-- [x] look for TODO comments
-- [ ] find alternative for `<% if (`
-- [x] meta info in compilation step
-- [ ] actual userscript and extension builds
-- [x] alternative for all the templates in some html files
+- find alternative for `<% if (`
+  - [x] made html templates js functions
+  - [x] binary files are included as base64 in the bundle step, they do need explicit imports
+  - [ ] \<% if (readJSON('/.tests_enabled')) { %\>, are these still used?
+- build script
+  - [x] userscript
+  - [ ] .crx extension
+  - [ ] beta
+  - [ ] noupdate
+- [ ] run and debug
+- [ ] port updates made to 4chan-X made since this was forked
 
 ## Other notes
 
