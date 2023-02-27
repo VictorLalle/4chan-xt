@@ -1,3 +1,4 @@
+import QR from "../Posting/QR";
 import $ from "./$";
 
 /*
@@ -8,9 +9,9 @@ import $ from "./$";
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
+let eventPageRequest;
 if (globalThis.chrome?.extension) {
-  let Request;
-  const eventPageRequest = (function () {
+  eventPageRequest = (function () {
     const callbacks = [];
     chrome.runtime.onMessage.addListener(function (response) {
       callbacks[response.id](response.data);
@@ -107,34 +108,29 @@ const CrossOrigin = {
     });
   },
 
-  Request: (Request = (function () {
-    Request = class Request {
-      static initClass() {
-        this.prototype.status = 0;
-        this.prototype.statusText = '';
-        this.prototype.response = null;
-        this.prototype.responseHeaderString = null;
-      }
-      getResponseHeader(headerName) {
-        if ((this.responseHeaders == null) && (this.responseHeaderString != null)) {
-          this.responseHeaders = $.dict();
-          for (var header of this.responseHeaderString.split('\r\n')) {
-            var i;
-            if ((i = header.indexOf(':')) >= 0) {
-              var key = header.slice(0, i).trim().toLowerCase();
-              var val = header.slice(i + 1).trim();
-              this.responseHeaders[key] = val;
-            }
+  Request: class Request {
+    static status = 0;
+    static statusText = '';
+    static response = null;
+    static responseHeaderString = null;
+
+    getResponseHeader(headerName) {
+      if ((this.responseHeaders == null) && (Request.responseHeaderString != null)) {
+        this.responseHeaders = $.dict();
+        for (var header of Request.responseHeaderString.split('\r\n')) {
+          var i;
+          if ((i = header.indexOf(':')) >= 0) {
+            var key = header.slice(0, i).trim().toLowerCase();
+            var val = header.slice(i + 1).trim();
+            this.responseHeaders[key] = val;
           }
         }
-        return this.responseHeaders?.[headerName.toLowerCase()] ?? null;
       }
-      abort() { }
-      onloadend() { }
-    };
-    Request.initClass();
-    return Request;
-  })()),
+      return this.responseHeaders?.[headerName.toLowerCase()] ?? null;
+    }
+    abort() { }
+    onloadend() { }
+  },
 
   // Attempts to fetch `url` using cross-origin privileges, if available.
   // Interface is a subset of that of $.ajax.

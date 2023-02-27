@@ -11,8 +11,8 @@ export default function generatePostInfoHtml(
   output += `<input type="checkbox" name="${ID}" value="delete">`;
 
   if (!o.isReply || boardID === "f" || subject) output += `<span class="subject">${E(subject || "")}</span>`;
-  output += `<span class="nameBlock${capcode ? ` capcode${capcode}` : ''}">`;
-  if (email) output += `<a href="mailto:${encodeURIComponent(email).replace(/%40/g, "@")}" class="useremail">`;
+  output += `<span class="nameBlock${capcode ? ` capcode${E(capcode)}` : ''}">`;
+  if (email) output += `<a href="mailto:${E(encodeURIComponent(email).replace(/%40/g, "@"))}" class="useremail">`;
   output += `<span class="name ${capcode ? E(capcode) : ''}">${E(name)}</span>`;
   if (tripcode) output += ` <span class="postertrip">${E(tripcode)}</span>`;
   if (pass) output += ` <span title="Pass user since ${E(pass)}" class="n-pu"></span>`;
@@ -26,14 +26,14 @@ export default function generatePostInfoHtml(
     output +=
       ` <img src="${staticPath}${capcodeLC}icon${gifIcon}" alt="${E(capcode)} Icon" title="This user is ${E(capcodeDescription)}." class="identityIcon retina">`;
   }
-  if (!(uniqueID && !capcode)) {
+  if (uniqueID && !capcode) {
     output +=
       `<span class="posteruid id_${E(uniqueID)}">(ID: <span class="hand" title="Highlight posts by this ID">${E(uniqueID)}</span>)</span>`;
   }
   if (flagCode) output += ` <span title="${flag}" class="flag flag-${flagCode.toLowerCase()}"></span>`;
   if (flagCodeTroll) output += ` <span title="${flag}" class="bfl bfl-${flagCodeTroll.toLowerCase()}"></span>`;
   output += `</span>
-  <span class="dateTime" data-utc="${dateUTC}">${E(dateText)}</span>
+  <span class="dateTime" data-utc="${E(dateUTC)}">${E(dateText)}</span>
   <span class="postNum${!(boardID === "f" && !o.isReply) ? ' desktop' : ''}">
     <a href="${postLink}" title="Link to this post">No.</a>
     <a href="${quoteLink}" title="Reply to this post">${ID}</a>`;
@@ -50,8 +50,6 @@ export default function generatePostInfoHtml(
   if (o.isArchived) {
     output +=
       ` <img src="${staticPath}archived${gifIcon}" alt="Archived" title="Archived" class="archivedIcon retina">`;
-  } else {
-    output += ` <img src="${staticPath}archived${gifIcon}" alt="Archived" title="Archived" class="archivedIcon retina">`;
   }
   if (!o.isReply && g.VIEW === "index") output += ` &nbsp; <span>[<a href="/${boardID}/thread/${threadID}" class="replylink">Reply</a>]</span>`;
   output += '</span></div>';

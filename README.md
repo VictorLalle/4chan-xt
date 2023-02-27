@@ -20,7 +20,9 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 
 ## Other notes
 
-- A lot of files have circular dependencies, but rollup can handle that, but for some scripts that add to the same object I had to merge them, like Posting/QR and site/SW.yotsuba.js
+- A lot of files have circular dependencies, but rollup can handle that
+  - but for some scripts that add to the same object I had to merge them, like Posting/QR and site/SW.yotsuba.js
+  - sometimes something might not be initialized before use
 - tsconfig.json has `"checkJs": true,`, and a lot of js files report type errors when opened because of unknown properties on objects and reassigning variables with different types. These errors don't block the bundle at this moment.
 - old files in the builds directory stay as reference until the new builds are functional, new files go in the builds/test directory
 - old build scripts are also kept around for reference until the new build output is fully functional

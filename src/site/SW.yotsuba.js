@@ -8,6 +8,7 @@ import PostSuccessful from "../Posting/PostSuccessful";
 import ImageHost from "../Images/ImageHost";
 import { g, Conf } from "../globals/globals";
 import BoardConfig from "../General/BoardConfig";
+import CSS from "../css/CSS";
 
 import generatePostInfoHtml from './SW.yotsuba.Build/PostInfoHtml';
 import generateFileHtml from "./SW.yotsuba.Build/FileHtml";
@@ -366,7 +367,7 @@ $\
   Build: {
     staticPath: '//s.4cdn.org/image/',
     gifIcon: window.devicePixelRatio >= 2 ? '@2x.gif' : '.gif',
-    spoilerRange: $.dict(),
+    spoilerRange: Object.create(null),
 
     shortFilename(filename) {
       const ext = filename.match(/\.?[^\.]*$/)[0];
@@ -443,7 +444,7 @@ $\
       }
       o.files = [];
       if (data.ext) {
-        o.file = SWYotsuba.this.parseJSONFile(data, { siteID, boardID });
+        o.file = this.parseJSONFile(data, { siteID, boardID });
         o.files.push(o.file);
       }
       // Temporary JSON properties for events such as April 1 / Halloween
@@ -511,7 +512,7 @@ $\
     post(o) {
       const { ID, threadID, boardID, file } = o;
       const { subject, email, name, tripcode, capcode, pass, uniqueID, flagCode, flagCodeTroll, flag, dateUTC, dateText, commentHTML } = o.info;
-      const { staticPath, gifIcon } = Build;
+      const { staticPath, gifIcon } = this;
 
       /* Post Info */
 

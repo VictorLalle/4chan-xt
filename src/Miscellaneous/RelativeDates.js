@@ -11,7 +11,7 @@ import $ from "../platform/$";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const RelativeDates = {
-  INTERVAL: $.MINUTE / 2,
+  INTERVAL: 30000,
 
   init() {
     if (

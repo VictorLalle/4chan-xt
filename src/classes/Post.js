@@ -11,8 +11,14 @@ import Callbacks from "./Callbacks";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 export default class Post {
-  // \u00A0 is nbsp
-  static deadMark = $.el('span', { textContent: '\u00A0(Dead)', className: 'qmark-dead' });
+  // because of a circular dependency $ might not be initialized, so we can't use $.el
+  static deadMark = (() => {
+    const el = document.createElement('span');
+    // \u00A0 is nbsp
+    el.textContent = '\u00A0(Dead)';
+    el.className = 'qmark-dead';
+    return el;
+  })();
 
   toString() { return this.ID; }
 

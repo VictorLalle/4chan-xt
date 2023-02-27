@@ -17,6 +17,7 @@ import Volume from './Volume';
 import Header from '../General/Header';
 import { Conf, g } from '../globals/globals';
 import UI from '../General/UI';
+import Get from '../General/Get';
 
 const Gallery = {
   init() {

@@ -239,7 +239,7 @@ $.ajax = (function () {
       return req;
     };
   }
-});
+})();
 
 // Status Code 304: Not modified
 // With the `If-Modified-Since` header we only receive the HTTP headers and no body for 304 responses.

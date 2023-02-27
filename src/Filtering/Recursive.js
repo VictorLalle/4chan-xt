@@ -1,6 +1,5 @@
 import Callbacks from "../classes/Callbacks";
 import { g } from "../globals/globals";
-import $ from "../platform/$";
 
 /*
  * decaffeinate suggestions:
@@ -9,7 +8,7 @@ import $ from "../platform/$";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const Recursive = {
-  recursives: $.dict(),
+  recursives: Object.create(null),
   init() {
     if (!['index', 'thread'].includes(g.VIEW)) { return; }
     return Callbacks.Post.push({

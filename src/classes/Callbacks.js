@@ -1,3 +1,5 @@
+import Main from "../main/Main";
+
 export default class Callbacks {
   static Post = new Callbacks('Post');
   static Thread = new Callbacks('Thread');
