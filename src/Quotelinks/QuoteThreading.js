@@ -5,6 +5,7 @@ import { Conf, g } from "../globals/globals";
 import ReplyPruning from "../Monitoring/ReplyPruning";
 import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -54,9 +55,9 @@ const QuoteThreading = {
     });
   },
 
-  parent: $.dict(),
-  children: $.dict(),
-  inserted: $.dict(),
+  parent: dict(),
+  children: dict(),
+  inserted: dict(),
 
   toggleThreading() {
     return this.setThreadingState(!Conf['Thread Quotes']);
@@ -189,7 +190,7 @@ const QuoteThreading = {
     } else {
       const nodes = [];
       Unread.order = new RandomAccessList();
-      QuoteThreading.inserted = $.dict();
+      QuoteThreading.inserted = dict();
       posts.forEach(function (post) {
         if (post.isFetchedQuote) { return; }
         Unread.order.push(post);

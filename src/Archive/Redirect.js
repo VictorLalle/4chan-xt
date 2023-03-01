@@ -2,6 +2,7 @@ import Notice from '../classes/Notice.js';
 import { Conf } from '../globals/globals.js';
 import $ from '../platform/$.js';
 import CrossOrigin from '../platform/CrossOrigin.js';
+import { DAY, dict } from '../platform/helpers.js';
 import archives from './archives.js';
 /*
  * decaffeinate suggestions:
@@ -17,19 +18,19 @@ const Redirect = {
     this.selectArchives();
     if (Conf['archiveAutoUpdate']) {
       const now = Date.now();
-      if (now - (2 * $.DAY) >= Conf['lastarchivecheck'] || Conf['lastarchivecheck'] > now) { return this.update(); }
+      if (now - (2 * DAY) >= Conf['lastarchivecheck'] || Conf['lastarchivecheck'] > now) { return this.update(); }
     }
   },
 
   selectArchives() {
     let boardID, boards, data, files;
     const o = {
-      thread: $.dict(),
-      post: $.dict(),
-      file: $.dict()
+      thread: dict(),
+      post: dict(),
+      file: dict()
     };
 
-    const archives = $.dict();
+    const archives = dict();
     for (data of Conf['archives']) {
       var name, software, uid;
       for (var key of ['boards', 'files']) {
@@ -109,14 +110,14 @@ const Redirect = {
 
   parse(responses, cb) {
     const archives = [];
-    const archiveUIDs = $.dict();
+    const archiveUIDs = dict();
     for (var response of responses) {
       for (var data of response) {
         var uid = JSON.stringify(data.uid ?? data.name);
         if (uid in archiveUIDs) {
           $.extend(archiveUIDs[uid], data);
         } else {
-          archiveUIDs[uid] = $.dict.clone(data);
+          archiveUIDs[uid] = dict.clone(data);
           archives.push(data);
         }
       }

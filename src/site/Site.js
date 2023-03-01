@@ -1,6 +1,7 @@
 import { Conf, g } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
+import { dict } from "../platform/helpers";
 import SW from "./SW";
 
 /*
@@ -31,7 +32,7 @@ const Site = {
         if (changes = SW[software].detect?.()) {
           changes.software = software;
           hostname = location.hostname.replace(/^www\./, '');
-          var properties = (Conf['siteProperties'][hostname] || (Conf['siteProperties'][hostname] = $.dict()));
+          var properties = (Conf['siteProperties'][hostname] || (Conf['siteProperties'][hostname] = dict()));
           var changed = 0;
           for (var key in changes) {
             if (properties[key] !== changes[key]) {

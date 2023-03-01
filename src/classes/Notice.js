@@ -1,5 +1,6 @@
 import Header from "../General/Header";
 import $ from "../platform/$";
+import { SECOND } from "../platform/helpers";
 
 export default class Notice {
   constructor(type, content, timeout, onclose) {
@@ -34,7 +35,7 @@ export default class Notice {
     $.add(Header.noticesRoot, this.el);
     this.el.clientHeight; // force reflow
     this.el.style.opacity = 1;
-    if (this.timeout) { return setTimeout(this.close, this.timeout * $.SECOND); }
+    if (this.timeout) { return setTimeout(this.close, this.timeout * SECOND); }
   }
 
   close() {

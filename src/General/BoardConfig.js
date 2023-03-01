@@ -1,6 +1,7 @@
 import Notice from "../classes/Notice";
 import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import { dict, HOUR } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -16,7 +17,7 @@ var BoardConfig = {
     let middle;
     if (g.SITE.software !== 'yotsuba') { return; }
     const now = Date.now();
-    if (now - (2 * $.HOUR) >= ((middle = Conf['boardConfig'].lastChecked || 0)) || middle > now) {
+    if (now - (2 * HOUR) >= ((middle = Conf['boardConfig'].lastChecked || 0)) || middle > now) {
       return $.ajax(`${location.protocol}//a.4cdn.org/boards.json`, { onloadend: this.load });
     } else {
       const { boards } = Conf['boardConfig'];
@@ -27,7 +28,7 @@ var BoardConfig = {
   load() {
     let boards;
     if ((this.status === 200) && this.response && this.response.boards) {
-      boards = $.dict();
+      boards = dict();
       for (var board of this.response.boards) {
         boards[board.board] = board;
       }

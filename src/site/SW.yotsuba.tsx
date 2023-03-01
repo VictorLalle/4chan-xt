@@ -6,13 +6,15 @@ import $$ from "../platform/$$";
 import Captcha from "../Posting/Captcha";
 import PostSuccessful from "../Posting/PostSuccessful";
 import ImageHost from "../Images/ImageHost";
-import { g, Conf } from "../globals/globals";
+import { g, Conf, E } from "../globals/globals";
 import BoardConfig from "../General/BoardConfig";
 import CSS from "../css/CSS";
 
 import generatePostInfoHtml from './SW.yotsuba.Build/PostInfoHtml';
 import generateFileHtml from "./SW.yotsuba.Build/FileHtml";
 import generateCatalogThreadHtml from "./SW.yotsuba.Build/CatalogThreadHtml";
+import h, { hFragment, isEscaped } from "../globals/jsx";
+import { dict, MINUTE } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -223,7 +225,7 @@ $\
     if ((g.BOARD.ID === 'f') && thread.OP.file) {
       const { file } = thread.OP;
       return $.ajax(this.urls.threadJSON({ boardID: 'f', threadID: thread.ID }), {
-        timeout: $.MINUTE,
+        timeout: MINUTE,
         onloadend() {
           if (this.response) {
             return file.text.dataset.md5 = (file.MD5 = this.response.posts[0].md5);
@@ -435,7 +437,7 @@ $\
         flag: $.unescape((data.country_name || data.flag_name)),
         dateUTC: data.time,
         dateText: data.now,
-        commentHTML: { innerHTML: data.com || '' }
+        commentHTML: { innerHTML: E(data.com) || '', [isEscaped]: true }
       };
       if (data.capcode) {
         o.info.capcode = data.capcode.replace(/_highlight$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -448,7 +450,7 @@ $\
         o.files.push(o.file);
       }
       // Temporary JSON properties for events such as April 1 / Halloween
-      o.extra = $.dict();
+      o.extra = dict();
       for (var key in data) {
         if (key[0] === 'x') {
           o.extra[key] = data[key];
@@ -536,42 +538,39 @@ $\
       const postLink = `${url}#p${ID}`;
       const quoteLink = this.sameThread(boardID, threadID) ? `javascript:quote('${+ID}');` : `${url}#q${ID}`;
 
-      const postInfo = {
-        innerHTML: generatePostInfoHtml(
-          ID, o, subject, capcode, email, name, tripcode, pass, capcodeLC, capcodePlural, staticPath, gifIcon,
-          capcodeDescription, uniqueID, flag, flagCode, flagCodeTroll, dateUTC, dateText, postLink, quoteLink, boardID,
-          threadID,
-        )
-      };
+      const postInfo = generatePostInfoHtml(
+        ID, o, subject, capcode, email, name, tripcode, pass, capcodeLC, capcodePlural, staticPath, gifIcon,
+        capcodeDescription, uniqueID, flag, flagCode, flagCodeTroll, dateUTC, dateText, postLink, quoteLink, boardID,
+        threadID,
+      );
 
       /* File Info */
+      let protocol, fileURL, shortFilename, fileThumb;
+      if (file) {
+        protocol = /^https?:(?=\/\/i\.4cdn\.org\/)/;
+        fileURL = file.url.replace(protocol, '');
+        shortFilename = this.shortFilename(file.name);
+        fileThumb = file.isSpoiler ? this.spoilerThumb(boardID) : file.thumbURL.replace(protocol, '');
+      }
 
-
-      const protocol = /^https?:(?=\/\/i\.4cdn\.org\/)/;
-      const fileURL = file?.url?.replace(protocol, '');
-      const shortFilename = this.shortFilename(file?.name);
-      const fileThumb = file?.isSpoiler ? this.spoilerThumb(boardID) : file?.thumbURL?.replace(protocol, '');
-
-      const fileBlock = {
-        innerHTML: generateFileHtml(file, ID, boardID, fileURL, shortFilename, fileThumb, o, staticPath, gifIcon)
-      };
+      const fileBlock = generateFileHtml(file, ID, boardID, fileURL, shortFilename, fileThumb, o, staticPath, gifIcon);
 
       /* Whole Post */
 
       const postClass = o.isReply ? 'reply' : 'op';
 
-      const wholePost = {
-        innerHTML: (o.isReply ? `<div class="sideArrows" id="sa${ID}">&gt;&gt;</div>` : '') +
-          `<div id="p${ID}" class="post ${postClass}${o.capcodeHighlight ? ' highlightPost' : ''}">` +
-          (o.isReply ? postInfo.innerHTML + fileBlock.innerHTML : fileBlock.innerHTML + postInfo.innerHTML) +
-          `<blockquote class="postMessage" id="m${ID}">${commentHTML.innerHTML}</blockquote></div>`
-      };
+      const wholePost = <>
+        {(o.isReply ? <div class="sideArrows" id={`sa${ID}`}>&gt;&gt;</div> : '')}
+        <div id="p${ID}" class="post ${postClass}${o.capcodeHighlight ? ' highlightPost' : ''}">
+          {(o.isReply ? <>{postInfo}{fileBlock}</> : <>{fileBlock}{postInfo}</>)}
+          <blockquote class="postMessage" id={`m${ID}`}>{commentHTML}</blockquote>
+        </div>
+      </>;
 
       const container = $.el('div', {
         className: `postContainer ${postClass}Container`,
         id: `pc${ID}`
-      }
-      );
+      });
       $.extend(container, wholePost);
 
       // Fix quotelinks
@@ -664,10 +663,10 @@ $\
       const postCount = data.replies + 1;
       const fileCount = data.images + !!data.ext;
 
-      const container = $.el('div', {
-        innerHTML:
-          generateCatalogThreadHtml(thread, src, imgClass, data, postCount, fileCount, pageCount, staticPath, gifIcon)
-      });
+      const container = $.el(
+        'div',
+        generateCatalogThreadHtml(thread, src, imgClass, data, postCount, fileCount, pageCount, staticPath, gifIcon)
+      );
       $.before(thread.OP.nodes.info, [...Array.from(container.childNodes)]);
 
       for (var br of $$('br', thread.OP.nodes.comment)) {
@@ -704,11 +703,11 @@ $\
 
       const link = this.postURL(thread.board.ID, thread.ID, data.no);
       return $.el('div', { className: 'catalog-reply' },
-        {
-          innerHTML: `<span><time data-utc="${data.time * 1000}" data-abbrev="1">...</time>: </span> ` +
-            `<a class="catalog-reply-excerpt" href="${link}">${excerpt}</a> ` +
-            `<a class="catalog-reply-preview" href="${link}">...</a>`
-        }
+        <>
+          <span><time data-utc={data.time * 1000} data-abbrev="1">...</time>: </span>
+          <a class="catalog-reply-excerpt" href={link}>{excerpt}</a>
+          <a class="catalog-reply-preview" href={link}>...</a>
+        </>
       );
     }
   }

@@ -9,11 +9,12 @@ import CrossOrigin from '../platform/CrossOrigin';
 import Captcha from './Captcha';
 import meta from '../../package.json';
 import Header from '../General/Header';
-import { Conf, g } from '../globals/globals';
+import { Conf, E, g } from '../globals/globals';
 import Menu from '../Menu/Menu';
 import UI from '../General/UI';
 import BoardConfig from '../General/BoardConfig';
 import Get from '../General/Get';
+import { DAY, dict, SECOND } from '../platform/helpers';
 
 /*
  * decaffeinate suggestions:
@@ -313,7 +314,7 @@ var QR = {
           notif.onclose = null;
           return notif.close();
         }
-          , 7 * $.SECOND);
+          , 7 * SECOND);
       }
     }
   },
@@ -472,7 +473,10 @@ var QR = {
 
   openError() {
     const div = $.el('div');
-    $.extend(div, { innerHTML: 'Could not open file. [<a href="' + meta.faq + '#error-reading-metadata" target="_blank">More info</a>]' });
+    $.extend(div, {
+      innerHTML:
+        'Could not open file. [<a href="' + E(meta.faq) + '#error-reading-metadata" target="_blank">More info</a>]'
+    });
     return QR.error(div);
   },
 
@@ -1098,7 +1102,7 @@ var QR = {
           if ((attempts >= 6) || (this.status === 200)) {
             return cb();
           } else {
-            return setTimeout(check, attempts * $.SECOND);
+            return setTimeout(check, attempts * SECOND);
           }
         },
         responseType: 'text',
@@ -1133,7 +1137,7 @@ var QR = {
     init() {
       if (!Conf['Quick Reply']) { return; }
       this.data = Conf['cooldowns'];
-      this.changes = $.dict();
+      this.changes = dict();
       return $.sync('cooldowns', this.sync);
     },
 
@@ -1168,7 +1172,7 @@ var QR = {
     },
 
     sync(data) {
-      QR.cooldown.data = data || $.dict();
+      QR.cooldown.data = data || dict();
       return QR.cooldown.start();
     },
 
@@ -1201,7 +1205,7 @@ var QR = {
     delete(post) {
       let cooldown;
       if (!QR.cooldown.data) { return; }
-      const cooldowns = (QR.cooldown.data[post.board.ID] || (QR.cooldown.data[post.board.ID] = $.dict()));
+      const cooldowns = (QR.cooldown.data[post.board.ID] || (QR.cooldown.data[post.board.ID] = dict()));
       for (var id in cooldowns) {
         cooldown = cooldowns[id];
         if ((cooldown.delay == null) && (cooldown.threadID === post.thread.ID) && (cooldown.postID === post.ID)) {
@@ -1213,11 +1217,11 @@ var QR = {
 
     secondsDeletion(post) {
       if (!QR.cooldown.data || !Conf['Cooldown']) { return 0; }
-      const cooldowns = QR.cooldown.data[post.board.ID] || $.dict();
+      const cooldowns = QR.cooldown.data[post.board.ID] || dict();
       for (var start in cooldowns) {
         var cooldown = cooldowns[start];
         if ((cooldown.delay == null) && (cooldown.threadID === post.thread.ID) && (cooldown.postID === post.ID)) {
-          var seconds = QR.cooldown.delays.deletion - Math.floor((Date.now() - start) / $.SECOND);
+          var seconds = QR.cooldown.delays.deletion - Math.floor((Date.now() - start) / SECOND);
           return Math.max(seconds, 0);
         }
       }
@@ -1237,7 +1241,7 @@ var QR = {
 
     mergeChange(data, scope, id, value) {
       if (value) {
-        return (data[scope] || (data[scope] = $.dict()))[id] = value;
+        return (data[scope] || (data[scope] = dict()))[id] = value;
       } else if (scope in data) {
         delete data[scope][id];
         if (Object.keys(data[scope]).length === 0) { return delete data[scope]; }
@@ -1246,13 +1250,13 @@ var QR = {
 
     set(scope, id, value) {
       QR.cooldown.mergeChange(QR.cooldown.data, scope, id, value);
-      return (QR.cooldown.changes[scope] || (QR.cooldown.changes[scope] = $.dict()))[id] = value;
+      return (QR.cooldown.changes[scope] || (QR.cooldown.changes[scope] = dict()))[id] = value;
     },
 
     save() {
       const { changes } = QR.cooldown;
       if (!Object.keys(changes).length) { return; }
-      return $.get('cooldowns', $.dict(), function ({ cooldowns }) {
+      return $.get('cooldowns', dict(), function ({ cooldowns }) {
         for (var scope in QR.cooldown.changes) {
           for (var id in QR.cooldown.changes[scope]) {
             var value = QR.cooldown.changes[scope][id];
@@ -1260,13 +1264,13 @@ var QR = {
           }
           QR.cooldown.data = cooldowns;
         }
-        return $.set('cooldowns', cooldowns, () => QR.cooldown.changes = $.dict());
+        return $.set('cooldowns', cooldowns, () => QR.cooldown.changes = dict());
       });
     },
 
     clear() {
-      QR.cooldown.data = $.dict();
-      QR.cooldown.changes = $.dict();
+      QR.cooldown.data = dict();
+      QR.cooldown.changes = dict();
       QR.cooldown.auto = false;
       QR.cooldown.update();
       return $.queueTask($.delete, 'cooldowns');
@@ -1284,12 +1288,12 @@ var QR = {
 
       if (Conf['Cooldown']) {
         for (var scope of [g.BOARD.ID, 'global']) {
-          var cooldowns = (QR.cooldown.data[scope] || (QR.cooldown.data[scope] = $.dict()));
+          var cooldowns = (QR.cooldown.data[scope] || (QR.cooldown.data[scope] = dict()));
 
           for (var start in cooldowns) {
             cooldown = cooldowns[start];
             start = +start;
-            var elapsed = Math.floor((now - start) / $.SECOND);
+            var elapsed = Math.floor((now - start) / SECOND);
             if (elapsed < 0) { // clock changed since then?
               QR.cooldown.set(scope, start, null);
               save = true;
@@ -1347,7 +1351,7 @@ var QR = {
 
       if (nCooldowns) {
         clearTimeout(QR.cooldown.timeout);
-        QR.cooldown.timeout = setTimeout(QR.cooldown.count, $.SECOND);
+        QR.cooldown.timeout = setTimeout(QR.cooldown.count, SECOND);
       } else {
         delete QR.cooldown.isCounting;
       }
@@ -1872,7 +1876,7 @@ var QR = {
     error(className, message, link) {
       const div = $.el('div', { className });
       $.extend(div, {
-        innerHTML: message + (link ? ` [<a href="${link}" target="_blank">More info</a>]` : '') +
+        innerHTML: message + (link ? ` [<a href="${E(link)}" target="_blank">More info</a>]` : '') +
           `<br>[<a href="javascript:;">delete post</a>] [<a href="javascript:;">delete all</a>]`
       });
       (this.errors || (this.errors = [])).push(div);
@@ -1906,7 +1910,7 @@ var QR = {
       this.file = file;
       if (Conf['Randomize Filename'] && (g.BOARD.ID !== 'f')) {
         let ext;
-        this.filename = `${Date.now() - Math.floor(Math.random() * 365 * $.DAY)}`;
+        this.filename = `${Date.now() - Math.floor(Math.random() * 365 * DAY)}`;
         if (ext = this.file.name.match(QR.validExtension)) { this.filename += ext[0]; }
       } else {
         this.filename = this.file.name;

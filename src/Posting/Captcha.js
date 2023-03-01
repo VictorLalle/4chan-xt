@@ -7,6 +7,7 @@ import Keybinds from "../Miscellaneous/Keybinds";
 import $$ from "../platform/$$";
 import QR from "./QR";
 import { Conf } from "../globals/globals";
+import { MINUTE, SECOND } from "../platform/helpers";
 
 const Captcha = {
   Cache: {
@@ -159,7 +160,7 @@ const Captcha = {
       return $.event('CaptchaCount', this.captchas.length);
     }
   }, Replace: CaptchaReplace, t: CaptchaT, v2: {
-    lifetime: 2 * $.MINUTE,
+    lifetime: 2 * MINUTE,
 
     init() {
       if (document.cookie.indexOf('pass_enabled=1') >= 0) { return; }
@@ -386,7 +387,7 @@ const Captcha = {
         if (pasted) {
           this.destroy();
         } else {
-          if (this.timeouts.destroy == null) { this.timeouts.destroy = setTimeout(this.destroy.bind(this), 3 * $.SECOND); }
+          if (this.timeouts.destroy == null) { this.timeouts.destroy = setTimeout(this.destroy.bind(this), 3 * SECOND); }
         }
         if (focus) { QR.nodes.status.focus(); }
       }

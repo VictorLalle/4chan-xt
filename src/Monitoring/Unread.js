@@ -5,6 +5,7 @@ import Get from "../General/Get";
 import Header from "../General/Header";
 import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import { debounce, SECOND } from "../platform/helpers";
 import QuoteYou from "../Quotelinks/QuoteYou";
 import Favicon from "./Favicon";
 import ThreadWatcher from "./ThreadWatcher";
@@ -190,7 +191,7 @@ const Unread = {
       return window.focus();
     };
     return notif.onshow = () => setTimeout(() => notif.close()
-      , 7 * $.SECOND);
+      , 7 * SECOND);
   },
 
   onUpdate() {
@@ -211,7 +212,7 @@ const Unread = {
     return Unread.update();
   },
 
-  read: $.debounce(100, function (e) {
+  read: debounce(100, function (e) {
     // Update the lastReadPost when hidden posts are added to the thread.
     if (!Unread.posts.size && (Unread.readCount !== Unread.thread.posts.keys.length)) {
       Unread.saveLastReadPost();
@@ -243,7 +244,7 @@ const Unread = {
     }
   },
 
-  saveLastReadPost: $.debounce(2 * $.SECOND, function () {
+  saveLastReadPost: debounce(2000, function () {
     let ID;
     $.forceSync('Remember Last Read Post');
     if (!Conf['Remember Last Read Post'] || !Unread.db) { return; }
@@ -311,7 +312,7 @@ const Unread = {
     }
   },
 
-  saveThreadWatcherCount: $.debounce(2 * $.SECOND, function () {
+  saveThreadWatcherCount: debounce(2000, function () {
     $.forceSync('Remember Last Read Post');
     if (Conf['Remember Last Read Post'] && (!Unread.thread.isDead || Unread.thread.isArchived)) {
       let posts;

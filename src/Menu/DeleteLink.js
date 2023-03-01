@@ -1,6 +1,7 @@
 import Notice from "../classes/Notice";
 import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import { dict } from "../platform/helpers";
 import QR from "../Posting/QR";
 import Menu from "./Menu";
 /*
@@ -10,7 +11,7 @@ import Menu from "./Menu";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const DeleteLink = {
-  auto: [$.dict(), $.dict()],
+  auto: [dict(), dict()],
 
   init() {
     if (!['index', 'thread'].includes(g.VIEW) || !Conf['Menu'] || !Conf['Delete Link']) { return; }
@@ -153,7 +154,7 @@ const DeleteLink = {
   },
 
   cooldown: {
-    seconds: $.dict(),
+    seconds: dict(),
 
     start(post, seconds) {
       // Already counting.

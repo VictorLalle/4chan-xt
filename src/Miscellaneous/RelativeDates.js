@@ -3,6 +3,7 @@ import Post from "../classes/Post";
 import Index from "../General/Index";
 import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import { DAY, HOUR, MINUTE, SECOND } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -51,7 +52,7 @@ const RelativeDates = {
   relative(diff, now, date, abbrev) {
     let number;
     let unit = (() => {
-      if ((number = (diff / $.DAY)) >= 1) {
+      if ((number = (diff / DAY)) >= 1) {
         const years = now.getFullYear() - date.getFullYear();
         let months = now.getMonth() - date.getMonth();
         const days = now.getDate() - date.getDate();
@@ -70,13 +71,13 @@ const RelativeDates = {
         } else {
           return 'day';
         }
-      } else if ((number = (diff / $.HOUR)) >= 1) {
+      } else if ((number = (diff / HOUR)) >= 1) {
         return 'hour';
-      } else if ((number = (diff / $.MINUTE)) >= 1) {
+      } else if ((number = (diff / MINUTE)) >= 1) {
         return 'minute';
       } else {
         // prevent "-1 seconds ago"
-        number = Math.max(0, diff) / $.SECOND;
+        number = Math.max(0, diff) / SECOND;
         return 'second';
       }
     })();
@@ -151,14 +152,14 @@ const RelativeDates = {
   },
 
   setOwnTimeout(diff, data) {
-    const delay = diff < $.MINUTE ?
-      $.SECOND - ((diff + ($.SECOND / 2)) % $.SECOND)
-      : diff < $.HOUR ?
-        $.MINUTE - ((diff + ($.MINUTE / 2)) % $.MINUTE)
-        : diff < $.DAY ?
-          $.HOUR - ((diff + ($.HOUR / 2)) % $.HOUR)
+    const delay = diff < MINUTE ?
+      SECOND - ((diff + (SECOND / 2)) % SECOND)
+      : diff < HOUR ?
+        MINUTE - ((diff + (MINUTE / 2)) % MINUTE)
+        : diff < DAY ?
+          HOUR - ((diff + (HOUR / 2)) % HOUR)
           :
-          $.DAY - ((diff + ($.DAY / 2)) % $.DAY);
+          DAY - ((diff + (DAY / 2)) % DAY);
     return setTimeout(RelativeDates.markStale, delay, data);
   },
 

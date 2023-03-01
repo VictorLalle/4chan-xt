@@ -8,6 +8,7 @@ import Main from "../main/Main";
 import Menu from "../Menu/Menu";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -34,7 +35,7 @@ const ThreadHiding = {
     if (!$.hasStorage || (g.SITE.software !== 'yotsuba')) { return; }
     const hiddenThreads = ThreadHiding.db.get({
       boardID: board.ID,
-      defaultValue: $.dict()
+      defaultValue: dict()
     });
     for (var threadID in hiddenThreads) { hiddenThreads[threadID] = true; }
     return localStorage.setItem(`4chan-hide-t-${board}`, JSON.stringify(hiddenThreads));

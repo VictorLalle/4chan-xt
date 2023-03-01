@@ -18,6 +18,7 @@ import Header from '../General/Header';
 import { Conf, g } from '../globals/globals';
 import UI from '../General/UI';
 import Get from '../General/Get';
+import { debounce, dict, SECOND } from '../platform/helpers';
 
 const Gallery = {
   init() {
@@ -76,7 +77,7 @@ const Gallery = {
 
     Gallery.images = [];
     const nodes = (Gallery.nodes = {});
-    Gallery.fileIDs = $.dict();
+    Gallery.fileIDs = dict();
     Gallery.slideshow = false;
 
     nodes.el = (dialog = $.el('div',
@@ -292,7 +293,7 @@ const Gallery = {
   },
 
   startTimer() {
-    return Gallery.timeoutID = setTimeout(Gallery.checkTimer, Gallery.delay * $.SECOND);
+    return Gallery.timeoutID = setTimeout(Gallery.checkTimer, Gallery.delay * SECOND);
   },
 
   setupTimer() {
@@ -413,7 +414,7 @@ const Gallery = {
     rotateLeft() { return Gallery.cb.rotate(270); },
     rotateRight() { return Gallery.cb.rotate(90); },
 
-    rotate: $.debounce(100, function (delta) {
+    rotate: debounce(100, function (delta) {
       const { current } = Gallery.nodes;
       if (current.nodeName === 'IFRAME') { return; }
       current.dataRotate = ((current.dataRotate || 0) + delta) % 360;
@@ -445,7 +446,7 @@ const Gallery = {
       return (this.checked ? $.addClass : $.rmClass)(document.documentElement, `gal-${this.name.toLowerCase().replace(/\s+/g, '-')}`);
     },
 
-    setHeight: $.debounce(100, function () {
+    setHeight: debounce(100, function () {
       let dim, margin, minHeight;
       const { current, frame } = Gallery.nodes;
       const { style } = current;

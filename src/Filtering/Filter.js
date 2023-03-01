@@ -8,6 +8,7 @@ import Menu from "../Menu/Menu";
 import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
+import { dict } from "../platform/helpers";
 import QuoteYou from "../Quotelinks/QuoteYou";
 import PostHiding from "./PostHiding";
 import ThreadHiding from "./ThreadHiding";
@@ -20,7 +21,7 @@ import ThreadHiding from "./ThreadHiding";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const Filter = {
-  filters: $.dict(),
+  filters: dict(),
   init() {
     if (!['index', 'thread', 'catalog'].includes(g.VIEW) || !Conf['Filter']) { return; }
     if ((g.VIEW === 'catalog') && !Conf['Filter in Native Catalog']) { return; }
@@ -141,7 +142,7 @@ const Filter = {
     let boards;
     if (!boardsRaw) { return false; }
     if (boards = Filter.parseBoardsMemo[boardsRaw]) { return boards; }
-    boards = $.dict();
+    boards = dict();
     let siteFilter = '';
     for (var boardID of boardsRaw.split(',')) {
       if (boardID.includes(':')) {
@@ -164,7 +165,7 @@ const Filter = {
     return boards;
   },
 
-  parseBoardsMemo: $.dict(),
+  parseBoardsMemo: dict(),
 
   test(post, hideable = true) {
     if (post.filterResults) { return post.filterResults; }
@@ -244,7 +245,7 @@ const Filter = {
   catalog() {
     let url;
     if (!(url = g.SITE.urls.catalogJSON?.(g.BOARD))) { return; }
-    Filter.catalogData = $.dict();
+    Filter.catalogData = dict();
     $.ajax(url,
       { onloadend: Filter.catalogParse });
     return Callbacks.CatalogThreadNative.push({

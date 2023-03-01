@@ -6,6 +6,7 @@ import Index from "../General/Index";
 import { g, Conf } from "../globals/globals";
 import ExpandThread from "../Miscellaneous/ExpandThread";
 import $ from "../platform/$";
+import { dict } from "../platform/helpers";
 import QuoteYou from "../Quotelinks/QuoteYou";
 import ThreadWatcher from "./ThreadWatcher";
 
@@ -16,9 +17,9 @@ import ThreadWatcher from "./ThreadWatcher";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const UnreadIndex = {
-  lastReadPost: $.dict(),
-  hr: $.dict(),
-  markReadLink: $.dict(),
+  lastReadPost: dict(),
+  hr: dict(),
+  markReadLink: dict(),
 
   init() {
     if ((g.VIEW !== 'index') || !Conf['Remember Last Read Post'] || !Conf['Unread Line in Index']) { return; }

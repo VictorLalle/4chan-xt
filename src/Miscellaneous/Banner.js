@@ -4,6 +4,7 @@ import Main from "../main/Main";
 import Unread from "../Monitoring/Unread";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -110,7 +111,7 @@ const Banner = {
     }
   },
 
-  original: $.dict(),
+  original: dict(),
 
   custom(child) {
     let data;

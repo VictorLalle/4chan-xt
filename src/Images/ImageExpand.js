@@ -6,6 +6,7 @@ import UI from "../General/UI";
 import { Conf, g } from "../globals/globals";
 import Nav from "../Miscellaneous/Nav";
 import $ from "../platform/$";
+import { SECOND } from "../platform/helpers";
 import ImageCommon from "./ImageCommon";
 import Volume from "./Volume";
 
@@ -349,7 +350,7 @@ const ImageExpand = {
     if (ImageCommon.isFromArchive(this)) {
       return ImageExpand.contract(post);
     }
-    return ImageCommon.error(this, post, post.file, 10 * $.SECOND, function (URL) {
+    return ImageCommon.error(this, post, post.file, 10 * SECOND, function (URL) {
       if (post.file.isExpanding || post.file.isExpanded) {
         ImageExpand.contract(post);
         if (URL) { return ImageExpand.expand(post, URL); }

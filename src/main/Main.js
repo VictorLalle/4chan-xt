@@ -88,6 +88,7 @@ import Menu from "../Menu/Menu";
 import BoardConfig from "../General/BoardConfig";
 import CaptchaReplace from "../Posting/Captcha.replace";
 import Get from "../General/Get";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -146,7 +147,7 @@ const Main = {
     // Flatten default values from Config into Conf
     var flatten = function (parent, obj) {
       if (obj instanceof Array) {
-        Conf[parent] = $.dict.clone(obj[0]);
+        Conf[parent] = dict.clone(obj[0]);
       } else if (typeof obj === 'object') {
         for (var key in obj) {
           var val = obj[key];
@@ -176,16 +177,16 @@ const Main = {
     flatten(null, Config);
 
     for (var db of DataBoard.keys) {
-      Conf[db] = $.dict();
+      Conf[db] = dict();
     }
-    Conf['customTitles'] = $.dict.clone({ '4chan.org': { boards: { 'qa': { 'boardTitle': { orig: '/qa/ - Question & Answer', title: '/qa/ - 2D/Random' } } } } });
-    Conf['boardConfig'] = { boards: $.dict() };
+    Conf['customTitles'] = dict.clone({ '4chan.org': { boards: { 'qa': { 'boardTitle': { orig: '/qa/ - Question & Answer', title: '/qa/ - 2D/Random' } } } } });
+    Conf['boardConfig'] = { boards: dict() };
     Conf['archives'] = Redirect.archives;
-    Conf['selectedArchives'] = $.dict();
-    Conf['cooldowns'] = $.dict();
-    Conf['Index Sort'] = $.dict();
-    for (let i = 0; i < 2; i++) { Conf[`Last Long Reply Thresholds ${i}`] = $.dict(); }
-    Conf['siteProperties'] = $.dict();
+    Conf['selectedArchives'] = dict();
+    Conf['cooldowns'] = dict();
+    Conf['Index Sort'] = dict();
+    for (let i = 0; i < 2; i++) { Conf[`Last Long Reply Thresholds ${i}`] = dict(); }
+    Conf['siteProperties'] = dict();
 
     // XXX old key names
     Conf['Except Archives from Encryption'] = false;
@@ -199,7 +200,7 @@ const Main = {
     Conf['Use Faster Image Host'] = 'true';
     Conf['Captcha Fixes'] = true;
     Conf['captchaServiceDomain'] = '';
-    Conf['captchaServiceKey'] = $.dict();
+    Conf['captchaServiceKey'] = dict();
 
     // Enforce JS whitelist
     if (
@@ -211,7 +212,7 @@ const Main = {
     }
 
     // Get saved values as items
-    const items = $.dict();
+    const items = dict();
     for (key in Conf) { items[key] = undefined; }
     items['previousversion'] = undefined;
     return ($.getSync || $.get)(items, function (items) {
@@ -257,7 +258,7 @@ const Main = {
       if (items['Show Updated Notifications'] ?? true) {
         // TODO meta
         const el = $.el('span',
-          { innerHTML: 'meta.name has been updated to <a href="' + meta.changelog + '" target="_blank">version ${g.VERSION}</a>.' });
+          { innerHTML: `meta.name has been updated to <a href="${meta.changelog}" target="_blank">version ${g.VERSION}</a>.` });
         return new Notice('info', el, 15);
       }
     });
@@ -764,7 +765,7 @@ const Main = {
         $.addClass(document.documentElement, 'tainted');
         if (Conf['Disable Native Extension'] && !Main.isFirstRun) {
           const msg = $.el('div',
-            { innerHTML: 'Failed to disable the native extension. You may need to <a href="' + meta.faq + '#blocking-native-extension" target="_blank">block it</a>.' });
+            { innerHTML: 'Failed to disable the native extension. You may need to <a href="' + E(meta.faq) + '#blocking-native-extension" target="_blank">block it</a>.' });
           new Notice('error', msg);
         }
       }

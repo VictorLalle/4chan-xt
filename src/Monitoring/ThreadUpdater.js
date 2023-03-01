@@ -11,6 +11,7 @@ import Unread from './Unread';
 import Header from '../General/Header';
 import { g, Conf } from '../globals/globals';
 import UI from '../General/UI';
+import { SECOND } from '../platform/helpers';
 
 /*
  * decaffeinate suggestions:
@@ -242,7 +243,7 @@ const ThreadUpdater = {
     // Fetching your own posts after posting
     if (ThreadUpdater.postID && (ThreadUpdater.checkPostCount < 5)) {
       ThreadUpdater.set('timer', '...', 'loading');
-      ThreadUpdater.timeoutID = setTimeout(ThreadUpdater.update, ++ThreadUpdater.checkPostCount * $.SECOND);
+      ThreadUpdater.timeoutID = setTimeout(ThreadUpdater.update, ++ThreadUpdater.checkPostCount * SECOND);
       return;
     }
 
@@ -309,7 +310,7 @@ const ThreadUpdater = {
       g.SITE.urls.threadJSON({ boardID: ThreadUpdater.thread.board.ID, threadID: ThreadUpdater.thread.ID }),
       'ThreadUpdater',
       ThreadUpdater.cb.load,
-      { timeout: $.MINUTE }
+      { timeout: MINUTE }
     );
   },
 
@@ -341,7 +342,7 @@ const ThreadUpdater = {
 
     // XXX Reject updates that falsely delete the last post.
     if ((postObjects[postObjects.length - 1].no < lastPost) &&
-      ((new Date(req.getResponseHeader('Last-Modified')) - thread.posts.get(lastPost).info.date) < (30 * $.SECOND))) { return; }
+      ((new Date(req.getResponseHeader('Last-Modified')) - thread.posts.get(lastPost).info.date) < (30 * SECOND))) { return; }
 
     g.SITE.Build.spoilerRange[board] = OP.custom_spoiler;
     thread.setStatus('Archived', !!OP.archived);

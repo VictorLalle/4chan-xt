@@ -6,6 +6,7 @@ import { g, Conf } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -13,7 +14,7 @@ import $$ from "../platform/$$";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const ExpandThread = {
-  statuses: $.dict(),
+  statuses: dict(),
   init() {
     if (!((g.VIEW === 'index') && Conf['Thread Expansion'])) { return; }
     if (Conf['JSON Index']) {

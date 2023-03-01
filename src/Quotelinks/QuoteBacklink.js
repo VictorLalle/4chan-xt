@@ -1,6 +1,7 @@
 import Callbacks from "../classes/Callbacks";
 import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import { dict } from "../platform/helpers";
 import QuoteInline from "./QuoteInline";
 import QuotePreview from "./QuotePreview";
 import QuoteYou from "./QuoteYou";
@@ -25,7 +26,7 @@ import QuoteYou from "./QuoteYou";
  * and that as much backlinks are appended in the background as possible.
  */
 const QuoteBacklink = {
-  containers: $.dict(),
+  containers: dict(),
   init() {
     if (!['index', 'thread'].includes(g.VIEW) || !Conf['Quote Backlinks']) { return; }
 

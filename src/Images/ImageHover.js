@@ -3,6 +3,7 @@ import Header from "../General/Header";
 import UI from "../General/UI";
 import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import { SECOND } from "../platform/helpers";
 import ImageCommon from "./ImageCommon";
 import Volume from "./Volume";
 
@@ -103,7 +104,7 @@ const ImageHover = {
   error(post, file) {
     return function () {
       if (ImageCommon.decodeError(this, file)) { return; }
-      return ImageCommon.error(this, post, file, 3 * $.SECOND, URL => {
+      return ImageCommon.error(this, post, file, 3 * SECOND, URL => {
         if (URL) {
           return this.src = URL + (this.src === URL ? '?' + Date.now() : '');
         } else {

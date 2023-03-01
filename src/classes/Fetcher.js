@@ -9,6 +9,7 @@ import { E, g, Conf } from "../globals/globals";
 import ImageHost from "../Images/ImageHost";
 import CrossOrigin from "../platform/CrossOrigin";
 import Get from "../General/Get";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -228,7 +229,7 @@ export default class Fetcher {
       for (let i = 0; i < comment.length; i++) {
         var text = comment[i];
         if ((i % 2) === 1) {
-          var tag = this.archiveTags[text.replace(/\ .*\]/, ']')];
+          var tag = Fetcher.archiveTags[text.replace(/\ .*\]/, ']')];
           if (typeof tag === 'function') { result.push(tag(text)); } else { result.push(tag); }
         } else {
           var greentext = text[0] === '>';
@@ -302,7 +303,7 @@ export default class Fetcher {
       if (!/\.pdf$/.test(o.file.url)) { o.file.dimensions = `${o.file.width}x${o.file.height}`; }
       if ((this.boardID === 'f') && data.media.exif) { o.file.tag = JSON.parse(data.media.exif).Tag; }
     }
-    o.extra = $.dict();
+    o.extra = dict();
 
     const board = g.boards[this.boardID] ||
       new Board(this.boardID);

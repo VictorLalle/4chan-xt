@@ -9,6 +9,7 @@ import Header from "../General/Header";
 import { g, Conf } from "../globals/globals";
 import UI from "../General/UI";
 import Get from "../General/Get";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -125,12 +126,12 @@ const CatalogLinks = {
   },
 
   externalParse() {
-    CatalogLinks.externalList = $.dict();
+    CatalogLinks.externalList = dict();
     for (var line of Conf['externalCatalogURLs'].split('\n')) {
       if (line[0] === '#') { continue; }
       var url = line.split(';')[0];
       var boards = Filter.parseBoards(line.match(/;boards:([^;]+)/)?.[1] || '*');
-      var excludes = Filter.parseBoards(line.match(/;exclude:([^;]+)/)?.[1]) || $.dict();
+      var excludes = Filter.parseBoards(line.match(/;exclude:([^;]+)/)?.[1]) || dict();
       for (var board in boards) {
         if (!excludes[board] && !excludes[board.split('/')[0] + '/*']) {
           CatalogLinks.externalList[board] = url;

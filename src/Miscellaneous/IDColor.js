@@ -1,6 +1,7 @@
 import Callbacks from "../classes/Callbacks";
 import { g, Conf } from "../globals/globals";
 import $ from "../platform/$";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -10,7 +11,7 @@ import $ from "../platform/$";
 const IDColor = {
   init() {
     if (!['index', 'thread'].includes(g.VIEW) || !Conf['Color User IDs']) { return; }
-    this.ids = $.dict();
+    this.ids = dict();
     this.ids['Heaven'] = [0, 0, 0, '#fff'];
 
     return Callbacks.Post.push({

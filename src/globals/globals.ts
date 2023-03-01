@@ -75,7 +75,7 @@ export const E = (function () {
     return str[x];
   };
   const output = function (text: string) {
-    return text.toString().replace(regex, fn);
+    return text?.toString().replace(regex, fn) ?? '';
   };
   output.cat = function (templates) {
     let html = '';

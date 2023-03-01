@@ -1,5 +1,6 @@
 import QR from "../Posting/QR";
 import $ from "./$";
+import { dict } from "./helpers";
 
 /*
  * decaffeinate suggestions:
@@ -23,7 +24,7 @@ if (globalThis.chrome?.extension) {
 }
 
 const CrossOrigin = {
-  binary(url, cb, headers = $.dict()) {
+  binary(url, cb, headers = dict()) {
     // XXX https://forums.lanik.us/viewtopic.php?f=64&t=24173&p=78310
     url = url.replace(/^((?:https?:)?\/\/(?:\w+\.)?(?:4chan|4channel|4cdn)\.org)\/adv\//, '$1//adv/');
     if (globalThis.chrome?.extension) {
@@ -116,7 +117,7 @@ const CrossOrigin = {
 
     getResponseHeader(headerName) {
       if ((this.responseHeaders == null) && (Request.responseHeaderString != null)) {
-        this.responseHeaders = $.dict();
+        this.responseHeaders = dict();
         for (var header of Request.responseHeaderString.split('\r\n')) {
           var i;
           if ((i = header.indexOf(':')) >= 0) {

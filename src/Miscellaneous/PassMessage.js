@@ -1,6 +1,6 @@
 import { Conf } from "../globals/globals";
 import $ from "../platform/$";
-import PassMessagePage from './PassMessage/PassMessage.html';
+import PassMessagePage from './PassMessage/PassMessageHtml';
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -11,9 +11,9 @@ const PassMessage = {
   init() {
     if (Conf['passMessageClosed']) { return; }
     const msg = $.el('div',
-      { className: 'box-outer top-box' }
-      ,
-      { innerHTML: PassMessagePage });
+      { className: 'box-outer top-box' },
+      PassMessagePage,
+    );
     msg.style.cssText = 'padding-bottom: 0;';
     const close = $('a', msg);
     $.on(close, 'click', function () {

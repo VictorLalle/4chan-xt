@@ -2,6 +2,7 @@ import { Conf } from "../globals/globals";
 import Main from "../main/Main";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
+import { dict } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -41,7 +42,7 @@ const SWTinyboard = {
     for (var script of $$('script:not([src])', document.head)) {
       var m;
       if (m = script.textContent.match(/\bvar configRoot=(".*?")/)) {
-        var properties = $.dict();
+        var properties = dict();
         try {
           var root = JSON.parse(m[1]);
           if (root[0] === '/') {

@@ -11,17 +11,10 @@
 import Notice from "../classes/Notice";
 import { Conf, g } from "../globals/globals";
 import CrossOrigin from "./CrossOrigin";
+import { debounce, dict, MINUTE, SECOND } from "./helpers";
 
 // not chainable
 const $ = (selector, root = document.body) => root.querySelector(selector);
-
-$.DAY = 24 * (
-  $.HOUR = 60 * (
-    $.MINUTE = 60 * (
-      $.SECOND = 1000
-    )
-  )
-);
 
 $.id = id => document.getElementById(id);
 
@@ -61,29 +54,6 @@ $.extend = function (object, properties) {
     object[key] = val;
   }
 };
-
-$.dict = () => Object.create(null);
-
-$.dict.clone = function (obj) {
-  if ((typeof obj !== 'object') || (obj === null)) {
-    return obj;
-  } else if (obj instanceof Array) {
-    const arr = [];
-    for (let i = 0, end = obj.length; i < end; i++) {
-      arr.push($.dict.clone(obj[i]));
-    }
-    return arr;
-  } else {
-    const map = Object.create(null);
-    for (var key in obj) {
-      var val = obj[key];
-      map[key] = $.dict.clone(val);
-    }
-    return map;
-  }
-};
-
-$.dict.json = str => $.dict.clone(JSON.parse(str));
 
 $.hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
@@ -147,7 +117,7 @@ $.ajax = (function () {
   } else {
     // # XXX https://bugs.chromium.org/p/chromium/issues/detail?id=920638
     let requestID = 0;
-    const requests = $.dict();
+    const requests = dict();
 
     $.ajaxPageInit = function () {
       $.global(function () {
@@ -244,7 +214,7 @@ $.ajax = (function () {
 // Status Code 304: Not modified
 // With the `If-Modified-Since` header we only receive the HTTP headers and no body for 304 responses.
 // This saves a lot of bandwidth and CPU time for both the users and the servers.
-$.lastModified = $.dict();
+$.lastModified = dict();
 $.whenModified = function (url, bucket, cb, options = {}) {
   let t;
   const { timeout, ajax } = options;
@@ -254,13 +224,13 @@ $.whenModified = function (url, bucket, cb, options = {}) {
   if (url.split('/')[2] === 'a.4cdn.org') { params.push(`t=${Date.now()}`); }
   const url0 = url;
   if (params.length) { url += '?' + params.join('&'); }
-  const headers = $.dict();
+  const headers = dict();
   if ((t = $.lastModified[bucket]?.[url0]) != null) {
     headers['If-Modified-Since'] = t;
   }
   const r = (ajax || $.ajax)(url, {
     onloadend() {
-      ($.lastModified[bucket] || ($.lastModified[bucket] = $.dict()))[url0] = this.getResponseHeader('Last-Modified');
+      ($.lastModified[bucket] || ($.lastModified[bucket] = dict()))[url0] = this.getResponseHeader('Last-Modified');
       return cb.call(this);
     },
     timeout,
@@ -269,7 +239,7 @@ $.whenModified = function (url, bucket, cb, options = {}) {
   return r;
 };
 
-const reqs = $.dict();
+const reqs = dict();
 $.cache = function (url, cb, options = {}) {
   let req;
   const { ajax } = options;
@@ -484,28 +454,6 @@ $.modifiedClick = e => e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || (e.bu
 
 $.open = GM_openInTab || (url => window.open(url, '_blank'));
 
-$.debounce = function (wait, fn) {
-  let lastCall = 0;
-  let timeout = null;
-  let that = null;
-  let args = null;
-  const exec = function () {
-    lastCall = Date.now();
-    return fn.apply(that, args);
-  };
-  return function () {
-    args = arguments;
-    that = this;
-    if (lastCall < (Date.now() - wait)) {
-      return exec();
-    }
-    // stop current reset
-    clearTimeout(timeout);
-    // after wait, let next invocation execute immediately
-    return timeout = setTimeout(exec, wait);
-  };
-};
-
 $.queueTask = (function () {
   // inspired by https://www.w3.org/Bugs/Public/show_bug.cgi?id=15007
   const taskQueue = [];
@@ -605,7 +553,7 @@ $.hasStorage = (function () {
 })();
 
 $.item = function (key, val) {
-  const item = $.dict();
+  const item = dict();
   item[key] = val;
   return item;
 };
@@ -618,7 +566,7 @@ $.oneItemSugar = fn => (function (key, val, cb) {
   }
 });
 
-$.syncing = $.dict();
+$.syncing = dict();
 
 $.securityCheck = function (data) {
   if (location.protocol !== 'https:') {
@@ -629,14 +577,14 @@ $.securityCheck = function (data) {
 if (globalThis.chrome?.extension) {
   // https://developer.chrome.com/extensions/storage.html
   $.oldValue = {
-    local: $.dict(),
-    sync: $.dict()
+    local: dict(),
+    sync: dict()
   };
 
   chrome.storage.onChanged.addListener(function (changes, area) {
     for (var key in changes) {
       var oldValue = $.oldValue.local[key] ?? $.oldValue.sync[key];
-      $.oldValue[area][key] = $.dict.clone(changes[key].newValue);
+      $.oldValue[area][key] = dict.clone(changes[key].newValue);
       var newValue = $.oldValue.local[key] ?? $.oldValue.sync[key];
       var cb = $.syncing[key];
       if (cb && (JSON.stringify(newValue) !== JSON.stringify(oldValue))) {
@@ -674,12 +622,12 @@ if (globalThis.chrome?.extension) {
       }
       return chrome.storage[area].get(keys, function (result) {
         let key;
-        result = $.dict.clone(result);
+        result = dict.clone(result);
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
         }
         if (keys === null) {
-          const result2 = $.dict();
+          const result2 = dict();
           for (key in result) { var val = result[key]; if ($.hasOwn(data, key)) { result2[key] = val; } }
           result = result2;
         }
@@ -700,8 +648,8 @@ if (globalThis.chrome?.extension) {
 
   (function () {
     const items = {
-      local: $.dict(),
-      sync: $.dict()
+      local: dict(),
+      sync: dict()
     };
 
     const exceedsQuota = (key, value) => // bytes in UTF-8
@@ -722,7 +670,7 @@ if (globalThis.chrome?.extension) {
 
     const timeout = {};
     var setArea = function (area, cb) {
-      const data = $.dict();
+      const data = dict();
       $.extend(data, items[area]);
       if (!Object.keys(data).length || (timeout[area] > Date.now())) { return; }
       return chrome.storage[area].set(data, function () {
@@ -730,8 +678,8 @@ if (globalThis.chrome?.extension) {
         let key;
         if (err = chrome.runtime.lastError) {
           console.error(err.message);
-          setTimeout(setArea, $.MINUTE, area);
-          timeout[area] = Date.now() + $.MINUTE;
+          setTimeout(setArea, MINUTE, area);
+          timeout[area] = Date.now() + MINUTE;
           return cb?.(err);
         }
 
@@ -755,7 +703,7 @@ if (globalThis.chrome?.extension) {
       });
     };
 
-    var setSync = $.debounce($.SECOND, () => setArea('sync'));
+    var setSync = debounce(SECOND, () => setArea('sync'));
 
     $.set = $.oneItemSugar(function (data, cb) {
       if (!$.crxWorking()) { return; }
@@ -766,8 +714,8 @@ if (globalThis.chrome?.extension) {
 
     return $.clear = function (cb) {
       if (!$.crxWorking()) { return; }
-      items.local = $.dict();
-      items.sync = $.dict();
+      items.local = dict();
+      items.sync = dict();
       let count = 2;
       let err = null;
       const done = function () {
@@ -796,7 +744,7 @@ if (globalThis.chrome?.extension) {
         var cb;
         var val = e.data[key];
         if (cb = $.syncing[key]) {
-          result.push(cb($.dict.json(JSON.stringify(val)), key));
+          result.push(cb(dict.json(JSON.stringify(val)), key));
         }
       }
       return result;
@@ -818,7 +766,7 @@ if (globalThis.chrome?.extension) {
         }
         return result;
       })()).then(function () {
-        const items = $.dict();
+        const items = dict();
         for (key of keys) { items[key] = undefined; }
         $.syncChannel.postMessage(items);
         return cb?.();
@@ -831,7 +779,7 @@ if (globalThis.chrome?.extension) {
         for (let i = 0; i < values.length; i++) {
           var val = values[i];
           if (val) {
-            items[keys[i]] = $.dict.json(val);
+            items[keys[i]] = dict.json(val);
           }
         }
         return cb(items);
@@ -883,7 +831,7 @@ if (globalThis.chrome?.extension) {
       $.setValue = GM_setValue;
       $.deleteValue = GM_deleteValue;
     } else if (typeof GM_deleteValue !== 'undefined' && GM_deleteValue !== null) {
-      $.oldValue = $.dict();
+      $.oldValue = dict();
       $.setValue = function (key, val) {
         GM_setValue(key, val);
         if (key in $.syncing) {
@@ -900,7 +848,7 @@ if (globalThis.chrome?.extension) {
       };
       if (!$.hasStorage) { $.cantSync = true; }
     } else if ($.hasStorage) {
-      $.oldValue = $.dict();
+      $.oldValue = dict();
       $.setValue = function (key, val) {
         if (key in $.syncing) { $.oldValue[key] = val; }
         return localStorage.setItem(key, val);
@@ -918,7 +866,7 @@ if (globalThis.chrome?.extension) {
     if (typeof GM_addValueChangeListener !== 'undefined' && GM_addValueChangeListener !== null) {
       $.sync = (key, cb) => $.syncing[key] = GM_addValueChangeListener(g.NAMESPACE + key, function (key2, oldValue, newValue, remote) {
         if (remote) {
-          if (newValue !== undefined) { newValue = $.dict.json(newValue); }
+          if (newValue !== undefined) { newValue = dict.json(newValue); }
           return cb(newValue, key);
         }
       });
@@ -937,7 +885,7 @@ if (globalThis.chrome?.extension) {
           if (newValue != null) {
             if (newValue === $.oldValue[key]) { return; }
             $.oldValue[key] = newValue;
-            return cb($.dict.json(newValue), key.slice(g.NAMESPACE.length));
+            return cb(dict.json(newValue), key.slice(g.NAMESPACE.length));
           } else {
             if ($.oldValue[key] == null) { return; }
             delete $.oldValue[key];
@@ -975,7 +923,7 @@ if (globalThis.chrome?.extension) {
         var val2;
         if (val2 = $.getValue(g.NAMESPACE + key)) {
           try {
-            items[key] = $.dict.json(val2);
+            items[key] = dict.json(val2);
           } catch (err) {
             // XXX https://github.com/ccd0/4chan-x/issues/2218
             if (!/^(?:undefined)*$/.test(val2)) {

@@ -1,6 +1,7 @@
 import Callbacks from "../classes/Callbacks";
 import Filter from "../Filtering/Filter";
 import { g, Conf, E } from "../globals/globals";
+import h, { isEscaped } from "../globals/jsx";
 import ImageCommon from "../Images/ImageCommon";
 import $ from "../platform/$";
 import $$ from "../platform/$$";
@@ -64,30 +65,35 @@ const FileInfo = {
   },
 
   formatters: {
-    t() { return { innerHTML: E(this.file.url.match(/[^/]*$/)[0]) }; },
-    T() { return { innerHTML: "<a href=\"" + E(this.file.url) + "\" target=\"_blank\">" + (FileInfo.formatters.t.call(this)).innerHTML + "</a>" }; },
-    l() { return { innerHTML: "<a href=\"" + E(this.file.url) + "\" target=\"_blank\">" + (FileInfo.formatters.n.call(this)).innerHTML + "</a>" }; },
-    L() { return { innerHTML: "<a href=\"" + E(this.file.url) + "\" target=\"_blank\">" + (FileInfo.formatters.N.call(this)).innerHTML + "</a>" }; },
+    t() { return { innerHTML: E(this.file.url.match(/[^/]*$/)[0]), [isEscaped]: true }; },
+    T() { return <a href={this.file.url} target="_blank">{FileInfo.formatters.t.call(this)}</a> },
+    l() { return <a href={this.file.url} target="_blank">{FileInfo.formatters.n.call(this)}</a> },
+    L() { return <a href={this.file.url} target="_blank">{FileInfo.formatters.N.call(this)}</a> },
     n() {
       const fullname = this.file.name;
       const shortname = SW.yotsuba.Build.shortFilename(this.file.name, this.isReply);
       if (fullname === shortname) {
-        return { innerHTML: E(fullname) };
+        return { innerHTML: E(fullname), [isEscaped]: true };
       } else {
-        return { innerHTML: "<span class=\"fnswitch\"><span class=\"fntrunc\">" + E(shortname) + "</span><span class=\"fnfull\">" + E(fullname) + "</span></span>" };
+        return <span class="fnswitch">
+          <span class="fntrunc">{shortname}</span>
+          <span class="fnfull">{fullname}</span>
+        </span>;
       }
     },
-    N() { return { innerHTML: E(this.file.name) }; },
-    d() { return { innerHTML: "<a href=\"" + E(this.file.url) + "\" download=\"" + E(this.file.name) + "\" class=\"fa fa-download download-button\"></a>" }; },
-    f() { return { innerHTML: "<a href=\"javascript:;\" class=\"fa fa-times quick-filter-md5\"></a>" }; },
-    p() { return { innerHTML: ((this.file.isSpoiler) ? "Spoiler, " : "") }; },
-    s() { return { innerHTML: E(this.file.size) }; },
-    B() { return { innerHTML: Math.round(this.file.sizeInBytes) + " Bytes" }; },
-    K() { return { innerHTML: (Math.round(this.file.sizeInBytes / 1024)) + " KB" }; },
-    M() { return { innerHTML: (Math.round(this.file.sizeInBytes / 1048576 * 100) / 100) + " MB" }; },
-    r() { return { innerHTML: E(this.file.dimensions || "PDF") }; },
-    g() { return { innerHTML: ((this.file.tag) ? ", " + E(this.file.tag) : "") }; },
-    '%'() { return { innerHTML: "%" }; }
+    N() { return { innerHTML: E(this.file.name), [isEscaped]: true }; },
+    d() { return <a href={this.file.url} download={this.file.name} class="fa fa-download download-button"></a> },
+    f() {
+      return { innerHTML: "<a href=\"javascript:;\" class=\"fa fa-times quick-filter-md5\"></a>", [isEscaped]: true };
+    },
+    p() { return { innerHTML: ((this.file.isSpoiler) ? "Spoiler, " : ""), [isEscaped]: true }; },
+    s() { return { innerHTML: E(this.file.size), [isEscaped]: true }; },
+    B() { return { innerHTML: Math.round(this.file.sizeInBytes) + " Bytes", [isEscaped]: true }; },
+    K() { return { innerHTML: (Math.round(this.file.sizeInBytes / 1024)) + " KB", [isEscaped]: true }; },
+    M() { return { innerHTML: (Math.round(this.file.sizeInBytes / 1048576 * 100) / 100) + " MB", [isEscaped]: true }; },
+    r() { return { innerHTML: E(this.file.dimensions || "PDF"), [isEscaped]: true }; },
+    g() { return { innerHTML: ((this.file.tag) ? ", " + E(this.file.tag) : ""), [isEscaped]: true }; },
+    '%'() { return { innerHTML: "%", [isEscaped]: true }; }
   }
 };
 export default FileInfo;

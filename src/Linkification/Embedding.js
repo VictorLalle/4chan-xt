@@ -1,12 +1,13 @@
 import Get from '../General/Get';
 import Header from '../General/Header';
 import UI from '../General/UI';
-import { g, Conf } from '../globals/globals';
+import { g, Conf, E } from '../globals/globals';
 import ImageHost from '../Images/ImageHost';
 import Main from '../main/Main';
 import $ from '../platform/$';
 import $$ from '../platform/$$';
 import CrossOrigin from '../platform/CrossOrigin';
+import { dict } from '../platform/helpers';
 import EmbeddingPage from './Embedding/Embed.html';
 /*
  * decaffeinate suggestions:
@@ -19,7 +20,7 @@ import EmbeddingPage from './Embedding/Embed.html';
 const Embedding = {
   init() {
     if (!['index', 'thread', 'archive'].includes(g.VIEW) || !Conf['Linkify'] || (!Conf['Embedding'] && !Conf['Link Title'] && !Conf['Cover Preview'])) { return; }
-    this.types = $.dict();
+    this.types = dict();
     for (var type of this.ordered_types) { this.types[type.key] = type; }
 
     if (Conf['Embedding'] && (g.VIEW !== 'archive')) {
@@ -316,7 +317,10 @@ const Embedding = {
     regExp: /^[^?#]+\.(?:gif|png|jpg|jpeg|bmp|webp)(?::\w+)?(?:[?#]|$)/i,
     style: '',
     el(a) {
-      return $.el('div', { innerHTML: '<a target="_blank" href="${a.dataset.href}"><img src="${a.dataset.href}" style="max-width: 80vw; max-height: 80vh;"></a>' });
+      const hrefEscaped = E(a.dataset.href);
+      return $.el('div', {
+        innerHTML: `<a target="_blank" href="${hrefEscaped}"><img src="${hrefEscaped}" style="max-width: 80vw; max-height: 80vh;"></a>`
+      });
     }
   }
     , {
