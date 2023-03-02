@@ -423,21 +423,22 @@ $\
         isArchived: !!data.archived,
         // file status
         fileDeleted: !!data.filedeleted,
-        filesDeleted: data.filedeleted ? [0] : []
-      };
-      o.info = {
-        subject: $.unescape(data.sub),
-        email: $.unescape(data.email),
-        name: $.unescape(data.name) || '',
-        tripcode: data.trip,
-        pass: (data.since4pass != null) ? `${data.since4pass}` : undefined,
-        uniqueID: data.id,
-        flagCode: data.country,
-        flagCodeTroll: data.board_flag,
-        flag: $.unescape((data.country_name || data.flag_name)),
-        dateUTC: data.time,
-        dateText: data.now,
-        commentHTML: { innerHTML: E(data.com) || '', [isEscaped]: true }
+        filesDeleted: data.filedeleted ? [0] : [],
+        info: {
+          subject: $.unescape(data.sub),
+          email: $.unescape(data.email),
+          name: $.unescape(data.name) || '',
+          tripcode: data.trip,
+          pass: (data.since4pass != null) ? `${data.since4pass}` : undefined,
+          uniqueID: data.id,
+          flagCode: data.country,
+          flagCodeTroll: data.board_flag,
+          flag: $.unescape((data.country_name || data.flag_name)),
+          dateUTC: data.time,
+          dateText: data.now,
+          // Yes, we use the raw string here
+          commentHTML: { innerHTML: data.com || '', [isEscaped]: true }
+        }
       };
       if (data.capcode) {
         o.info.capcode = data.capcode.replace(/_highlight$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());

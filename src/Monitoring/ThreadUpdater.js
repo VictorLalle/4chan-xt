@@ -11,7 +11,7 @@ import Unread from './Unread';
 import Header from '../General/Header';
 import { g, Conf } from '../globals/globals';
 import UI from '../General/UI';
-import { SECOND } from '../platform/helpers';
+import { MINUTE, SECOND } from '../platform/helpers';
 
 /*
  * decaffeinate suggestions:

@@ -6,7 +6,7 @@ export default function generatePostInfoHtml(
   capcodeDescription, uniqueID, flag, flagCode, flagCodeTroll, dateUTC, dateText, postLink, quoteLink, boardID,
   threadID,
 ): EscapedHtml {
-  const nameHtml = [<span class={`name ${capcode || ''}`}>{name}</span>];
+  const nameHtml: (EscapedHtml | string)[] = [<span class={`name ${capcode || ''}`}>{name}</span>];
   if (tripcode) nameHtml.push(' ', <span class="postertrip">{tripcode}</span>);
   if (pass) nameHtml.push(' ', <span title={`Pass user since ${pass}`} class="n-pu"></span>)
   if (capcode) {
@@ -16,7 +16,9 @@ export default function generatePostInfoHtml(
     )
   }
 
-  const nameBlockContent = [email ? <a href={`mailto:${email}`} class="useremail">{nameHtml}</a> : nameHtml];
+  const nameBlockContent: (EscapedHtml | string)[] = [
+    email ? <a href={`mailto:${email}`} class="useremail">{nameHtml}</a> : nameHtml
+  ];
   if (!(boardID === "f" && !o.isReply || capcodeDescription)) nameBlockContent.push(' ');
   if (capcodeDescription) {
     nameBlockContent.push(
@@ -38,46 +40,50 @@ export default function generatePostInfoHtml(
   if (flagCode) nameBlockContent.push(' ', <span title={flag} class={`flag flag-${flagCode.toLowerCase()}`} />);
   if (flagCodeTroll) nameBlockContent.push(' ', <span title={flag} class={`bfl bfl-${flagCodeTroll.toLowerCase()}`} />);
 
-  const postInfo = [
-    <input type="checkbox" name={ID} value="delete" />,
-    ((!o.isReply || boardID === "f" || subject) ? <span class="subject">{subject}</span> : ''),
-    <span class={`nameBlock${capcode}`}>
-      {...nameBlockContent}
-    </span>,
-    <span class="dateTime" data-utc={dateUTC}>{dateText}</span>,
-    <span class={`postNum${!(boardID === " f" && !o.isReply) ? ' desktop' : ''}`} />,
+  const postNumContent: (EscapedHtml | string)[] = [
     <a href={postLink} title="Link to this post">No.</a>,
     <a href={quoteLink} title="Reply to this post">{ID}</a>,
-  ]
+  ];
+
   if (o.isSticky) {
     const src = `${staticPath}sticky${gifIcon}`;
-    postInfo.push(' ');
+    postNumContent.push(' ');
     if (boardID === "f") {
-      postInfo.push(<img src={src} alt="Sticky" title="Sticky" style="height: 18px; width: 18px;" />);
+      postNumContent.push(<img src={src} alt="Sticky" title="Sticky" style="height: 18px; width: 18px;" />);
     } else {
-      postInfo.push(<img src={src} alt="Sticky" title="Sticky" class="stickyIcon retina" />)
+      postNumContent.push(<img src={src} alt="Sticky" title="Sticky" class="stickyIcon retina" />)
     }
   }
   if (o.isClosed && !o.isArchived) {
-    postInfo.push(' ');
+    postNumContent.push(' ');
     const src = `${staticPath}closed${gifIcon}`
     if (boardID === "f") {
-      postInfo.push(<img src={src} alt="Closed" title="Closed" style="height: 18px; width: 18px;" />)
+      postNumContent.push(<img src={src} alt="Closed" title="Closed" style="height: 18px; width: 18px;" />)
     } else {
-      postInfo.push(<img src={src} alt="Closed" title="Closed" class="closedIcon retina" />)
+      postNumContent.push(<img src={src} alt="Closed" title="Closed" class="closedIcon retina" />)
     }
   }
   if (o.isArchived) {
-    postInfo.push(
+    postNumContent.push(
       ' ',
-      <img src={`${staticPath}archived${gifIcon}`} alt="Archived" title="Archived" class="archivedIcon retina"></img>
+      <img src={`${staticPath}archived${gifIcon}`} alt="Archived" title="Archived" class="archivedIcon retina" />
     )
   }
   if (!o.isReply && g.VIEW === "index") {
     // \u00A0 is nbsp
-    postInfo.push(' \u00A0 ')
-    postInfo.push(<span>[<a href={`/${boardID}/thread/${threadID}`} class="replylink">Reply</a>]</span>)
+    postNumContent.push(' \u00A0 ')
+    postNumContent.push(<span>[<a href={`/${boardID}/thread/${threadID}`} class="replylink">Reply</a>]</span>)
   }
 
-  return <div class="postInfo desktop" id={`pi${ID}`}>{...postInfo}</div>;
+  return <div class="postInfo desktop" id={`pi${ID}`}>
+    <input type="checkbox" name={ID} value="delete" />
+    {((!o.isReply || boardID === "f" || subject) ? <span class="subject">{subject}</span> : '')}
+    <span class={`nameBlock${capcode || ''}`}>
+      {...nameBlockContent}
+    </span>
+    <span class="dateTime" data-utc={dateUTC}>{dateText}</span>
+    <span class={`postNum${!(boardID === " f" && !o.isReply) ? ' desktop' : ''}`} >
+      {...postNumContent}
+    </span>
+  </div>;
 }

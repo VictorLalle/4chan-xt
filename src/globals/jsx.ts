@@ -1,8 +1,10 @@
 /*
  * This file has the code for the jsx to { innerHTML: "safe string" }
  *
- * Usage: import h from this file simply write jsx like you would normally. Strings bound to attributes and children
- * will be escaped automatically.
+ * Usage: import h from this file.
+ * Attributes are stringified raw, so the names must be like html text: eg class and not className.
+ * Boolean values are stringified followed: true will mean the attribute is there, false means it will be omitted.
+ * Strings bound to attributes and children will be escaped automatically.
  * It returns interface EscapedHtml { innerHTML: "safe string", [isEscaped]: true }
  *
  * For strings that don't have a parent element you can use fragments: <></>.
@@ -38,7 +40,7 @@ export default function h(
 
   if (attributes) {
     for (const [attribute, value] of Object.entries(attributes)) {
-      if (value === null || value === undefined) continue;
+      if (!value && value !== 0) continue;
       innerHTML += ` ${attribute}`;
       if (value === true) continue;
       innerHTML += `="${E(value.toString())}"`;
@@ -46,7 +48,8 @@ export default function h(
   }
   if (tag !== hFragment) innerHTML += '>';
 
-  if (tag !== hFragment && voidElements.has(tag)) {
+  const isVoid = tag !== hFragment && voidElements.has(tag);
+  if (isVoid) {
     if (children.length) throw new TypeError(`${tag} is a void html element and can't have child elements`);
   } else {
     for (const child of children) {
@@ -61,7 +64,7 @@ export default function h(
     }
   }
 
-  if (tag !== hFragment) innerHTML += `</${tag}>`;
+  if (!isVoid && tag !== hFragment) innerHTML += `</${tag}>`;
 
   return { innerHTML, [isEscaped]: true };
 }
