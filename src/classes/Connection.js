@@ -1,3 +1,6 @@
+import $ from "../platform/$";
+import { g } from "../globals/globals";
+
 export default class Connection {
   constructor(target, origin, cb = {}) {
     this.send = this.send.bind(this);

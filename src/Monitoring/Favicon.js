@@ -147,7 +147,6 @@ const Favicon = {
 
   SFW: '//s.4cdn.org/image/favicon-ws.ico',
   NSFW: '//s.4cdn.org/image/favicon.ico',
-  // TODO
   dead: `data:image/gif;base64,${dead}`,
   logo: `data:image/png;base64,${empty}`,
 };

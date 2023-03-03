@@ -15,8 +15,9 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 - build script
   - [x] userscript
   - [ ] .crx extension
-  - [ ] beta
-  - [ ] noupdate
+    - [x] crx directory that can be loaded as an unpacked extension is created
+  - [x] beta
+  - [x] noupdate
 - [ ] run and debug
 - [ ] port updates made to 4chan-X made since this was forked
 

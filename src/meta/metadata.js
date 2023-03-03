@@ -7,11 +7,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export default async function generateMetadata(packageJson) {
-
-  // TODO
-  const channel = '';
-
+export default async function generateMetadata(packageJson, channel) {
   const meta = packageJson.meta;
 
   const versionFile = await readFile(resolve(__dirname, '../../version.json'));
@@ -21,7 +17,7 @@ export default async function generateMetadata(packageJson) {
   const icon = Buffer.from(iconFile).toString('base64');
 
   let output = `// ==UserScript==
-// @name         ${meta.name}${channel ? ' beta' : ''}
+// @name         ${meta.name}${channel === '-beta' ? ' beta' : ''}
 // @version      ${version.version}
 // @minGMVer     ${meta.min.greasemonkey}
 // @minFFVer     ${meta.min.firefox}
@@ -84,7 +80,7 @@ export default async function generateMetadata(packageJson) {
   output += '\n// @run-at       document-start';
 
   if (channel === '-noupdate') {
-    output += '\n// @updateURL    https://noupdate.invalid/\n// @downloadURL  https://noupdate.invalid/\n';
+    output += '\n// @updateURL    https://noupdate.invalid/\n// @downloadURL  https://noupdate.invalid/';
   } else {
     output += `
 // @updateURL    ${meta.downloads}${packageJson.name}${channel}.meta.js

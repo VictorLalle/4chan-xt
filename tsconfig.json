@@ -19,7 +19,9 @@
       "DOM",
       "ES2020"
     ],
-    "outDir": "builds/test/tsOutput",
+    // needs to be in the deepest dir used as target in the rollup build
+    // https://stackoverflow.com/q/40460790, https://github.com/rollup/plugins/issues/243
+    "outDir": "builds/test/crx/tsOutput",
   },
   "exclude": [
     "builds/test/tsOutput"

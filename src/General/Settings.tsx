@@ -30,9 +30,11 @@ import meta from '../../package.json';
 import { Conf, E, g } from '../globals/globals';
 import Header from './Header';
 import h, { hFragment } from '../globals/jsx';
-import { dict } from '../platform/helpers';
+import { dict, platform } from '../platform/helpers';
 
 const Settings = {
+  dialog: undefined as HTMLDivElement | undefined,
+
   init() {
     // 4chan X settings link
     const link = $.el('a', {
@@ -247,7 +249,7 @@ Enable it on boards.${location.hostname.split('.')[1]}.org in your browser's pri
     if ($.perProtocolSettings || (location.protocol !== 'https:')) {
       $('div[data-name="Redirect to HTTPS"]', section).hidden = true;
     }
-    if ($.platform !== 'crx') {
+    if (platform !== 'crx') {
       $('div[data-name="Work around CORB Bug"]', section).hidden = true;
     }
 

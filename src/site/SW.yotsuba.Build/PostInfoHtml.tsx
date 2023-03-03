@@ -16,9 +16,8 @@ export default function generatePostInfoHtml(
     )
   }
 
-  const nameBlockContent: (EscapedHtml | string)[] = [
-    email ? <a href={`mailto:${email}`} class="useremail">{nameHtml}</a> : nameHtml
-  ];
+  const nameBlockContent: (EscapedHtml | string)[] =
+    email ? [<a href={`mailto:${email}`} class="useremail">{...nameHtml}</a>] : nameHtml;
   if (!(boardID === "f" && !o.isReply || capcodeDescription)) nameBlockContent.push(' ');
   if (capcodeDescription) {
     nameBlockContent.push(
@@ -41,8 +40,8 @@ export default function generatePostInfoHtml(
   if (flagCodeTroll) nameBlockContent.push(' ', <span title={flag} class={`bfl bfl-${flagCodeTroll.toLowerCase()}`} />);
 
   const postNumContent: (EscapedHtml | string)[] = [
-    <a href={postLink} title="Link to this post">No.</a>,
-    <a href={quoteLink} title="Reply to this post">{ID}</a>,
+    ' ', <a href={postLink} title="Link to this post">No.</a>,
+    ' ', <a href={quoteLink} title="Reply to this post">{ID}</a>,
   ];
 
   if (o.isSticky) {

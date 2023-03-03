@@ -18,7 +18,7 @@ const Tinyboard = {
         let { boardID, threadID } = document.currentScript.dataset;
         threadID = +threadID;
         const form = document.querySelector('form[name="post"]');
-        window.$(document).ajaxComplete(function (event, request, settings) {
+        $(document).ajaxComplete(function (event, request, settings) {
           let postID;
           if (settings.url !== form.action) { return; }
           if (!(postID = +request.responseJSON?.id)) { return; }

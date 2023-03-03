@@ -1,18 +1,11 @@
 import version from "../../version.json";
 import meta from "../../package.json";
 import type SimpleDict from "../classes/SimpleDict";
+import type Post from "../classes/Post";
+import type Thread from "../classes/Thread";
+import type SWTinyboard from "../site/SW.tinyboard";
 
 // interfaces might be incomplete
-
-export interface Site {
-  ID: string,
-  siteID: string,
-  properties: {
-    software: string,
-  },
-  software: string,
-}
-
 export interface BoardConfig {
   board: string
   bump_limit: number
@@ -41,8 +34,8 @@ export interface Board {
   boardID: string,
   siteID: string,
   config: BoardConfig,
-  posts: SimpleDict,
-  threads: SimpleDict,
+  posts: SimpleDict<Post>,
+  threads: SimpleDict<Thread>,
 }
 
 export const Conf = Object.create(null);
@@ -50,9 +43,12 @@ export const Conf = Object.create(null);
 export const g: {
   VERSION: string,
   NAMESPACE: string,
-  sites: Site[],
+  sites: (typeof SWTinyboard)[],
   boards: Board[],
-  SITE?: Site,
+  posts?: SimpleDict<Post>,
+  threads?: SimpleDict<Thread>
+  THREADID?: number,
+  SITE?: typeof SWTinyboard,
   BOARD?: Board,
   VIEW?: string,
 } = {

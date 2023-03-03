@@ -39,6 +39,7 @@
     "yotsuba"
   ],
   "ignoreWords": [
+    "noupdate",
     "tyme",
     "werk"
   ],

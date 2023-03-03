@@ -971,8 +971,8 @@ var QR = {
     post.unlock();
 
     if (err = this.response?.getElementById('errmsg')) { // error!
-      // TODO: check if exists
-      $('a', err).target = '_blank'; // duplicate image link
+      const el = $('a', err);
+      if (el) el.target = '_blank'; // duplicate image link
     } else if (connErr = (!this.response || (this.response.title !== 'Post successful!'))) {
       err = QR.connectionError();
       if ((QR.captcha === Captcha.v2) && QR.currentCaptcha) { Captcha.cache.save(QR.currentCaptcha); }

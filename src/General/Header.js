@@ -10,6 +10,7 @@ import BoardConfig from "./BoardConfig";
 import Get from "./Get";
 import Settings from "./Settings";
 import UI from "./UI";
+import meta from '../../package.json';
 
 /*
  * decaffeinate suggestions:
@@ -670,9 +671,12 @@ var Header = {
         break;
     }
 
-    // TODO meta
-    const el = $.el('span',
-      { innerHTML: "meta.name needs your permission to show desktop notifications. [<a href=\"meta.faq#why-is-4chan-x-asking-for-permission-to-show-desktop-notifications\" target=\"_blank\">FAQ</a>]<br><button>Authorize</button> or <button>Disable</button>" });
+    const el = $.el('span', {
+      innerHTML:
+        `${meta.name} needs your permission to show desktop notifications. ` +
+        `[<a href=\"${meta.faq}#why-is-4chan-x-asking-for-permission-to-show-desktop-notifications\" target=\"_blank\">FAQ</a>]` +
+        `<br><button>Authorize</button> or <button>Disable</button>`
+    });
     const [authorize, disable] = Array.from($$('button', el));
     $.on(authorize, 'click', () => Notification.requestPermission(function (status) {
       Header.areNotificationsEnabled = status === 'granted';

@@ -11,7 +11,7 @@
 import Notice from "../classes/Notice";
 import { Conf, g } from "../globals/globals";
 import CrossOrigin from "./CrossOrigin";
-import { debounce, dict, MINUTE, SECOND } from "./helpers";
+import { debounce, dict, MINUTE, platform, SECOND } from "./helpers";
 
 // not chainable
 const $ = (selector, root = document.body) => root.querySelector(selector);
@@ -74,7 +74,7 @@ $.ajax = (function () {
     if (!options.type) { options.type = (options.form && 'post') || 'get'; }
     // XXX https://forums.lanik.us/viewtopic.php?f=64&t=24173&p=78310
     url = url.replace(/^((?:https?:)?\/\/(?:\w+\.)?(?:4chan|4channel|4cdn)\.org)\/adv\//, '$1//adv/');
-    if (globalThis.chrome?.extension) {
+    if (platform === 'crx') {
       // XXX https://bugs.chromium.org/p/chromium/issues/detail?id=920638
       if (Conf['Work around CORB Bug'] && g.SITE.software === 'yotsuba' && !options.testCORB && FormData.prototype.entries) {
         return $.ajaxPage(url, options);
@@ -93,7 +93,7 @@ $.ajax = (function () {
       $.extend(r.upload, { onprogress });
       // connection error or content blocker
       $.on(r, 'error', function () { if (!r.status) { return console.warn(`4chan X failed to load: ${url}`); } });
-      if (globalThis.chrome?.extension) {
+      if (platform === 'crx') {
         // https://bugs.chromium.org/p/chromium/issues/detail?id=920638
         $.on(r, 'load', () => {
           if (!Conf['Work around CORB Bug'] && r.readyState === 4 && r.status === 200 && r.statusText === '' && r.response === null) {
@@ -112,7 +112,7 @@ $.ajax = (function () {
     return r;
   });
 
-  if (!globalThis.chrome?.extension) {
+  if (platform === 'userscript') {
     return r;
   } else {
     // # XXX https://bugs.chromium.org/p/chromium/issues/detail?id=920638
@@ -145,8 +145,11 @@ $.ajax = (function () {
           }
           r.onloadend = function () {
             delete window.FCX.requests[id];
-            const { status, statusText, response } = this;
+            let { status, statusText, response } = this;
             const responseHeaderString = this.getAllResponseHeaders();
+            if (this.getResponseHeader('Content-Type') === 'application/json' && typeof response === 'string') {
+              response = JSON.parse(response);
+            }
             const detail = { status, statusText, response, responseHeaderString, id };
             return document.dispatchEvent(new CustomEvent('4chanXAjaxLoadend', { bubbles: true, detail }));
           };
@@ -199,6 +202,7 @@ $.ajax = (function () {
     return $.ajaxPage = function (url, options = {}) {
       let req;
       let { onloadend, timeout, responseType, withCredentials, type, onprogress, form, headers } = options;
+      if (!type) type = 'GET';
       const id = requestID++;
       requests[id] = (req = new CrossOrigin.Request());
       $.extend(req, { responseType, onloadend });
@@ -415,7 +419,7 @@ $.one = function (el, events, handler) {
 };
 
 $.event = function (event, detail, root = document) {
-  if (!globalThis.chrome?.extension) {
+  if (platform === 'userscript') {
     if ((detail != null) && (typeof cloneInto === 'function')) {
       detail = cloneInto(detail, document.defaultView);
     }
@@ -423,7 +427,7 @@ $.event = function (event, detail, root = document) {
   return root.dispatchEvent(new CustomEvent(event, { bubbles: true, cancelable: true, detail }));
 };
 
-if (!globalThis.chrome?.extension) {
+if (platform === 'userscript') {
   // XXX Make $.event work in Pale Moon with GM 3.x (no cloneInto function).
   (function () {
     if (!/PaleMoon\//.test(navigator.userAgent) || (+GM_info?.version?.split('.')[0] < 2) || (typeof cloneInto !== 'undefined')) { return; }
@@ -452,7 +456,7 @@ if (!globalThis.chrome?.extension) {
 
 $.modifiedClick = e => e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || (e.button !== 0);
 
-$.open = GM_openInTab || (url => window.open(url, '_blank'));
+$.open = window.GM_openInTab || (url => window.open(url, '_blank'));
 
 $.queueTask = (function () {
   // inspired by https://www.w3.org/Bugs/Public/show_bug.cgi?id=15007
@@ -540,8 +544,6 @@ $.engine = (function () {
   if (/Gecko\/|Goanna/.test(navigator.userAgent)) { return 'gecko'; } // Goanna = Pale Moon 26+
 })();
 
-$.platform = GM ? 'userscript' : 'crx';
-
 $.hasStorage = (function () {
   try {
     if (localStorage.getItem(g.NAMESPACE + 'hasStorage') === 'true') { return true; }
@@ -574,7 +576,7 @@ $.securityCheck = function (data) {
   }
 };
 
-if (globalThis.chrome?.extension) {
+if (platform === 'crx') {
   // https://developer.chrome.com/extensions/storage.html
   $.oldValue = {
     local: dict(),

@@ -1,20 +1,34 @@
-import { rollup } from "rollup";
+import { rollup } from 'rollup';
 import typescript from '@rollup/plugin-typescript';
-import setupFileInliner from "./rollup-plugin-inline-file.js";
-import { dirname, resolve } from "path";
+import setupFileInliner from './rollup-plugin-inline-file.js';
+import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import generateMetadata from "../src/meta/metadata.js";
-import { readFile, writeFile } from "fs/promises";
-import importBase64 from "./rollup-plugin-base64.js";
+import generateMetadata from '../src/meta/metadata.js';
+import { copyFile, readFile, writeFile } from 'fs/promises';
+import importBase64 from './rollup-plugin-base64.js';
+import generateManifestJson from '../src/meta/manifestJson.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-(async () => {
-  const packageJsonFile = await readFile(resolve(__dirname, '../package.json'));
-  const packageJson = JSON.parse(packageJsonFile.toString());
+const buildDir = resolve(__dirname, '../builds/test/');
 
-  const metadata = await generateMetadata(packageJson);
-  await writeFile(resolve(__dirname, `../builds/test/${packageJson.meta.path}.meta.js`), metadata);
+let channel = '';
+
+if (process.argv.includes('-beta')) {
+  channel = '-beta';
+} else if (process.argv.includes('-noupdate')) {
+  channel = '-noupdate';
+}
+
+(async () => {
+  const packageJson = JSON.parse(await readFile(resolve(__dirname, '../package.json'), 'utf-8'));
+
+  const metadata = await generateMetadata(packageJson, channel);
+
+  const license = await readFile(resolve(__dirname, '../LICENSE'), 'utf8');
+
+  const version = JSON.parse(await readFile(resolve(__dirname, '../version.json'), 'utf-8'));
+
 
   const inlineFile = await setupFileInliner(packageJson);
 
@@ -45,12 +59,38 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
     ]
   });
 
-  const bundledResult = await bundle.write({
-    banner: metadata,
-    // file: '../builds/test/rollupOutput.js',
-    name: "bundle.js",
-    dir: resolve(__dirname, '../builds/test/'),
+  /** @type {import('rollup').OutputOptions} */
+  const sharedBundleOpts = {
     format: "iife",
-    generatedCode: { constBindings: false }
+    generatedCode: {
+      // needed for possible circular dependencies
+      constBindings: false,
+    },
+    // Can't be none as long as the root file defined exports
+    // exports: 'none',
+  };
+
+  // user script
+  await bundle.write({
+    ...sharedBundleOpts,
+    banner: metadata + license,
+    // file: '../builds/test/rollupOutput.js',
+    file: resolve(buildDir, `${packageJson.meta.path}${channel}.user.js`),
   });
+
+  // chrome extension
+  const crxDir = resolve(buildDir, 'crx');
+  await bundle.write({
+    ...sharedBundleOpts,
+    banner: license,
+    file: resolve(crxDir, 'script.js'),
+  });
+
+  await copyFile(resolve(__dirname, '../src/meta/eventPage.js'), resolve(crxDir, 'eventPage.js'));
+
+  writeFile(resolve(crxDir, 'manifest.json'), generateManifestJson(packageJson, version, channel));
+
+  for (const file of ['icon16.png', 'icon48.png', 'icon128.png']) {
+    await copyFile(resolve(__dirname, '../src/meta/', file), resolve(crxDir, file));
+  };
 })();

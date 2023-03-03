@@ -1,6 +1,6 @@
 import QR from "../Posting/QR";
 import $ from "./$";
-import { dict } from "./helpers";
+import { dict, platform } from "./helpers";
 
 /*
  * decaffeinate suggestions:
@@ -11,7 +11,7 @@ import { dict } from "./helpers";
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 let eventPageRequest;
-if (globalThis.chrome?.extension) {
+if (platform === 'crx') {
   eventPageRequest = (function () {
     const callbacks = [];
     chrome.runtime.onMessage.addListener(function (response) {
@@ -27,7 +27,7 @@ const CrossOrigin = {
   binary(url, cb, headers = dict()) {
     // XXX https://forums.lanik.us/viewtopic.php?f=64&t=24173&p=78310
     url = url.replace(/^((?:https?:)?\/\/(?:\w+\.)?(?:4chan|4channel|4cdn)\.org)\/adv\//, '$1//adv/');
-    if (globalThis.chrome?.extension) {
+    if (platform === 'crx') {
       eventPageRequest({ type: 'ajax', url, headers, responseType: 'arraybuffer' }, function ({ response, responseHeaderString }) {
         if (response) { response = new Uint8Array(response); }
         return cb(response, responseHeaderString);
@@ -46,7 +46,7 @@ const CrossOrigin = {
           }
         });
       };
-      if ((GM?.xmlHttpRequest == null) && (typeof GM_xmlhttpRequest === 'undefined' || GM_xmlhttpRequest === null)) {
+      if ((typeof window.GM_xmlhttpRequest === 'undefined' || window.GM_xmlhttpRequest === null)) {
         fallback();
         return;
       }
@@ -151,14 +151,14 @@ const CrossOrigin = {
     let { onloadend, timeout, responseType, headers } = options;
     if (responseType == null) { responseType = 'json'; }
 
-    if ((GM?.xmlHttpRequest == null) && (typeof GM_xmlhttpRequest === 'undefined' || GM_xmlhttpRequest === null)) {
+    if (typeof window.GM_xmlhttpRequest === 'undefined' || window.GM_xmlhttpRequest === null) {
       return $.ajax(url, options);
     }
 
     const req = new CrossOrigin.Request();
     req.onloadend = onloadend;
 
-    if (!globalThis.chrome?.extension) {
+    if (platform === 'userscript') {
       const gmOptions = {
         method: 'GET',
         url,
@@ -218,7 +218,7 @@ const CrossOrigin = {
   },
 
   permission(cb, cbFail, origins) {
-    if (globalThis.chrome?.extension) {
+    if (platform === 'crx') {
 
       return eventPageRequest({ type: 'permission', origins }, function (result) {
         if (result) {

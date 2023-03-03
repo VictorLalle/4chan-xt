@@ -88,7 +88,7 @@ import Menu from "../Menu/Menu";
 import BoardConfig from "../General/BoardConfig";
 import CaptchaReplace from "../Posting/Captcha.replace";
 import Get from "../General/Get";
-import { dict } from "../platform/helpers";
+import { dict, platform } from "../platform/helpers";
 
 /*
  * decaffeinate suggestions:
@@ -106,7 +106,7 @@ const Main = {
     let key;
     try {
       let w = window;
-      if ($.platform === 'crx') { w = (w.wrappedJSObject || w); }
+      if (platform === 'crx') { w = (w.wrappedJSObject || w); }
       if (`${meta.name} antidup` in w) { return; }
       w[`${meta.name} antidup`] = true;
     } catch (error) { }
@@ -256,9 +256,8 @@ const Main = {
     items.previousversion = (changes.previousversion = g.VERSION);
     return $.set(changes, function () {
       if (items['Show Updated Notifications'] ?? true) {
-        // TODO meta
         const el = $.el('span',
-          { innerHTML: `meta.name has been updated to <a href="${meta.changelog}" target="_blank">version ${g.VERSION}</a>.` });
+          { innerHTML: `${meta.name} has been updated to <a href="${meta.changelog}" target="_blank">version ${g.VERSION}</a>.` });
         return new Notice('info', el, 15);
       }
     });
@@ -811,7 +810,7 @@ const Main = {
       { textContent: `${data.error.name || 'Error'}: ${data.error.message || 'see console for details'}` });
     const lines = data.error.stack?.match(/\d+(?=:\d+\)?$)/mg)?.join().replace(/^/, ' at ') || '';
     const context = $.el('div',
-      { textContent: `(${meta.name} ${meta.fork} v${g.VERSION} ${$.platform} on ${$.engine}${lines})` });
+      { textContent: `(${meta.name} ${meta.fork} v${g.VERSION} ${platform} on ${$.engine}${lines})` });
     return [message, error, context];
   },
 
@@ -822,7 +821,6 @@ const Main = {
     if (errors.length > 1) { title += ` (+${errors.length - 1} other errors)`; }
     let details = '';
     const addDetails = function (text) {
-      // TODO meta
       if (encodeURIComponent(title + details + text + '\n').length <= "meta.newIssueMaxLength - meta.newIssue.replace(/%(title|details)/, '')".length) {
         return details += text + '\n';
       }
@@ -830,12 +828,12 @@ const Main = {
     addDetails(`\
 [Please describe the steps needed to reproduce this error.]
 
-Script: ${meta.name} ${meta.fork} v${g.VERSION} ${$.platform}
+Script: ${meta.name} ${meta.fork} v${g.VERSION} ${platform}
 URL: ${location.href}
 User agent: ${navigator.userAgent}\
 `
     );
-    if (($.platform === 'userscript') && (info = (() => {
+    if ((platform === 'userscript') && (info = (() => {
       if (typeof GM !== 'undefined' && GM !== null) { return GM.info; } else {
         if (typeof GM_info !== 'undefined' && GM_info !== null) { return GM_info; }
       }

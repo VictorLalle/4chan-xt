@@ -11,7 +11,6 @@ import archives from './archives.js';
  */
 
 const Redirect = {
-  // TODO check
   archives,
 
   init() {

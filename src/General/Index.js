@@ -747,10 +747,12 @@ const Index = {
       // Optional notification for manual refreshes
       if (!Index.notice) { Index.notice = new Notice('info', 'Refreshing index...'); }
       if (!Index.nTimeout) {
-        Index.nTimeout = setTimeout(() => // TODO check if notice exists
-          Index.notice.el.lastElementChild.textContent += ' (disable JSON Index if this takes too long)'
-          , 3 * SECOND);
-      }
+        Index.nTimeout = setTimeout(() => {
+          if (Index.notice) {
+            Index.notice.el.lastElementChild.textContent += ' (disable JSON Index if this takes too long)';
+          }
+        }, 3 * SECOND);
+      };
     } else {
       // Also display notice if Index Refresh is taking too long
       if (!Index.nTimeout) {
