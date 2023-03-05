@@ -53,7 +53,7 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
   - [x] 86071184aa39b3585f06c1a4e2921c411ad8cf10 archived.moe adds /pw/ search, tokyochronos has hosting issues
   - [x] 8a6392b1cf721ddfae6d8f4e3ec2566f15755370 add Eientei
   - [x] 451a06f54b878ce433b0775858affefc71927fc7 alice.al domain change
-- [ ] 2a8bf2adb0737ce7bb1e21f6b959e4c6e1de1bc7 Disable Javascript Whitelist on captcha iframe. #3292
+- [x] 2a8bf2adb0737ce7bb1e21f6b959e4c6e1de1bc7 Disable Javascript Whitelist on captcha iframe. #3292
 - [ ] e9c1529da7844a42a1b40458c2c77b77e23ca537 Make QR post more like original form post. #3330
 - [ ] d16062a8fac5c092c34310c7704ac3980494b6ef Merge remote-tracking branch '4chenz/master'
   - [ ] 8795b1c56dbdfb52a32ddb3ea80b549f0048dc7b Add Google Lens image search url
