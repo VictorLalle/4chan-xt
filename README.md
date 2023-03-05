@@ -65,7 +65,7 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 - [ ] 27957c25af5d182adc38f1e67a098ab338631ccd Release 4chan X v1.14.22.2.
 - [x] eb25d6e797a1673fd7cddb257fce04055383ec9b Update chrome-webstore-upload.
 - [ ] 14e67e9a958633e37b4e4a6293cfa3a921c1eab0 Release 4chan X v1.14.22.3.
-- [ ] 7295b21b73eb13ec53fdc61767ada341c2e13144 Avoid breaking sauce settings of people with links to original Google Images and Google Lens, provided they didn't already update to v1.14.22.3.
+- [x] 7295b21b73eb13ec53fdc61767ada341c2e13144 Avoid breaking sauce settings of people with links to original Google Images and Google Lens, provided they didn't already update to v1.14.22.3.
 - [ ] 71873cd7b22a565c2a41fa24f63f7504152683eb Recognize JPEG files with .jfif extensions as images for purposes of Image Hover etc.; also recognize .avif and .jxl files as images.
 - [ ] ea2462ecc47327c6f0c31348d95fd2b1b6447cb3 Release 4chan X v1.14.22.4.
 
