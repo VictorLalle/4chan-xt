@@ -874,6 +874,9 @@ var QR = {
     post.lock();
 
     const formData = {
+      MAX_FILE_SIZE: QR.max_size,
+      mode: 'regist',
+      pwd: QR.persona.getPassword(),
       resto: threadID,
       name: (!QR.forcedAnon ? post.name : undefined),
       email: post.email,
@@ -883,8 +886,6 @@ var QR = {
       filetag,
       spoiler: post.spoiler,
       flag: post.flag,
-      mode: 'regist',
-      pwd: QR.persona.getPassword()
     };
 
     const options = {
