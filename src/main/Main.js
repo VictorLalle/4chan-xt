@@ -89,6 +89,7 @@ import BoardConfig from "../General/BoardConfig";
 import CaptchaReplace from "../Posting/Captcha.replace";
 import Get from "../General/Get";
 import { dict, platform } from "../platform/helpers";
+// import Test from "../General/Test";
 
 /*
  * decaffeinate suggestions:
@@ -964,5 +965,5 @@ export default Main;
 $.ready(() => Main.init());
 
 // <% if (readJSON('/.tests_enabled')) { %>
-// Main.features.push ['Build Test', Test]
+// Main.features.push(['Build Test', Test]);
 // <% } %>
