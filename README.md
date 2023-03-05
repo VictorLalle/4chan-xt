@@ -55,8 +55,8 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
   - [x] 451a06f54b878ce433b0775858affefc71927fc7 alice.al domain change
 - [x] 2a8bf2adb0737ce7bb1e21f6b959e4c6e1de1bc7 Disable Javascript Whitelist on captcha iframe. #3292
 - [x] e9c1529da7844a42a1b40458c2c77b77e23ca537 Make QR post more like original form post. #3330
-- [ ] d16062a8fac5c092c34310c7704ac3980494b6ef Merge remote-tracking branch '4chenz/master'
-  - [ ] 8795b1c56dbdfb52a32ddb3ea80b549f0048dc7b Add Google Lens image search url
+- [x] d16062a8fac5c092c34310c7704ac3980494b6ef Merge remote-tracking branch '4chenz/master'
+  - [x] 8795b1c56dbdfb52a32ddb3ea80b549f0048dc7b Add Google Lens image search url
 - [ ] f3f03f5e79fb5f26c0fd4406b2ab6796851ea471 Replace Google image search link with Google Lens.
   - [ ] c68a8afbdf30e3cbb35f0834b364f20600151adf  Switch Google image search back to old version, thanks to https://boards.4channel.org/g/thread/91737566#p91789527
 - [ ] aef984da1a6af4d0003b51e7f03bce252ac71dff Remove empty space from ads if they don't load. https://kissu.moe/b/res/7155#11052
