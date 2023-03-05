@@ -60,7 +60,7 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
 - [x] f3f03f5e79fb5f26c0fd4406b2ab6796851ea471 Replace Google image search link with Google Lens.
   - [x] c68a8afbdf30e3cbb35f0834b364f20600151adf Switch Google image search back to old version, thanks to https://boards.4channel.org/g/thread/91737566#p91789527
 - [x] aef984da1a6af4d0003b51e7f03bce252ac71dff Remove empty space from ads if they don't load. https://kissu.moe/b/res/7155#11052
-- [ ] 19268975ea2d49a753624315b0928f27496aac02 Update Randomize Filename to match current 4chan format. https://boards.4channel.org/g/thread/91737566#p91784238
+- [x] 19268975ea2d49a753624315b0928f27496aac02 Update Randomize Filename to match current 4chan format. https://boards.4channel.org/g/thread/91737566#p91784238
 - [ ] 2a47dfd8ba724b17f5bc5f9214bea8ce8b469398 Catch errors due to "Restricted" selection. #2905
 - [ ] 27957c25af5d182adc38f1e67a098ab338631ccd Release 4chan X v1.14.22.2.
 - [ ] eb25d6e797a1673fd7cddb257fce04055383ec9b Update chrome-webstore-upload.
