@@ -42,6 +42,35 @@ The 4chan XT project is a migration of 4chan X from coffeescript to TypeScript/J
   - streetsidesoftware.code-spell-checker
   - EditorConfig.EditorConfig
 
+## commits since this was forked
+
+<details>
+<summary>Click to expand</summary>
+
+- [x] 944b04210c119aedf8da1a8bcabaca9b80312118 Update archive list.
+  - [x] 59ee8c57792d0f82491756a077e25f506fd62994 Desuarchive removes /gif/
+  - [x] 402679e33a06dfbe0dc39ceba5c24fed761b6a19 desuarchive removes /wsg/ files
+  - [x] 86071184aa39b3585f06c1a4e2921c411ad8cf10 archived.moe adds /pw/ search, tokyochronos has hosting issues
+  - [x] 8a6392b1cf721ddfae6d8f4e3ec2566f15755370 add Eientei
+  - [x] 451a06f54b878ce433b0775858affefc71927fc7 alice.al domain change
+- [ ] 2a8bf2adb0737ce7bb1e21f6b959e4c6e1de1bc7 Disable Javascript Whitelist on captcha iframe. #3292
+- [ ] e9c1529da7844a42a1b40458c2c77b77e23ca537 Make QR post more like original form post. #3330
+- [ ] d16062a8fac5c092c34310c7704ac3980494b6ef Merge remote-tracking branch '4chenz/master'
+  - [ ] 8795b1c56dbdfb52a32ddb3ea80b549f0048dc7b Add Google Lens image search url
+- [ ] f3f03f5e79fb5f26c0fd4406b2ab6796851ea471 Replace Google image search link with Google Lens.
+  - [ ] c68a8afbdf30e3cbb35f0834b364f20600151adf  Switch Google image search back to old version, thanks to https://boards.4channel.org/g/thread/91737566#p91789527
+- [ ] aef984da1a6af4d0003b51e7f03bce252ac71dff Remove empty space from ads if they don't load. https://kissu.moe/b/res/7155#11052
+- [ ] 19268975ea2d49a753624315b0928f27496aac02 Update Randomize Filename to match current 4chan format. https://boards.4channel.org/g/thread/91737566#p91784238
+- [ ] 2a47dfd8ba724b17f5bc5f9214bea8ce8b469398 Catch errors due to "Restricted" selection. #2905
+- [ ] 27957c25af5d182adc38f1e67a098ab338631ccd Release 4chan X v1.14.22.2.
+- [ ] eb25d6e797a1673fd7cddb257fce04055383ec9b Update chrome-webstore-upload.
+- [ ] 14e67e9a958633e37b4e4a6293cfa3a921c1eab0 Release 4chan X v1.14.22.3.
+- [ ] 7295b21b73eb13ec53fdc61767ada341c2e13144 Avoid breaking sauce settings of people with links to original Google Images and Google Lens, provided they didn't already update to v1.14.22.3.
+- [ ] 71873cd7b22a565c2a41fa24f63f7504152683eb Recognize JPEG files with .jfif extensions as images for purposes of Image Hover etc.; also recognize .avif and .jxl files as images.
+- [ ] ea2462ecc47327c6f0c31348d95fd2b1b6447cb3 Release 4chan X v1.14.22.4.
+
+</details>
+
 ---
 
 Original readme:
